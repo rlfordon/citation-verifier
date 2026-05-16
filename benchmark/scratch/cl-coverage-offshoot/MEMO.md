@@ -25,14 +25,57 @@ Five of the 27 `cl_cluster_citations_empty` cases also had captions in
 the cited form that diverged from CL's stored caption — Rule 25(d)
 substitutions, Doe reveals, and SSA pseudonyms — which is what made
 them require manual investigation rather than recover automatically via
-name-based fallback. They are still fundamentally the same CL-side
+name-based fallback in my citation-verifier. They are still fundamentally the same CL-side
 issue (empty `citations[]`), but they put extra weight on
 recommendations that would let discovery bypass name matching.
 
-The bulk of the gap — 24 of 34 misses (71%) — sits on Westlaw cites
-filed by federal district courts. A second cluster of 6 misses sits on
+The bulk of the gap — 24 of 34 lookup misses are from Westlaw cites
+to opinions by federal district courts. A second cluster of 6 lookup misses sits on
 recent California state appellate reporters (`Cal.5th` / `Cal.App.5th`,
 2022–2026).
+
+## How the 250 citations flowed through the pipeline
+
+The full story is a sequence: first `/citation-lookup/`, then
+[citation-verifier](https://github.com/rfordon/citation-verifier)'s
+name+date+court fallback against opinion search and RECAP search, then
+audit, then manual review of borderline cases. The diagram below shows
+where each of the 250 citations landed and which signal got it there.
+
+```mermaid
+flowchart LR
+    A[250 cited citations] --> B[221 measurable<br/>after Phase 6 dedup]
+    A -.->|excluded| X[29 unmeasurable<br/>13 short-form dups<br/>15 unresolvable short-forms<br/>1 no case name]
+
+    B --> C[170 resolved by<br/>/citation-lookup/]
+    B --> D[51 not resolved by<br/>/citation-lookup/]
+
+    D --> E[34 found by citation-verifier]
+    D --> F[17 not found anywhere]
+
+    E --> G[27 found via opinion search<br/>cluster exists in CL, but citations[] empty]
+    E --> H[7 found via RECAP search<br/>docket only, no opinion cluster]
+
+    G --> G1[22 name search bridges<br/>automatically]
+    G --> G2[5 required manual review<br/>3 Rule 25(d) / Doe reveal<br/>2 SSA pseudonym]
+
+    H --> H1[5 RECAP search lands<br/>on correct docket]
+    H --> H2[2 required manual review<br/>caption variations]
+
+    F --> F1[11 not_in_cl<br/>no plausible match]
+    F --> F2[5 wrong-cluster rescue<br/>audit caught it]
+    F --> F3[1 audit_ambiguous<br/>partial party + date mismatch]
+
+    style C fill:#c8e6c9
+    style G fill:#fff9c4
+    style H fill:#fff9c4
+    style F fill:#ffcdd2
+```
+
+Reading the diagram: the 170 green box are the happy path — direct
+citation-lookup hits. The 34 yellow boxes are the lookup misses where
+the case nonetheless lives in CL. The 17 red box is what couldn't be
+found by any method.
 
 ## Methodology
 
@@ -40,7 +83,7 @@ recent California state appellate reporters (`Cal.5th` / `Cal.App.5th`,
   CL across a mix of federal (60) and state (18) courts via the
   benchmark's `mine_citing_opinions` step.
 - **Extraction**: per-opinion JSON via the Anthropic Haiku model
-  (`extract_citations.py`). Hallucinated citations (~13.5% of LLM
+  (`extract_citations.py`). Incomplete or incorrectly extracted citations (~13.5% of LLM
   output) excluded by using `citations_valid` only.
 - **Pre-filter & dedup**: drop short-form citations (`Id.`, bare pin
   cites) and foreign reporters (`Eng. Rep.`, `Q.B.`, etc.); dedup on
@@ -50,8 +93,10 @@ recent California state appellate reporters (`Cal.5th` / `Cal.App.5th`,
   Circuit, State_COLR, State_IAC, and Federal_District (250 total).
 - **Verification pipeline**:
   - Phase 4 — `/api/rest/v4/citation-lookup/` (strict)
-  - Phase 4c — name-based fallback against opinion search and RECAP
-    search, with court-id + date filters and multi-factor scoring
+  - Phase 4c — [citation-verifier](https://github.com/rfordon/citation-verifier)
+    fallback: name-based search against the opinion-search and
+    RECAP-search APIs, with court-id + date filters and multi-factor
+    scoring on name, court, date, and docket number
     (`15_staged_fallback_rigorous.py`)
   - Phase 5 — per-rescue audit: cite-in-cluster cross-check, party-name
     presence on both sides, court_id match, ±2-year date proximity
@@ -92,13 +137,13 @@ Coverage bucket distribution (denominator = 221):
 | `not_found_anywhere` | 17 | 7.7% |
 
 The 17 not-found rows split as: 11 `not_in_cl` (no plausible match in
-either opinion search or RECAP), 5 `rescue_was_false_positive` (the
-verifier's fallback found a wrong cluster; audit correctly rejected it
+either opinion search or RECAP), 5 `rescue_was_false_positive` (citation-verifier's 
+fallback found a wrong cluster; audit correctly rejected it
 on cite-in-cluster, court_id, or party mismatch), and 1
 `audit_ambiguous` (`In re Loc. TV Advert.` — partial party match plus
 date mismatch).
 
-## The 34 lookup misses, in detail
+## The 34 lookup misses that were in CL or RECAP, in detail
 
 ### Issue 1 — `cl_cluster_citations_empty` (27 cases)
 
@@ -106,7 +151,8 @@ Pattern: the opinion cluster exists in CL with the case the brief
 cites, but its `citations[]` array is empty. Without a populated cite
 index, the citation_lookup API has no way to resolve the cite back to
 the cluster, even though everything else about the cluster is correct.
-A name-based fallback finds it — *most of the time*.
+citation-verifier's name+court+date fallback against opinion search
+recovers it — *most of the time*.
 
 In our sample this pattern is **universal among lookup misses where the
 cluster exists** — all 27 in-cluster misses fit it. Zero cases where
@@ -135,10 +181,11 @@ automatically):
 #### Sub-case 1a: name search bridges the gap (22 cases)
 
 For these 22, the cluster's case name matches the cited form closely
-enough that our name-based fallback (opinion search by case name +
-court + date) lands on the right cluster on the first try. The audit's
-parties-present test confirms. These represent the largest single
-discoverability gap fixable by a single change: populating `citations[]`.
+enough that citation-verifier's name-based fallback (opinion search by
+case name + court + date) lands on the right cluster on the first try.
+The audit step then confirms via party-name match and date proximity.
+These represent the largest single discoverability gap fixable by a
+single change: populating `citations[]`.
 
 #### Sub-case 1b: name search blocked by caption change (5 cases)
 
@@ -172,11 +219,11 @@ then, anyone trying to discover these cases by name (in either an
 automated verifier or a manual CL search) is stuck.
 
 > *Aside: this sample also surfaced a parallel set of issues on the
-> search side — cases where the verifier itself initially picked the
-> wrong cluster and only the audit step caught it, or where it picked
-> the right cluster but the audit overrode on weak signals. Those are
-> verifier-side concerns more than CL-side ones, and we're saving the
-> detailed discussion for a separate write-up.*
+> search side — cases where citation-verifier itself initially picked
+> the wrong cluster and only the audit step caught it, or where it
+> picked the right cluster but the audit overrode on weak signals.
+> Those are citation-verifier–side concerns more than CL-side ones,
+> and we're saving the detailed discussion for a separate write-up.*
 
 ### Issue 2 — `cl_docket_only_no_cluster` (7 cases)
 
@@ -206,7 +253,7 @@ on CL with everything needed to make a cluster:
 Two of the three were created on CL in 2017, but their underlying
 opinions were filed in 2009 and 2016 — long enough ago that the
 contemporaneous `scrape_pacer_free_opinions` run for those date ranges
-would have already completed when the doc was eventually uploaded via
+may have already completed when the doc was eventually uploaded via
 RECAP. The third was created on CL 2025-10-02; whether the live scraper
 for `mad` has caught up to October 2025 is unknown from our data, but
 the `cand` and `nyed` lag documented in
@@ -244,8 +291,7 @@ name; all six have empty `citations[]`.
 
 ## Recommendations
 
-These are unprioritized observations; FLP is in a much better position
-to triage them.
+These are unprioritized observations:
 
 1. **Populate `citations[]` for existing opinion clusters more
    aggressively, especially for recent state appellate opinions and
@@ -254,7 +300,8 @@ to triage them.
    The clusters already exist; the cites just aren't indexed. This
    would also resolve the 5 caption-divergent sub-cases automatically,
    since `/citation-lookup/` would hit the cluster directly without
-   needing to reason about the caption.
+   needing to reason about the caption. This will likely be addressed
+   by the scanning project.
 
 2. **Back-fill opinion clusters from free RECAP documents that
    bypassed the live `scrape_pacer_free_opinions` window.** A periodic
@@ -262,7 +309,7 @@ to triage them.
    `is_available=true`, opinion-typed entry descriptions, and no
    associated cluster would catch:
    - Old docs (e.g., 2009 *Darensburg*, 2016 *Mehar Holdings*)
-     uploaded to CL via RECAP years after the live scrape window for
+     uploaded to CL via RECAP after the live scrape window for
      their date range had already completed.
    - New docs (e.g., 2025 *Doe v. Lawrence*) where the live scraper
      for the relevant court is lagging (see #7316 for the `nysd`-
@@ -275,11 +322,6 @@ to triage them.
    #7316 fix together would catch both the historical and the
    ongoing gap.
 
-   *Optional, scoped speculation:* two of the seven (Hunter "ORDER
-   RE:", Cabot "ORDER CERTIFYING") are substantive Magistrate Judge
-   orders with WL numbers but description text that may not match
-   `WrtOpRpt.pl`'s opinion-typing patterns. If `WrtOpRpt.pl`'s output
-   is in FLP control, expanding the typing patterns could help.
 
 ## Caveats and limitations
 
@@ -315,30 +357,27 @@ to triage them.
   these as "unmeasurable" rather than misses is a judgment call;
   reasonable people could include some of them.
 
-- **Audit conservatism.** The audit's `parties_present` test
+- **Audit conservatism.** Our audit's `parties_present` test
   (requires both `X` and `Y` from the cited `X v. Y` to appear in the
-  matched cluster's case name) is strict. Without the 7 manual
-  corrections to false-negative audit verdicts, measured coverage
-  would be 197/221 = 89.1%. Whether to include the 7 corrected rows
-  in the headline depends on whether you trust hand verification —
-  we do, but it's worth flagging.
+  citation-verifier-matched cluster's case name) is strict. Without
+  the 7 manual corrections to false-negative audit verdicts, measured
+  coverage would be 197/221 = 89.1%. Whether to include the 7
+  corrected rows in the headline depends on whether you trust hand
+  verification — we do, but it's worth flagging.
 
 - **Audit false positives.** A separate pre-existing
   `parties_present`-only verdict rule produced 4 audit false
   positives (Wilson, Wilmington Trust, Rose Way, Thurman) before we
   added the cite-in-cluster cross-check rule
-  (`16_audit_rescues.py:395-407`). In each, the verifier picked a
-  different cluster whose own `citations[]` array contained
-  different cites from the one cited in the brief — definitive
-  evidence of a wrong match. These are now correctly marked
+  (`16_audit_rescues.py:395-407`). In each, citation-verifier picked
+  a different cluster whose own `citations[]` array contained cites
+  different from the one cited in the brief — definitive evidence of
+  a wrong match. These are now correctly marked
   `rescue_was_false_positive` and counted in `not_found_anywhere`.
 
-- **Hallucinated citations excluded upfront.** ~13.5% of the LLM's
-  raw extracted citations were hallucinations and are excluded from
-  this sample by using `citations_valid` only. Hallucinations are
-  themselves an interesting signal for a different question (how
-  much do briefs / opinions hallucinate?) but aren't relevant to CL
-  coverage.
+- **Invalid citations excluded upfront.** ~13.5% of the LLM's
+  raw extracted citations were invalid (short cites or extraction artifacts) and are excluded from
+  this sample by using `citations_valid` only. 
 
 ## Reproducibility
 
