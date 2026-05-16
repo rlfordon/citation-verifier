@@ -42,7 +42,7 @@ minutes depending on CL API responsiveness.
 | # | Script | What it does |
 |---|---|---|
 | 10 | `10_mine_citing_opinions.py` | Mines 78 citing opinions from CL (federal + state, 2023–2026). Writes one `.txt` per cluster to `citing_opinions/`. |
-| 11 | `11_run_extraction.py` | Drives `extract_citations.py` over each mined opinion. Writes one `.json` per cluster to `real_extractions/`. |
+| 11 | `11_run_extraction.py` | Drives `extract_citations.py` over each mined opinion. Writes one `.json` per cluster to `real_extractions/`. Uses Anthropic Haiku via `claude -p` rather than eyecite — see [MEMO §Methodology](MEMO.md#methodology) for the tradeoffs (paren-attribution bug, smart-quote contamination, slip-opinion placeholder absorption, plus LLM-only fields like `court_hint` / `month` / `day` / `docket_number`). |
 | 12 | `12_stratify.py` | Pre-filters short-form / foreign citations; dedups; applies K=5 per-opinion cap; stratifies 50 per tier across SCOTUS / Circuit / State_COLR / State_IAC / Federal_District. Writes `final_pool.csv` (all tiers post-dedup-and-cap) and `final_200.csv` (the 250-row stratified sample). |
 | 13 | `13_lookup_coverage.py` | Phase 4: runs `/citation-lookup/` on every row of `final_200.csv`. Writes `coverage_per_citation.csv`, `coverage_per_tier.csv`, `coverage_summary.md`. |
 | 15 | `15_staged_fallback_rigorous.py` | Phase 4c: citation-verifier name-based fallback against opinion search and RECAP search for the NOT_FOUND rows from Phase 4. Multi-factor scoring (name + court + date + docket). Writes `staged_fallback_rigorous_per_row.csv`. |
