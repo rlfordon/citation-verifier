@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CourtListener coverage of cited cases — findings from a 250-citation sample</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --ink: #1a1614;
+  --ink-soft: #3d342e;
+  --paper: #f7f3ec;
+  --paper-warm: #efe8dc;
+  --rule: #d4c9b6;
+  --rule-soft: #e8dfcd;
+  --accent: #8b2014;        /* deep brick red — law-review feel */
+  --accent-soft: #c2624f;
+  --good: #4a6b3a;          /* moss green */
+  --good-soft: #a8c08f;
+  --warn: #b8862c;          /* mustard */
+  --warn-soft: #e3c97a;
+  --bad: #7a2018;           /* deep rust */
+  --bad-soft: #c87a6e;
+  --info: #2d5266;          /* steel blue */
+  --info-soft: #7da3b5;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  font-feature-settings: "onum", "kern", "liga";
+}
+
+body {
+  background-image:
+    radial-gradient(at 20% 10%, rgba(139, 32, 20, 0.03) 0px, transparent 50%),
+    radial-gradient(at 80% 90%, rgba(45, 82, 102, 0.03) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+.container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+}
+
+/* ============ MASTHEAD ============ */
+header.masthead {
+  border-bottom: 3px double var(--ink);
+  padding-bottom: 2rem;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.eyebrow {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-family: "Source Serif 4", serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+  font-feature-settings: "lnum";
+}
+
+.byline {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.byline strong { font-style: normal; font-weight: 500; color: var(--ink); }
+
+/* ============ HEADINGS ============ */
+h2 {
+  font-family: "Source Serif 4", serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+  margin: 3.5rem 0 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+}
+
+h3 {
+  font-family: "Source Serif 4", serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 2.25rem 0 0.75rem;
+  color: var(--ink);
+}
+
+h4 {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 1.75rem 0 0.5rem;
+}
+
+/* ============ PROSE ============ */
+p { margin: 0 0 1.1rem; }
+p + p { text-indent: 0; }
+
+strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; }
+
+code, .mono {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.86em;
+  background: var(--paper-warm);
+  padding: 0.05em 0.3em;
+  border-radius: 2px;
+  color: var(--accent);
+  font-feature-settings: "lnum";
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-soft);
+  transition: background 0.15s;
+}
+a:hover {
+  background: rgba(139, 32, 20, 0.08);
+}
+
+/* ============ TL;DR CALLOUT ============ */
+.tldr {
+  background: var(--paper-warm);
+  border-left: 4px solid var(--accent);
+  padding: 1.5rem 1.75rem;
+  margin: 2rem 0 3rem;
+  position: relative;
+}
+.tldr h2 {
+  margin: 0 0 0.75rem;
+  border: none;
+  padding: 0;
+  font-size: 1.15rem;
+  font-family: "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+.tldr p:last-child { margin-bottom: 0; }
+
+/* ============ THE BIG STAT ============ */
+.headline-stat {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  margin: 2rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 1.5rem 0;
+}
+.stat {
+  text-align: center;
+  padding: 0 1rem;
+  border-right: 1px solid var(--rule-soft);
+}
+.stat:last-child { border-right: none; }
+.stat .num {
+  font-family: "Source Serif 4", serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--accent);
+  font-feature-settings: "lnum";
+  letter-spacing: -0.02em;
+}
+.stat .label {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+
+/* ============ TABLES ============ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0 2rem;
+  font-size: 0.94rem;
+  font-feature-settings: "lnum", "tnum";
+}
+th {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+  background: var(--paper-warm);
+}
+td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--rule-soft);
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: 1px solid var(--rule); }
+td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+tr.total { font-weight: 600; background: var(--paper-warm); }
+tr.total td { border-top: 2px solid var(--ink); border-bottom: none; }
+
+/* ============ CHART CARDS ============ */
+.chart-card {
+  background: #fdfaf3;
+  border: 1px solid var(--rule);
+  padding: 1.75rem 1.75rem 1.5rem;
+  margin: 2rem 0;
+  position: relative;
+  box-shadow: 0 1px 0 var(--rule-soft), 4px 4px 0 -1px var(--rule-soft);
+}
+.chart-card .chart-label {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+.chart-card h3.chart-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.chart-card .chart-sub {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-bottom: 1.25rem;
+  font-style: italic;
+}
+.chart-wrap {
+  position: relative;
+  height: 360px;
+}
+.chart-wrap.tall { height: 440px; }
+.chart-wrap.short { height: 280px; }
+
+.chart-footnote {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--rule);
+  line-height: 1.5;
+}
+
+/* ============ FLOW DIAGRAM ============ */
+.flow-card {
+  background: #fdfaf3;
+  border: 1px solid var(--rule);
+  padding: 2rem 1.5rem;
+  margin: 2rem 0;
+  overflow-x: auto;
+}
+.flow-svg-wrap { min-width: 720px; }
+
+/* ============ ISSUE BLOCKS ============ */
+.issue-block {
+  border-left: 3px solid var(--info);
+  padding-left: 1.25rem;
+  margin: 2rem 0;
+}
+.issue-block.issue-2 { border-left-color: var(--warn); }
+
+.tag {
+  display: inline-block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.75rem;
+  padding: 0.1em 0.5em;
+  background: var(--info);
+  color: var(--paper);
+  border-radius: 2px;
+  margin-right: 0.4rem;
+  vertical-align: 0.1em;
+  font-weight: 500;
+}
+.tag.warn { background: var(--warn); }
+.tag.bad { background: var(--bad); }
+.tag.good { background: var(--good); }
+
+/* ============ BLOCKQUOTE ============ */
+blockquote {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.5rem;
+  border-left: 3px solid var(--rule);
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 0.96em;
+}
+
+/* ============ RECS ============ */
+.rec-list {
+  counter-reset: rec;
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+.rec-list li {
+  counter-increment: rec;
+  position: relative;
+  padding: 1rem 0 1rem 3.5rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.rec-list li:last-child { border-bottom: none; }
+.rec-list li::before {
+  content: counter(rec);
+  position: absolute;
+  left: 0;
+  top: 0.9rem;
+  font-family: "Source Serif 4", serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  width: 2.5rem;
+  text-align: center;
+  line-height: 1;
+  font-feature-settings: "lnum";
+}
+
+/* ============ FOOTER ============ */
+footer.colophon {
+  margin-top: 5rem;
+  padding-top: 2rem;
+  border-top: 3px double var(--ink);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 640px) {
+  .container { padding: 2rem 1.25rem 3rem; }
+  .headline-stat { grid-template-columns: 1fr; }
+  .stat { border-right: none; border-bottom: 1px solid var(--rule-soft); padding: 0.75rem 0; }
+  .stat:last-child { border-bottom: none; }
+  table { font-size: 0.85rem; }
+  th, td { padding: 0.45rem 0.4rem; }
+  .chart-wrap { height: 300px; }
+  .chart-wrap.tall { height: 380px; }
+}
+
+/* ============ Small decorative element ============ */
+.ornament {
+  text-align: center;
+  font-family: "Source Serif 4", serif;
+  color: var(--rule);
+  font-size: 1.4rem;
+  margin: 2.5rem 0;
+  letter-spacing: 0.8em;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ============ MASTHEAD ============ -->
+  <header class="masthead">
+    <div class="eyebrow">Coverage Study &nbsp;·&nbsp; Free Law Project</div>
+    <h1>CourtListener coverage of cited cases</h1>
+    <p class="byline"><strong>Rebecca Fordon</strong>, with Claude &nbsp;·&nbsp; May 16, 2026 &nbsp;·&nbsp; Drafted for sharing with the Free Law Project / CourtListener team</p>
+  </header>
+
+  <!-- ============ TL;DR ============ -->
+  <section class="tldr">
+    <h2>The findings, in brief</h2>
+    <p>We sampled 250 cited citations from 78 recent (2023–2026) opinions in CourtListener and tried to find each cited case in CL. After excluding 29 unmeasurable rows, <strong>204 of 221 measurable citations (92.3%) are findable in CL</strong>.</p>
+    <p>For 34 of those 204, CL's <code>/citation-lookup/</code> API didn't resolve the cite even though the case does live in CL. Two patterns account for all of them, both concentrated in federal district and state appellate tiers.</p>
+  </section>
+
+  <!-- ============ HEADLINE STATS ============ -->
+  <div class="headline-stat">
+    <div class="stat">
+      <div class="num">92.3%</div>
+      <div class="label">Findable in CL</div>
+    </div>
+    <div class="stat">
+      <div class="num">34</div>
+      <div class="label">Lookup misses, recoverable</div>
+    </div>
+    <div class="stat">
+      <div class="num">17</div>
+      <div class="label">Not found anywhere</div>
+    </div>
+  </div>
+
+  <!-- ============ TWO PATTERNS ============ -->
+  <h3 style="margin-top: 2.5rem;">The two patterns behind the 34 misses</h3>
+  <table>
+    <thead>
+      <tr><th>Pattern</th><th class="num">Count</th><th>Mechanism</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>cl_cluster_citations_empty</code></td>
+        <td class="num">27</td>
+        <td>Opinion cluster in CL, <code>citations[]</code> array empty</td>
+      </tr>
+      <tr>
+        <td><code>cl_docket_only_no_cluster</code></td>
+        <td class="num">7</td>
+        <td>Document in CL via RECAP but no opinion cluster created</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Five of the 27 <code>cl_cluster_citations_empty</code> cases also had captions in the cited form that diverged from CL's stored caption — Rule 25(d) substitutions, Doe reveals, and SSA pseudonyms — which is what made them require manual investigation rather than recover automatically via name-based fallback in my citation-verifier. They are still fundamentally the same CL-side issue (empty <code>citations[]</code>), but they put extra weight on recommendations that would let discovery bypass name matching.</p>
+
+  <p>The bulk of the gap — <strong>24 of 34 lookup misses are from Westlaw cites to opinions by federal district courts</strong>. A second cluster of 6 lookup misses sits on recent California state appellate reporters (<code>Cal.5th</code> / <code>Cal.App.5th</code>, 2022–2026).</p>
+
+  <div class="ornament">§ &nbsp; § &nbsp; §</div>
+
+  <!-- ============ FLOW DIAGRAM (Pipeline) ============ -->
+  <h2>How the 250 citations flowed through the pipeline</h2>
+
+  <p>The full story is a sequence: first <code>/citation-lookup/</code>, then <a href="https://github.com/rfordon/citation-verifier">citation-verifier</a>'s name+date+court fallback against opinion search and RECAP search, then audit, then manual review of borderline cases. The diagram below shows where each of the 250 citations landed and which signal got it there.</p>
+
+  <div class="flow-card">
+    <div class="chart-label" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 0.4rem;">Figure 1</div>
+    <h3 class="chart-title" style="margin: 0 0 0.4rem;">Pipeline flow: 250 citations through six phases</h3>
+    <div class="chart-sub" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 1.25rem; font-style: italic;">Green = direct lookup hit. Amber = lookup missed but case is in CL. Red = not found anywhere.</div>
+    <div class="flow-svg-wrap">
+      <svg viewBox="0 0 940 480" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#3d342e"/>
+          </marker>
+          <marker id="arrow-dashed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#9a8870"/>
+          </marker>
+        </defs>
+
+        <!-- Column headers -->
+        <text x="80" y="22" font-family="IBM Plex Sans" font-size="10" font-weight="600" letter-spacing="1.5" fill="#3d342e">PHASE 1 — SAMPLE</text>
+        <text x="270" y="22" font-family="IBM Plex Sans" font-size="10" font-weight="600" letter-spacing="1.5" fill="#3d342e">PHASE 4 — LOOKUP</text>
+        <text x="490" y="22" font-family="IBM Plex Sans" font-size="10" font-weight="600" letter-spacing="1.5" fill="#3d342e">PHASE 4c — FALLBACK</text>
+        <text x="745" y="22" font-family="IBM Plex Sans" font-size="10" font-weight="600" letter-spacing="1.5" fill="#3d342e">FINAL CLASSIFICATION</text>
+
+        <!-- Node: 250 -->
+        <rect x="20" y="200" width="130" height="60" rx="2" fill="#efe8dc" stroke="#3d342e" stroke-width="1.5"/>
+        <text x="85" y="225" text-anchor="middle" font-family="Source Serif 4" font-size="22" font-weight="600" fill="#1a1614">250</text>
+        <text x="85" y="246" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#3d342e">cited citations</text>
+
+        <!-- Excluded (dashed) -->
+        <rect x="20" y="50" width="130" height="70" rx="2" fill="#f7f3ec" stroke="#9a8870" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="85" y="73" text-anchor="middle" font-family="Source Serif 4" font-size="16" font-weight="500" fill="#3d342e">29 excluded</text>
+        <text x="85" y="91" text-anchor="middle" font-family="IBM Plex Sans" font-size="9" fill="#3d342e">13 short-form dups</text>
+        <text x="85" y="104" text-anchor="middle" font-family="IBM Plex Sans" font-size="9" fill="#3d342e">15 unresolvable short-forms</text>
+        <text x="85" y="117" text-anchor="middle" font-family="IBM Plex Sans" font-size="9" fill="#3d342e">1 no case name</text>
+        <path d="M 85 200 L 85 125" stroke="#9a8870" stroke-width="1" stroke-dasharray="4,3" fill="none" marker-end="url(#arrow-dashed)"/>
+
+        <!-- Node: 221 measurable -->
+        <rect x="200" y="200" width="140" height="60" rx="2" fill="#efe8dc" stroke="#3d342e" stroke-width="1.5"/>
+        <text x="270" y="225" text-anchor="middle" font-family="Source Serif 4" font-size="22" font-weight="600" fill="#1a1614">221</text>
+        <text x="270" y="246" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#3d342e">measurable (post-dedup)</text>
+        <path d="M 150 230 L 200 230" stroke="#3d342e" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- Node: 170 found by lookup (green) -->
+        <rect x="395" y="80" width="155" height="60" rx="2" fill="#a8c08f" stroke="#4a6b3a" stroke-width="1.5"/>
+        <text x="472" y="105" text-anchor="middle" font-family="Source Serif 4" font-size="22" font-weight="600" fill="#1a1614">170</text>
+        <text x="472" y="126" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#1a1614">resolved by /citation-lookup/</text>
+        <path d="M 340 220 Q 370 220 372 140 Q 372 115 395 110" stroke="#3d342e" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- Node: 51 not resolved by lookup -->
+        <rect x="395" y="280" width="155" height="60" rx="2" fill="#fdfaf3" stroke="#3d342e" stroke-width="1.5"/>
+        <text x="472" y="305" text-anchor="middle" font-family="Source Serif 4" font-size="22" font-weight="600" fill="#1a1614">51</text>
+        <text x="472" y="326" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#3d342e">not resolved by lookup</text>
+        <path d="M 340 240 Q 370 240 372 310 Q 372 310 395 310" stroke="#3d342e" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- Node: 27 cluster empty citations[] (amber) -->
+        <rect x="650" y="170" width="220" height="70" rx="2" fill="#e3c97a" stroke="#b8862c" stroke-width="1.5"/>
+        <text x="760" y="194" text-anchor="middle" font-family="Source Serif 4" font-size="20" font-weight="600" fill="#1a1614">27</text>
+        <text x="760" y="213" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#1a1614">found via opinion search</text>
+        <text x="760" y="227" text-anchor="middle" font-family="IBM Plex Sans" font-size="9" font-style="italic" fill="#3d342e">cluster exists; citations[] empty</text>
+        <path d="M 550 295 Q 600 295 600 205 Q 600 205 650 205" stroke="#3d342e" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- Node: 7 docket only (amber) -->
+        <rect x="650" y="265" width="220" height="70" rx="2" fill="#e3c97a" stroke="#b8862c" stroke-width="1.5"/>
+        <text x="760" y="289" text-anchor="middle" font-family="Source Serif 4" font-size="20" font-weight="600" fill="#1a1614">7</text>
+        <text x="760" y="308" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#1a1614">found via RECAP search</text>
+        <text x="760" y="322" text-anchor="middle" font-family="IBM Plex Sans" font-size="9" font-style="italic" fill="#3d342e">docket only; no cluster</text>
+        <path d="M 550 320 Q 600 320 600 300 Q 600 300 650 300" stroke="#3d342e" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- Node: 17 not found (red) -->
+        <rect x="650" y="365" width="220" height="70" rx="2" fill="#c87a6e" stroke="#7a2018" stroke-width="1.5"/>
+        <text x="760" y="389" text-anchor="middle" font-family="Source Serif 4" font-size="20" font-weight="600" fill="#fdfaf3">17</text>
+        <text x="760" y="408" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#1a1614">not found anywhere</text>
+        <text x="760" y="422" text-anchor="middle" font-family="IBM Plex Sans" font-size="9" font-style="italic" fill="#3d342e">11 not_in_cl &nbsp;·&nbsp; 5 wrong-cluster &nbsp;·&nbsp; 1 ambiguous</text>
+        <path d="M 550 335 Q 600 335 600 400 Q 600 400 650 400" stroke="#3d342e" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- Legend -->
+        <g transform="translate(20, 440)">
+          <rect x="0" y="0" width="14" height="14" fill="#a8c08f" stroke="#4a6b3a"/>
+          <text x="20" y="11" font-family="IBM Plex Sans" font-size="11" fill="#3d342e">Direct hit (170)</text>
+
+          <rect x="135" y="0" width="14" height="14" fill="#e3c97a" stroke="#b8862c"/>
+          <text x="155" y="11" font-family="IBM Plex Sans" font-size="11" fill="#3d342e">Recoverable in CL (34)</text>
+
+          <rect x="320" y="0" width="14" height="14" fill="#c87a6e" stroke="#7a2018"/>
+          <text x="340" y="11" font-family="IBM Plex Sans" font-size="11" fill="#3d342e">Not found (17)</text>
+
+          <rect x="450" y="0" width="14" height="14" fill="#f7f3ec" stroke="#9a8870" stroke-dasharray="3,2"/>
+          <text x="470" y="11" font-family="IBM Plex Sans" font-size="11" fill="#3d342e">Excluded (29)</text>
+        </g>
+      </svg>
+    </div>
+    <div class="chart-footnote">Within the 27 "cluster empty" recoveries: 22 resolved automatically via name search; 5 required manual review (3 Rule 25(d) / Doe reveals, 2 SSA pseudonyms). Within the 7 RECAP recoveries: 5 landed directly, 2 required manual caption reconciliation.</div>
+  </div>
+
+  <p>Reading the diagram: the 170 green box is the happy path — direct citation-lookup hits. The 34 amber boxes are the lookup misses where the case nonetheless lives in CL. The 17 red box is what couldn't be found by any method.</p>
+
+  <!-- ============ COVERAGE BY TIER CHART ============ -->
+  <h2>Headline coverage</h2>
+
+  <div class="chart-card">
+    <div class="chart-label">Figure 2</div>
+    <h3 class="chart-title">Two coverage rates by court tier</h3>
+    <div class="chart-sub">For each tier: the share resolvable directly by <code>/citation-lookup/</code> (dark) vs. the share findable in CL by any method (light). The gap between the bars is the recoverable-but-unresolvable population this memo is about.</div>
+    <div class="chart-wrap tall">
+      <canvas id="tierChart"></canvas>
+    </div>
+    <div class="chart-footnote">The two rates diverge most for Federal_District (37.5% vs. 91.7%) — a 54-point gap driven almost entirely by WL cites whose clusters exist in CL but have empty <code>citations[]</code>. SCOTUS shows no gap at all. State_IAC's 81.6% overall coverage isn't itself driven by the California cluster-empty cases (those are recoverable and counted in the light bar); the 18.4% gap to 100% reflects citations not found anywhere in CL.</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th class="num">In CL</th>
+        <th class="num">Denominator</th>
+        <th class="num">Coverage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>SCOTUS</td><td class="num">45</td><td class="num">45</td><td class="num">100.0%</td></tr>
+      <tr><td>Circuit</td><td class="num">44</td><td class="num">46</td><td class="num">95.7%</td></tr>
+      <tr><td>State_COLR</td><td class="num">40</td><td class="num">44</td><td class="num">90.9%</td></tr>
+      <tr><td>State_IAC</td><td class="num">31</td><td class="num">38</td><td class="num">81.6%</td></tr>
+      <tr><td>Federal_District</td><td class="num">44</td><td class="num">48</td><td class="num">91.7%</td></tr>
+      <tr class="total"><td><strong>Overall</strong></td><td class="num"><strong>204</strong></td><td class="num"><strong>221</strong></td><td class="num"><strong>92.3%</strong></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============ COVERAGE BUCKETS ============ -->
+  <div class="chart-card">
+    <div class="chart-label">Figure 3</div>
+    <h3 class="chart-title">Where the 221 measurable citations end up</h3>
+    <div class="chart-sub">Distribution across the four coverage buckets.</div>
+    <div class="chart-wrap short">
+      <canvas id="bucketChart"></canvas>
+    </div>
+    <div class="chart-footnote">The 17 not-found rows split as: 11 <code>not_in_cl</code> (no plausible match), 5 <code>rescue_was_false_positive</code> (audit caught a wrong match), and 1 <code>audit_ambiguous</code>.</div>
+  </div>
+
+  <div class="ornament">§ &nbsp; § &nbsp; §</div>
+
+  <!-- ============ THE 34 IN DETAIL ============ -->
+  <h2>The 34 lookup misses, in detail</h2>
+
+  <div class="issue-block">
+    <h3><span class="tag">Issue 1</span> <code>cl_cluster_citations_empty</code> — 27 cases</h3>
+
+    <p>Pattern: the opinion cluster exists in CL with the case the brief cites, but its <code>citations[]</code> array is empty. Without a populated cite index, the citation_lookup API has no way to resolve the cite back to the cluster, even though everything else about the cluster is correct. citation-verifier's name+court+date fallback against opinion search recovers it — <em>most of the time</em>.</p>
+
+    <p>In our sample this pattern is <strong>universal among lookup misses where the cluster exists</strong> — all 27 in-cluster misses fit it. Zero cases where the cite IS in the cluster's <code>citations[]</code> but lookup nonetheless missed (would have indicated a lookup-side bug). Zero cases where the cluster has populated <code>citations[]</code> containing different cites (would have indicated a partial-cite-list bug).</p>
+
+    <div class="chart-card">
+      <div class="chart-label">Figure 4</div>
+      <h3 class="chart-title">The 27 cluster-empty cases, by reporter type and tier</h3>
+      <div class="chart-sub">Westlaw cites in federal district courts dominate.</div>
+      <div class="chart-wrap">
+        <canvas id="emptyClusterChart"></canvas>
+      </div>
+      <div class="chart-footnote">63% of these cases were filed 2022 or later (17/27) — consistent with citation-index ingestion lag for recent opinions.</div>
+    </div>
+
+    <h4>Sub-case 1a — Name search bridges the gap (22 cases)</h4>
+    <p>For these 22, the cluster's case name matches the cited form closely enough that citation-verifier's name-based fallback (opinion search by case name + court + date) lands on the right cluster on the first try. The audit step then confirms via party-name match and date proximity. <strong>These represent the largest single discoverability gap fixable by a single change: populating <code>citations[]</code>.</strong></p>
+
+    <h4>Sub-case 1b — Name search blocked by caption change (5 cases)</h4>
+    <p>For these 5, the cluster's case name has diverged from the cited form in ways that defeat a name-based search.</p>
+
+    <p><strong>Rule 25(d) substitution / Doe reveal (3 cases)</strong> — an official has been substituted under Federal Rule 25(d), or a Doe defendant has been replaced with the real name, <em>after</em> CL ingested the opinion. The brief cites the historical caption; CL stores the current one.</p>
+
+    <table>
+      <thead><tr><th>Cited</th><th>CL caption</th><th>URL</th></tr></thead>
+      <tbody>
+        <tr><td>Gilliard v. McWilliams, 2019 WL 3304707</td><td>Gilliard v. Gruenberg</td><td><a href="https://www.courtlistener.com/opinion/4642011/">opinion/4642011</a></td></tr>
+        <tr><td>Preston v. Smith, 2023 WL 5337430</td><td>Preston v. Unidentified</td><td><a href="https://www.courtlistener.com/opinion/9729396/">opinion/9729396</a></td></tr>
+        <tr><td>Viken Detection Corp. v. Doe, 2019 WL 5268725</td><td>Viken Detection Corp. v. Bradshaw</td><td><a href="https://www.courtlistener.com/opinion/9731515/">opinion/9731515</a></td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>SSA pseudonym (2 cases)</strong> — in Social Security appeals, the brief uses an SSA pseudonym (<code>Michael B.</code>, <code>John S.</code>); CL indexes the case under the plaintiff's real surname.</p>
+
+    <table>
+      <thead><tr><th>Cited</th><th>CL caption</th><th>URL</th></tr></thead>
+      <tbody>
+        <tr><td>Michael B. v. Berryhill, 2019 WL 2269962</td><td>Buschman v. Berryhill</td><td><a href="https://www.courtlistener.com/opinion/9674181/">opinion/9674181</a></td></tr>
+        <tr><td>John S. v. Bisignano, 2025 WL 1505405</td><td>Sims v. Bisignano</td><td><a href="https://www.courtlistener.com/opinion/10593230/">opinion/10593230</a></td></tr>
+      </tbody>
+    </table>
+
+    <p>All five clusters also have empty <code>citations[]</code>. Once <code>citations[]</code> is populated, the underlying issue evaporates — <code>/citation-lookup/</code> would resolve them without needing to reason about the caption at all. Until then, anyone trying to discover these cases by name (in either an automated verifier or a manual CL search) is stuck.</p>
+
+    <blockquote>Aside: this sample also surfaced a parallel set of issues on the search side — cases where citation-verifier itself initially picked the wrong cluster and only the audit step caught it, or where it picked the right cluster but the audit overrode on weak signals. Those are citation-verifier–side concerns more than CL-side ones, and we're saving the detailed discussion for a separate write-up.</blockquote>
+  </div>
+
+  <div class="issue-block issue-2">
+    <h3><span class="tag warn">Issue 2</span> <code>cl_docket_only_no_cluster</code> — 7 cases</h3>
+
+    <p>Pattern: the cited case appears in CL's RECAP archive as a docket and typically as a downloadable document, but no opinion cluster has been created from it. The <code>/citation-lookup/</code> API is cluster-scoped, so it can't reach docket-only cases at all.</p>
+
+    <p><code>18_diagnose_recap_cases.py</code> inspects each docket's recap_documents and sub-classifies these:</p>
+
+    <table>
+      <thead><tr><th>Sub-pattern</th><th class="num">Count</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td><code>recap_doc_opinion_not_ingested</code></td><td class="num">3</td><td>PDF on CL, <code>is_free_on_pacer=true</code>, OCR'd text, opinion-typed description — but no cluster created</td></tr>
+        <tr><td><code>recap_doc_unavailable</code></td><td class="num">2</td><td>PACER has it, but no one has RECAP'd it; CL has no PDF to work from</td></tr>
+        <tr><td><code>recap_doc_not_opinion_typed</code></td><td class="num">2</td><td>PDF on CL with text, but description uses non-canonical opinion language ("ORDER RE:" / "ORDER CERTIFYING")</td></tr>
+      </tbody>
+    </table>
+
+    <p>The three "opinion not ingested" cases are striking because the docs are on CL with everything needed to make a cluster:</p>
+
+    <table>
+      <thead><tr><th>Case</th><th>Docket</th><th>recap_document</th><th>Date on CL</th><th>Entry description</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Mehar Holdings v. Evanston Ins. Co., 2016 WL 5957681 (W.D. Tex.)</td>
+          <td><a href="https://www.courtlistener.com/docket/5474769/mehar-holdings-llc-v-evanston-insurance-company/">5474769</a></td>
+          <td><a href="https://www.courtlistener.com/recap-documents/18720567/">18720567</a> (12 pp)</td>
+          <td>2017-04-23</td>
+          <td>"ORDER GRANTING 14 Motion for Reconsideration … GRANTS 4 Motion to Remand. Signed by Judge Ezra"</td>
+        </tr>
+        <tr>
+          <td>Darensburg v. Metro. Transp. Comm'n, 2009 WL 2392094 (N.D. Cal.)</td>
+          <td><a href="https://www.courtlistener.com/docket/4182878/452/darensburg-v-metropolitan-transportation-commission/">4182878</a></td>
+          <td><a href="https://www.courtlistener.com/recap-documents/13644995/">13644995</a> (10 pp)</td>
+          <td>2017-02-17</td>
+          <td>"OPINION ON DEFENDANT'S MOTION FOR ATTORNEYS' FEES. Signed by Mag. J. Laporte on July 7, 2009"</td>
+        </tr>
+        <tr>
+          <td>Doe v. Lawrence Gen. Hosp., 2025 WL 2808055 (D. Mass.)</td>
+          <td><a href="https://www.courtlistener.com/docket/69539673/doe-v-lawrence-general-hospital/">69539673</a></td>
+          <td><a href="https://www.courtlistener.com/recap-documents/454203499/">454203499</a> (2 pp)</td>
+          <td>2025-10-02</td>
+          <td>"Memorandum & Order"</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Two of the three were created on CL in 2017, but their underlying opinions were filed in 2009 and 2016 — long enough ago that the contemporaneous <code>scrape_pacer_free_opinions</code> run for those date ranges may have already completed when the doc was eventually uploaded via RECAP. The third was created on CL 2025-10-02; whether the live scraper for <code>mad</code> has caught up to October 2025 is unknown from our data, but the <code>cand</code> and <code>nyed</code> lag documented in <a href="https://github.com/freelawproject/courtlistener/issues/7316">CL #7316</a> (2–3 months) suggests <code>mad</code> may show a similar pattern.</p>
+
+    <p>The two <code>recap_doc_not_opinion_typed</code> cases (<em>Cabot v. Lewis</em>: "ORDER CERTIFYING INTERLOCUTORY APPEAL"; <em>Hunter v. CCSF</em>: "ORDER RE: PLAINTIFFS MOTION FOR REVIEW OF CLERKS TAXATION OF COSTS") are substantive 4–8 page Magistrate Judge orders that received WL numbers — arguably opinion-worthy, but the description text uses non-canonical language that PACER's <code>WrtOpRpt.pl</code> may not flag.</p>
+  </div>
+
+  <!-- ============ CITATION TYPE BREAKDOWN ============ -->
+  <h3>Citation-type breakdown across all 34 lookup misses</h3>
+
+  <div class="chart-card">
+    <div class="chart-label">Figure 5</div>
+    <h3 class="chart-title">Reporter type within the 34 misses, split by court tier</h3>
+    <div class="chart-sub">Westlaw cites account for 71% of the misses; all are federal district. California reporters form the second-largest cluster.</div>
+    <div class="chart-wrap tall">
+      <canvas id="citeTypeChart"></canvas>
+    </div>
+    <div class="chart-footnote">Most district court opinions don't appear in official reporters, so the WL cite is often the only citable form — and lookup's resolution to a cluster depends on someone having put the WL cite in <code>citations[]</code>.</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Cite type</th><th class="num">Federal_District</th><th class="num">Circuit</th><th class="num">State_COLR</th><th class="num">State_IAC</th><th class="num">Total</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Westlaw (<code>YYYY WL N</code>)</td><td class="num">24</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><strong>24</strong></td></tr>
+      <tr><td>California reporters</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">5</td><td class="num"><strong>6</strong></td></tr>
+      <tr><td><code>F. Supp.</code></td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">2</td></tr>
+      <tr><td><code>F.[Nd]</code></td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td></tr>
+      <tr><td><code>So.</code> reporters</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="ornament">§ &nbsp; § &nbsp; §</div>
+
+  <!-- ============ METHODOLOGY ============ -->
+  <h2>Methodology</h2>
+
+  <p><strong>Corpus.</strong> 78 citing opinions, predominantly 2023–2026, mined from CL across a mix of federal (60) and state (18) courts via the benchmark's <code>mine_citing_opinions</code> step.</p>
+
+  <p><strong>Extraction.</strong> Per-opinion JSON via the Anthropic Haiku model (<code>extract_citations.py</code>). Incomplete or incorrectly extracted citations (~13.5% of LLM output) excluded by using <code>citations_valid</code> only.</p>
+
+  <p><strong>Pre-filter &amp; dedup.</strong> Drop short-form citations (<code>Id.</code>, bare pin cites) and foreign reporters (<code>Eng. Rep.</code>, <code>Q.B.</code>, etc.); dedup on <code>(citing_cluster, citation_string, parenthetical)</code>; K=5 cap per <code>(citing_cluster, cited_tier)</code> for opinion-level diversity.</p>
+
+  <p><strong>Stratified sample.</strong> 50 cited citations per tier across SCOTUS, Circuit, State_COLR, State_IAC, and Federal_District (250 total).</p>
+
+  <h4>Verification pipeline</h4>
+  <ul>
+    <li><strong>Phase 4</strong> — <code>/api/rest/v4/citation-lookup/</code> (strict)</li>
+    <li><strong>Phase 4c</strong> — <a href="https://github.com/rfordon/citation-verifier">citation-verifier</a> fallback: name-based search against the opinion-search and RECAP-search APIs, with court-id + date filters and multi-factor scoring on name, court, date, and docket number (<code>15_staged_fallback_rigorous.py</code>)</li>
+    <li><strong>Phase 5</strong> — per-rescue audit: cite-in-cluster cross-check, party-name presence on both sides, court_id match, ±2-year date proximity (<code>16_audit_rescues.py</code>)</li>
+    <li><strong>Phase 6</strong> — short-form citation dedup (<code>17_build_unified_review.py</code>): rows whose fuller sibling exists in the same citing opinion are dropped from both numerator and denominator; unresolvable short-forms (no antecedent) are dropped from the denominator only.</li>
+  </ul>
+
+  <p><strong>Manual review.</strong> An eyeball pass over <code>rescue_was_false_positive</code> audit verdicts identified 7 false negatives, recorded in <code>manual_corrections.csv</code>. A separate <code>18_diagnose_recap_cases.py</code> pass fetches the recap_document for each <code>in_recap</code> row and sub-classifies why no opinion cluster was ingested.</p>
+
+  <p>The pipeline is reproducible end-to-end from the scripts in <code>benchmark/scratch/cl-coverage-offshoot/</code> against an unchanged CourtListener corpus.</p>
+
+  <!-- ============ RECOMMENDATIONS ============ -->
+  <h2>Recommendations</h2>
+  <p><em>Unprioritized observations.</em></p>
+
+  <ol class="rec-list">
+    <li>
+      <strong>Populate <code>citations[]</code> for existing opinion clusters more aggressively, especially for recent state appellate opinions and federal district court WL cites.</strong>
+      This single change would close <strong>27 of the 34 lookup misses (79%)</strong> — by far the largest mechanism. The clusters already exist; the cites just aren't indexed. This would also resolve the 5 caption-divergent sub-cases automatically, since <code>/citation-lookup/</code> would hit the cluster directly without needing to reason about the caption. This will likely be addressed by the scanning project.
+    </li>
+    <li>
+      <strong>Back-fill opinion clusters from free RECAP documents that bypassed the live <code>scrape_pacer_free_opinions</code> window.</strong>
+      A periodic sweep of <code>recap_documents</code> with <code>is_free_on_pacer=true</code>, <code>is_available=true</code>, opinion-typed entry descriptions, and no associated cluster would catch old docs (e.g., 2009 <em>Darensburg</em>, 2016 <em>Mehar Holdings</em>) uploaded to CL via RECAP after the live scrape window for their date range had already completed, and new docs (e.g., 2025 <em>Doe v. Lawrence</em>) where the live scraper for the relevant court is lagging.
+    </li>
+    <li>
+      <strong>Fix the per-court scraper stall/lag pattern surfaced in #7316.</strong>
+      Three of the seven <code>in_recap</code> cases were docs created on CL in 2017 but underlying opinions filed years earlier — these wouldn't be caught by a live-scraper fix alone. Recommendation 2 above and the #7316 fix together would catch both the historical and the ongoing gap.
+    </li>
+  </ol>
+
+  <!-- ============ CAVEATS ============ -->
+  <h2>Caveats and limitations</h2>
+
+  <p><strong>Sample size.</strong> 250 rows across five tiers; per-tier sample sizes range 38–48 after Phase 6 exclusions. Confidence intervals on the individual tier coverage numbers are wide. The overall 92.3% should be read as a point estimate with ~±2 pp of slop.</p>
+
+  <p><strong>NYSD skip.</strong> We initially targeted SDNY (<code>nysd</code>) as one of our federal district sources for citation mining. We had to drop it because the live scraper isn't currently capturing nysd free opinions — see <a href="https://github.com/freelawproject/courtlistener/issues/7316">CL #7316</a>. This biases the sample by under-representing SDNY citations. SDNY is a heavy producer of recent unpublished WL opinions, and those recent opinions are the exact citation pattern most affected by <code>cl_cluster_citations_empty</code>. <strong>The 91.7% federal-district coverage number is therefore likely an overestimate of what a corpus that included SDNY citations would show.</strong></p>
+
+  <p><strong>Regional reporter tier ambiguity.</strong> <code>A.3d</code>, <code>P.3d</code>, <code>N.E.3d</code>, etc., carry both COLR and IAC opinions. Initial tier classification used the LLM-extracted <code>court_hint</code> from the Bluebook parenthetical when available; otherwise reporter pattern. Mis-classifications within state appellate are possible.</p>
+
+  <p><strong>Phase 6 exclusions.</strong> 29 of 250 rows are excluded from the denominator: 13 short-form duplicates of a fuller sibling in the same citing opinion (out of both numerator and denominator), 15 unresolvable short-forms with no antecedent in the same opinion (out of denominator only — they're not measurable misses), and 1 LLM extraction artifact where the case name was dropped. Treating these as "unmeasurable" rather than misses is a judgment call; reasonable people could include some of them.</p>
+
+  <p><strong>Audit conservatism.</strong> Our audit's <code>parties_present</code> test (requires both <code>X</code> and <code>Y</code> from the cited <code>X v. Y</code> to appear in the citation-verifier-matched cluster's case name) is strict. Without the 7 manual corrections to false-negative audit verdicts, measured coverage would be 197/221 = 89.1%. Whether to include the 7 corrected rows in the headline depends on whether you trust hand verification — we do, but it's worth flagging.</p>
+
+  <p><strong>Audit false positives.</strong> A separate pre-existing <code>parties_present</code>-only verdict rule produced 4 audit false positives (Wilson, Wilmington Trust, Rose Way, Thurman) before we added the cite-in-cluster cross-check rule (<code>16_audit_rescues.py:395-407</code>). In each, citation-verifier picked a different cluster whose own <code>citations[]</code> array contained cites different from the one cited in the brief — definitive evidence of a wrong match. These are now correctly marked <code>rescue_was_false_positive</code> and counted in <code>not_found_anywhere</code>.</p>
+
+  <p><strong>Invalid citations excluded upfront.</strong> ~13.5% of the LLM's raw extracted citations were invalid (short cites or extraction artifacts) and are excluded from this sample by using <code>citations_valid</code> only.</p>
+
+  <!-- ============ REPRODUCIBILITY ============ -->
+  <h2>Reproducibility</h2>
+
+  <p>All code and data live under <code>benchmark/scratch/cl-coverage-offshoot/</code>. Key artifacts:</p>
+
+  <table>
+    <thead><tr><th>File</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td><code>final_200.csv</code></td><td>Stratified 250-row sample (post-dedup, post-cap)</td></tr>
+      <tr><td><code>coverage_per_citation.csv</code></td><td>Phase 4 (<code>/citation-lookup/</code>) results</td></tr>
+      <tr><td><code>staged_fallback_rigorous_per_row.csv</code></td><td>Phase 4c (name+RECAP fallback) results</td></tr>
+      <tr><td><code>audit_per_row.csv</code></td><td>Phase 5 audit verdicts on each rescue</td></tr>
+      <tr><td><code>recap_diagnosis.csv</code></td><td>Phase 18 sub-classification of the 7 <code>in_recap</code> cases</td></tr>
+      <tr><td><code>manual_corrections.csv</code></td><td>7 user-investigated false negatives + 3 discoverability category labels</td></tr>
+      <tr><td><code>unified_review.csv</code></td><td>Full audit trail (35 columns × 250 rows)</td></tr>
+      <tr><td><code>unified_review_concise.csv</code></td><td>Reviewer-facing view (9 columns × 250 rows)</td></tr>
+    </tbody>
+  </table>
+
+  <p>To regenerate from the raw extractions:<br>
+  <code>12_stratify.py</code> → <code>13_lookup_coverage.py</code> → <code>15_staged_fallback_rigorous.py</code> → <code>16_audit_rescues.py</code> → <code>18_diagnose_recap_cases.py</code> → <code>17_build_unified_review.py</code></p>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="colophon">
+    <div class="ornament" style="margin-bottom: 1rem;">❦</div>
+    Rebecca Fordon, with Claude &nbsp;·&nbsp; 16 May 2026<br>
+    Drafted for sharing with the Free Law Project / CourtListener team
+  </footer>
+
+</div>
+
+<!-- ============ CHARTS SCRIPT ============ -->
+<script>
+// Shared theme
+const inkColor = '#1a1614';
+const inkSoft = '#3d342e';
+const ruleColor = '#d4c9b6';
+const accent = '#8b2014';
+const good = '#4a6b3a';
+const goodSoft = '#a8c08f';
+const warn = '#b8862c';
+const warnSoft = '#e3c97a';
+const bad = '#7a2018';
+const badSoft = '#c87a6e';
+const info = '#2d5266';
+const infoSoft = '#7da3b5';
+
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = inkSoft;
+Chart.defaults.borderColor = ruleColor;
+
+// ============ Figure 2: Tier coverage — two bars per tier ============
+// Resolvable by /citation-lookup/ vs. findable in CL by any method
+new Chart(document.getElementById('tierChart'), {
+  type: 'bar',
+  data: {
+    labels: ['SCOTUS', 'Circuit', 'State_COLR', 'Federal_District', 'State_IAC'],
+    datasets: [
+      {
+        label: 'Resolvable by /citation-lookup/',
+        data: [100.0, 93.5, 86.4, 37.5, 68.4],
+        backgroundColor: '#2d5266',
+        borderColor: '#1f3a48',
+        borderWidth: 1,
+        borderRadius: 0,
+        // counts for tooltips
+        _counts: ['45 / 45', '43 / 46', '38 / 44', '18 / 48', '26 / 38']
+      },
+      {
+        label: 'Findable in CL (any method)',
+        data: [100.0, 95.7, 90.9, 91.7, 81.6],
+        backgroundColor: '#c9b88a',
+        borderColor: '#8a7a52',
+        borderWidth: 1,
+        borderRadius: 0,
+        _counts: ['45 / 45', '44 / 46', '40 / 44', '44 / 48', '31 / 38']
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: {
+        position: 'top',
+        align: 'start',
+        labels: {
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11 },
+          color: inkColor,
+          boxWidth: 14,
+          boxHeight: 14,
+          padding: 14
+        }
+      },
+      tooltip: {
+        backgroundColor: inkColor,
+        titleFont: { family: "'IBM Plex Sans', sans-serif", weight: '600' },
+        bodyFont: { family: "'IBM Plex Mono', monospace" },
+        padding: 10,
+        callbacks: {
+          label: (ctx) => {
+            const counts = ctx.dataset._counts[ctx.dataIndex];
+            return ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%  (${counts})`;
+          }
+        }
+      },
+      title: { display: false }
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        max: 100,
+        grid: { color: 'rgba(212, 201, 182, 0.4)' },
+        ticks: {
+          callback: (v) => v + '%',
+          font: { family: "'IBM Plex Mono', monospace", size: 11 }
+        },
+        title: {
+          display: true,
+          text: 'Rate',
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11, weight: '500' },
+          color: inkSoft
+        }
+      },
+      y: {
+        grid: { display: false },
+        ticks: {
+          font: { family: "'IBM Plex Sans', sans-serif", size: 12, weight: '500' },
+          color: inkColor
+        }
+      }
+    }
+  }
+});
+
+// ============ Figure 3: Coverage bucket distribution ============
+new Chart(document.getElementById('bucketChart'), {
+  type: 'doughnut',
+  data: {
+    labels: [
+      'found_via_lookup (Phase 4 happy path)',
+      'in_opinions (cluster exists; lookup missed)',
+      'in_recap (docket only; no cluster)',
+      'not_found_anywhere'
+    ],
+    datasets: [{
+      data: [170, 27, 7, 17],
+      backgroundColor: [goodSoft, warnSoft, '#d4a866', badSoft],
+      borderColor: [good, warn, warn, bad],
+      borderWidth: 1.5
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '55%',
+    plugins: {
+      legend: {
+        position: 'right',
+        align: 'center',
+        labels: {
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11 },
+          color: inkColor,
+          padding: 12,
+          boxWidth: 14,
+          boxHeight: 14,
+          generateLabels: (chart) => {
+            const data = chart.data;
+            return data.labels.map((label, i) => {
+              const val = data.datasets[0].data[i];
+              const pct = (val / 221 * 100).toFixed(1);
+              return {
+                text: `${label}  —  ${val} (${pct}%)`,
+                fillStyle: data.datasets[0].backgroundColor[i],
+                strokeStyle: data.datasets[0].borderColor[i],
+                lineWidth: 1.5,
+                index: i
+              };
+            });
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: inkColor,
+        callbacks: {
+          label: (ctx) => ` ${ctx.parsed} of 221 (${(ctx.parsed/221*100).toFixed(1)}%)`
+        }
+      }
+    }
+  }
+});
+
+// ============ Figure 4: 27 cluster-empty cases by reporter & tier ============
+new Chart(document.getElementById('emptyClusterChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Westlaw (WL)', 'California (Cal.5th / Cal.App.5th)', 'F. Supp. 3d', 'F.4th', 'So. 3d'],
+    datasets: [
+      {
+        label: 'Federal_District',
+        data: [17, 0, 2, 0, 0],
+        backgroundColor: '#7a4d3a',
+        borderColor: '#5c3a2c',
+        borderWidth: 1
+      },
+      {
+        label: 'State_IAC',
+        data: [0, 5, 0, 0, 0],
+        backgroundColor: warnSoft,
+        borderColor: warn,
+        borderWidth: 1
+      },
+      {
+        label: 'State_COLR',
+        data: [0, 1, 0, 0, 1],
+        backgroundColor: infoSoft,
+        borderColor: info,
+        borderWidth: 1
+      },
+      {
+        label: 'Circuit',
+        data: [0, 0, 0, 1, 0],
+        backgroundColor: goodSoft,
+        borderColor: good,
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11 },
+          color: inkColor,
+          boxWidth: 14,
+          boxHeight: 14,
+          padding: 12
+        }
+      },
+      tooltip: {
+        backgroundColor: inkColor,
+        callbacks: {
+          label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        grid: { display: false },
+        ticks: {
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11 },
+          color: inkColor
+        }
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        grid: { color: 'rgba(212, 201, 182, 0.4)' },
+        ticks: {
+          stepSize: 5,
+          font: { family: "'IBM Plex Mono', monospace", size: 11 }
+        },
+        title: {
+          display: true,
+          text: 'Count of cases',
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11, weight: '500' },
+          color: inkSoft
+        }
+      }
+    }
+  }
+});
+
+// ============ Figure 5: Cite type x tier for all 34 misses ============
+new Chart(document.getElementById('citeTypeChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Westlaw (YYYY WL N)', 'California reporters', 'F. Supp.', 'F.[Nd]', 'So. reporters'],
+    datasets: [
+      {
+        label: 'Federal_District',
+        data: [24, 0, 2, 0, 0],
+        backgroundColor: '#7a4d3a',
+        borderColor: '#5c3a2c',
+        borderWidth: 1
+      },
+      {
+        label: 'Circuit',
+        data: [0, 0, 0, 1, 0],
+        backgroundColor: goodSoft,
+        borderColor: good,
+        borderWidth: 1
+      },
+      {
+        label: 'State_COLR',
+        data: [0, 1, 0, 0, 1],
+        backgroundColor: infoSoft,
+        borderColor: info,
+        borderWidth: 1
+      },
+      {
+        label: 'State_IAC',
+        data: [0, 5, 0, 0, 0],
+        backgroundColor: warnSoft,
+        borderColor: warn,
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11 },
+          color: inkColor,
+          boxWidth: 14,
+          boxHeight: 14,
+          padding: 12
+        }
+      },
+      tooltip: {
+        backgroundColor: inkColor,
+        callbacks: {
+          label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.x}`,
+          footer: (items) => {
+            const total = items.reduce((s, i) => s + i.parsed.x, 0);
+            return total ? `Row total: ${items[0].label.includes('Westlaw') ? 24 :
+              items[0].label.includes('California') ? 6 :
+              items[0].label.includes('F. Supp') ? 2 :
+              items[0].label.includes('F.[N') ? 1 : 1}` : '';
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        beginAtZero: true,
+        grid: { color: 'rgba(212, 201, 182, 0.4)' },
+        ticks: {
+          stepSize: 4,
+          font: { family: "'IBM Plex Mono', monospace", size: 11 }
+        },
+        title: {
+          display: true,
+          text: 'Number of misses',
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11, weight: '500' },
+          color: inkSoft
+        }
+      },
+      y: {
+        stacked: true,
+        grid: { display: false },
+        ticks: {
+          font: { family: "'IBM Plex Sans', sans-serif", size: 11, weight: '500' },
+          color: inkColor
+        }
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
