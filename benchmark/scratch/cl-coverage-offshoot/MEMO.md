@@ -157,7 +157,54 @@ either opinion search or RECAP), 5 `rescue_was_false_positive` (citation-verifie
 fallback found a wrong cluster; audit correctly rejected it
 on cite-in-cluster, court_id, or party mismatch), and 1
 `audit_ambiguous` (`In re Loc. TV Advert.` — partial party match plus
-date mismatch).
+date mismatch). The detail breakdown follows below; the headline point
+is that "not_found_anywhere" is a *pipeline* outcome, not a definitive
+"not in CL" answer.
+
+### Closer look at the 17 not-found cases
+
+By tier: 7 State_IAC, 4 State_COLR, 4 Federal_District, 2 Circuit, 0
+SCOTUS. By citation form: 3 Westlaw, 1 LEXIS, 1 IL App neutral, 1 F.4th,
+1 So. 3d, and 11 in the `other` bucket (mostly New York's `AD3d` /
+A.D.3d reporter and Texas's S.W.3d).
+
+The largest single sub-pattern is **six New York Appellate Division
+opinions** (Gold, Hersko, Campbell, Dondorfer, Kumar, Walker), four of
+them from the 4th Department, all recent (2024–2025). All six come
+back as citation_lookup 404s on both the no-period `230 AD3d 1113`
+form and the canonical `230 A.D.3d 1113` form — either CL doesn't have
+NY 4th Dept. opinions ingested at this volume, or the `A.D.3d`
+reporter isn't normalized into the citation index in a form
+citation_lookup can hit.
+
+Two **Texas Supreme Court** cases (Occidental Permian, 689 S.W.3d 899;
+Sundown Energy, 622 S.W.3d 884) also return citation_lookup 404, even
+though both are unambiguous published opinions from a covered court.
+
+A spot-check of one Circuit case, **Frankling Inc. v. BA CE Services,
+50 F.4th 432**, found a clean cluster in CL ([cluster
+8244887](https://www.courtlistener.com/opinion/8244887/)) under the
+caption *"Franlink v. BACE Services"* — but the brief's spelling
+(`Frankling` with a G, `BA CE` with a space) didn't match either
+citation_lookup's normalization or the name-based fallback. **The case
+is in CL; our pipeline couldn't find it.** This is a single confirmed
+example, but it suggests the 17 "not found" count is an upper bound on
+true CL gaps.
+
+The five `rescue_was_false_positive` rows (Wilson, Wilmington Trust,
+Rose Way, Thurman, Iglesias) are similar in spirit: citation-verifier
+landed on a *wrong* cluster that the audit correctly rejected via the
+cite-in-cluster cross-check or court-id mismatch. Whether the right
+cluster exists separately in CL is unknown without per-case manual
+investigation — for any of these, the answer could be the same as
+Frankling (it's there, we just didn't find it) or it could be a true
+gap.
+
+A reasonable framing for the headline number: of the 221 measurable
+citations, 204 are confirmed in CL; the remaining 17 are
+*non-confirmations* rather than *confirmed gaps*. A larger follow-up
+study with deeper per-case investigation of the not_found bucket would
+let us refine that bound.
 
 ## The 34 lookup misses that were in CL or RECAP, in detail
 
