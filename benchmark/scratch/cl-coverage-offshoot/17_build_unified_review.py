@@ -117,6 +117,7 @@ STEP4_CSV = HERE / "coverage_per_citation.csv"               # citation_lookup s
 STEP4C_CSV = HERE / "staged_fallback_rigorous_per_row.csv"   # rigorous fallback
 STEP5_CSV = HERE / "audit_per_row.csv"                       # audit verdicts
 CORRECTIONS_CSV = HERE / "manual_corrections.csv"            # 7 user overrides
+RECAP_DIAGNOSIS_CSV = HERE / "recap_diagnosis.csv"           # in_recap subreasons
 OUT_CSV = HERE / "unified_review.csv"
 OUT_CONCISE_CSV = HERE / "unified_review_concise.csv"
 
@@ -171,10 +172,11 @@ def main() -> int:
     step4c = load_index(STEP4C_CSV, key)
     step5 = load_index(STEP5_CSV, key)
     corrections = load_index(CORRECTIONS_CSV, key)
+    recap_diag = load_index(RECAP_DIAGNOSIS_CSV, key)
 
     print(f"Loaded sample: {len(sample)}, step4: {len(step4)}, "
           f"step4c: {len(step4c)}, step5: {len(step5)}, "
-          f"corrections: {len(corrections)}")
+          f"corrections: {len(corrections)}, recap_diag: {len(recap_diag)}")
 
     # Phase 6 — short-form dedup + exclusion
     short_form_status = find_fuller_siblings(sample)
@@ -360,6 +362,10 @@ def main() -> int:
             "diagnosis_detail": diagnosis_detail,
             "user_corrected_url": user_corrected_url,
             "cl_matched_name_override": cl_matched_name_override,
+            # RECAP sub-classification (only populated for in_recap rows; the
+            # 18_diagnose_recap_cases.py script writes recap_diagnosis.csv).
+            "recap_subreason": recap_diag.get(k, {}).get("subreason", ""),
+            "recap_subreason_detail": recap_diag.get(k, {}).get("subreason_detail", ""),
             # ----- phase 4: strict citation_lookup -----
             "p4_status": p4_status,
             "p4_in_cl": p4_in_cl,
@@ -497,6 +503,14 @@ def main() -> int:
             if r["user_corrected_url"]:
                 print(f"  {r['cited_case_name'][:35]:<35}  cite={r['citation_string'][:25]:<25}  "
                       f"-> {r['coverage']:<18}  {r['diagnosis']}")
+
+    # RECAP sub-classification rollup
+    in_recap_rows = [r for r in out_rows if r["coverage"] == "in_recap"]
+    if in_recap_rows:
+        sub_counts = Counter(r["recap_subreason"] or "(unclassified)" for r in in_recap_rows)
+        print(f"\n=== RECAP sub-classification ({len(in_recap_rows)} in_recap rows) ===")
+        for s, n in sub_counts.most_common():
+            print(f"  {n:>2}  {s}")
 
     return 0
 
