@@ -1,5 +1,0 @@
-tier,cluster_id,case,n_returned,n_valid,n_near_miss,n_not_in_source
-Circuit_DC,2807857,"Randy Brown v. Whole Foods Market Group, Inc",22,15,2,5
-SCOTUS,2812209,Obergefell v. Hodges,0,0,0,0
-Circuit_9th,4695642,Joseph Wojcicki v. SCANA Corporation,36,30,6,0
-State_COLR_CA,4886933,People v. Lemcke,0,0,0,0

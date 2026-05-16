@@ -1,6 +1,0 @@
-tier_label,seed_cite,cluster_id,cited_case_name,cited_court_id,char_count,elapsed_s,cost_usd,n_returned,n_valid,n_hallucinated,error
-SCOTUS,576 U.S. 644,2812209,Obergefell v. Hodges,,206985,240.0,0.0,0,0,0,TIMEOUT
-Circuit_DC,789 F.3d 146,2807857,"Randy Brown v. Whole Foods Market Group, Inc",,26655,58.3,0.14388,22,15,7,
-Circuit_9th,947 F.3d 240,4695642,Joseph Wojcicki v. SCANA Corporation,,23314,80.4,0.175515,36,30,6,
-State_COLR_CA,11 Cal. 5th 644,4886933,People v. Lemcke,,79113,240.0,0.0,0,0,0,TIMEOUT
-State_IAC_CA,234 Cal. App. 4th 1,2777628,"Ram v. OneWest Bank, FSB",,39939,240.0,0.0,0,0,0,TIMEOUT

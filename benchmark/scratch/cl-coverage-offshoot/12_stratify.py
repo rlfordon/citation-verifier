@@ -53,14 +53,110 @@ FINAL_POOL_CSV = HERE / "final_pool.csv"
 FINAL_200_CSV = HERE / "final_200.csv"
 SUMMARY_MD = HERE / "stratify_summary_real.md"
 
-# Lift tier classifier from 07_stratify.py
-sys.path.insert(0, str(HERE))
-# import via importlib to bypass the numeric module-name limitation
-import importlib.util
-_spec = importlib.util.spec_from_file_location("pilot_stratify", HERE / "07_stratify.py")
-_pilot = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_pilot)
-tier_from_cite = _pilot.tier_from_cite
+# ---- tier_from_cite (inlined from the deleted pilot 07_stratify.py) ---------
+# Coarse tier inference from the citation string. Used as a fallback when
+# `court_hint` from the LLM extraction doesn't resolve cleanly. The combined
+# logic (court_hint first, reporter-pattern fallback) lives in
+# tier_combined() further down.
+
+# State IAC reporters — most specific first. Match before COLR patterns.
+_STATE_IAC_PATTERNS = [
+    r"\bCal\.\s*(?:Rptr\.|App\.)\s*(?:2d|3d|4th|5th|6th)?",  # Cal. App. 5th, Cal. Rptr.
+    r"\bCal\.\s*App\.\b",
+    r"\bA\.D\.\s*(?:2d|3d|4th)?",                              # NY appellate division
+    r"\bN\.Y\.S\.\s*(?:2d|3d)?",                              # NY Supplement
+    r"\bIll\.\s*App\.\s*(?:2d|3d)?",
+    r"\bMass\.\s*App\.\s*Ct\.",
+    r"\bTex\.\s*App\.",
+    r"\bOhio\s*App\.\s*(?:2d|3d)?",
+    r"\bMich\.\s*App\.",
+    r"\bN\.J\.\s*Super\.",
+    r"\bPa\.\s*Super\.",
+    r"\bWash\.\s*App\.",
+    r"\bMo\.\s*App\.",
+    r"\bMd\.\s*App\.",
+    r"\bN\.C\.\s*App\.",
+    r"\bGa\.\s*App\.",
+    r"\bConn\.\s*App\.",
+    r"\bTenn\.\s*(?:Crim\.\s*)?App\.",
+    r"\bAla\.\s*Crim\.\s*App\.",
+    r"\bAla\.\s*Civ\.\s*App\.",
+    r"\bKy\.\s*App\.",
+    r"\bMinn\.\s*App\.",
+    r"\bOhio\s*App\.",
+    r"\bColo\.\s*App\.",
+    r"\bAriz\.\s*App\.",
+    r"\bN\.M\.\s*Ct\.\s*App\.",
+    r"\bN\.M\.\s*App\.",
+    r"\bWis\.\s*App\.",
+    r"\bFla\.\s*App\.",
+    r"\bFla\.\s*Dist\.\s*Ct\.\s*App\.",
+]
+_STATE_IAC_PAT_RE = re.compile("|".join(_STATE_IAC_PATTERNS))
+
+# State COLR — state-specific high-court reporters. Trailing `\b` doesn't
+# work after `\.`, so rely on negative lookahead.
+_STATE_COLR_PATTERNS = [
+    r"\bCal\.\s*(?:2d|3d|4th|5th)\b",
+    r"\bCal\.(?!\s*(?:App|Rptr))",                            # bare Cal. = old CA Supreme
+    r"\bN\.Y\.\s*(?:2d|3d)(?!\s*S)",                          # N.Y.3d
+    r"\bN\.Y\.(?=\s+\d)",                                      # bare N.Y. followed by digit
+    r"\bMass\.(?!\s*App)",
+    r"\bPa\.(?!\s*Super)",
+    r"\bMd\.(?!\s*App)",
+    r"\bVa\.(?!\s*App)",
+    r"\bOhio\s*St\.\s*(?:2d|3d)?",
+    r"\bMich\.(?!\s*App)",
+    r"\bIll\.\s*(?:2d|3d)?(?!\s*App)",
+    r"\bTex\.(?!\s*App)",
+    r"\bWash\.\s*(?:2d)?(?!\s*App)",
+    r"\bWis\.\s*(?:2d|3d)?(?!\s*App)",
+    r"\bOr\.(?!\s*App)",
+    r"\bN\.C\.(?!\s*App)",
+    r"\bN\.J\.(?!\s*Super)",
+    r"\bConn\.(?!\s*App)",
+    r"\bGa\.(?!\s*App)",
+    r"\bIowa\b",
+    r"\bColo\.(?!\s*App)",
+    r"\bAriz\.(?!\s*App)",
+    r"\bMinn\.(?!\s*App)",
+    r"\bMo\.(?!\s*App)",
+    r"\bKy\.(?!\s*App)",
+    r"\bAla\.(?!\s*(?:Crim|Civ)\s*App)",
+    r"\bN\.M\.(?!\s*(?:Ct|App))",
+    r"\bFla\.(?!\s*App|\s*Dist)",
+]
+_STATE_COLR_PAT_RE = re.compile("|".join(_STATE_COLR_PATTERNS))
+
+# Regional reporters — ambiguous (mostly COLR, sometimes IAC). Default to COLR.
+_REGIONAL_RE = re.compile(r"\b(?:A|P|N\.E|N\.W|S\.E|S\.W|So)\.\s*(?:2d|3d)?\b")
+
+# Federal
+_SCOTUS_REPORTER_RE = re.compile(r"\bU\.?\s?S\.?\b|S\.\s*Ct\.|L\.\s*Ed\.")
+_CIRCUIT_REPORTER_RE = re.compile(r"\bF\.?\s?(?:2d|3d|4th)\b|F\.\s*App'x\b")
+_FED_DISTRICT_REPORTER_RE = re.compile(r"\bF\.\s*Supp\.\s*(?:2d|3d)?\b")
+
+
+def tier_from_cite(cite: str) -> str:
+    """Coarse tier inference from the citation string.
+
+    Returns one of: SCOTUS, Circuit, State_COLR, State_IAC, Federal_District,
+    Other. Order matters: most specific first.
+    """
+    c = cite or ""
+    if _SCOTUS_REPORTER_RE.search(c):
+        return "SCOTUS"
+    if _CIRCUIT_REPORTER_RE.search(c):
+        return "Circuit"
+    if _FED_DISTRICT_REPORTER_RE.search(c):
+        return "Federal_District"
+    if _STATE_IAC_PAT_RE.search(c):
+        return "State_IAC"
+    if _STATE_COLR_PAT_RE.search(c):
+        return "State_COLR"
+    if _REGIONAL_RE.search(c):
+        return "State_COLR"  # ambiguous regional reporters default to COLR
+    return "Other"
 
 
 # ---- court_hint classifier --------------------------------------------------
