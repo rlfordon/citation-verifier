@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CourtListener coverage of cited cases</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+
+<style>
+  :root {
+    --fg: #1a1a1a;
+    --muted: #666;
+    --rule: #e5e5e5;
+    --accent: #1a5490;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --code-bg: #f3f3f3;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+                 Arial, sans-serif;
+    color: var(--fg);
+    line-height: 1.55;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 2.5rem 4rem;
+    background: var(--bg);
+  }
+  h1, h2, h3, h4 {
+    color: var(--fg);
+    line-height: 1.2;
+    margin-top: 2.2rem;
+    margin-bottom: 0.8rem;
+  }
+  h1 { font-size: 1.8rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; }
+  h2 { font-size: 1.35rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.3rem; }
+  h3 { font-size: 1.12rem; }
+  h4 { font-size: 1.02rem; color: var(--muted); }
+  p, ul, ol { margin: 0.7rem 0; }
+  code {
+    background: var(--code-bg);
+    padding: 0.08rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.92em;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  pre code { background: transparent; padding: 0; }
+  pre {
+    background: var(--code-bg);
+    padding: 0.8rem 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.88em;
+  }
+  blockquote {
+    border-left: 3px solid var(--accent);
+    background: var(--card);
+    margin: 1rem 0;
+    padding: 0.7rem 1rem;
+    color: var(--muted);
+    font-size: 0.95em;
+    border-radius: 0 4px 4px 0;
+  }
+  table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.93em;
+    width: 100%;
+    background: var(--card);
+  }
+  th, td {
+    border: 1px solid var(--rule);
+    padding: 0.45rem 0.7rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #f0f0f0; font-weight: 600; }
+  tr:nth-child(even) td { background: #fafafa; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .chart-placeholder {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin: 1.2rem 0;
+  }
+  .meta {
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+  .toc {
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    padding: 0.8rem 1rem 0.8rem 1.5rem;
+    margin: 1rem 0 2rem;
+    font-size: 0.95em;
+  }
+  .toc ul { margin: 0.2rem 0; }
+</style>
+
+</head>
+<body>
+<h1 id="courtlistener-coverage-of-cited-cases-findings-from-a-250-citation-sample">CourtListener coverage of cited cases: findings from a 250-citation sample</h1>
+<p><em>Rebecca Fordon, with Claude. 2026-05-16. Drafted for sharing with the
+Free Law Project / CourtListener team.</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>We sampled 250 cited citations from 78 recent (2023–2026) opinions in
+CourtListener and tried to find each cited case in CL. After excluding 29
+unmeasurable rows (short-form pin-cites whose fuller siblings already
+sit elsewhere in the sample, and one LLM extraction artifact), <strong>204 of
+221 measurable citations (92.3%) are findable in CL</strong>.</p>
+<p>For 34 of those 204, CL's <code>/citation-lookup/</code> API didn't resolve the
+cite even though the case does live in CL. Two patterns account for all
+of them, both concentrated in federal district and state appellate
+tiers:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Count</th>
+<th>Mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cl_cluster_citations_empty</code></td>
+<td>27</td>
+<td>Opinion cluster in CL, <code>citations[]</code> array empty</td>
+</tr>
+<tr>
+<td><code>cl_docket_only_no_cluster</code></td>
+<td>7</td>
+<td>Document in CL via RECAP but no opinion cluster created</td>
+</tr>
+</tbody>
+</table>
+<p>Five of the 27 <code>cl_cluster_citations_empty</code> cases also had captions in
+the cited form that diverged from CL's stored caption — Rule 25(d)
+substitutions, Doe reveals, and SSA pseudonyms — which is what made
+them require manual investigation rather than recover automatically via
+name-based fallback in my citation-verifier. They are still fundamentally the same CL-side
+issue (empty <code>citations[]</code>), but they put extra weight on
+recommendations that would let discovery bypass name matching.</p>
+<p>The bulk of the gap — 24 of 34 lookup misses are from Westlaw cites
+to opinions by federal district courts. A second cluster of 6 lookup misses sits on
+recent California state appellate reporters (<code>Cal.5th</code> / <code>Cal.App.5th</code>,
+2022–2026).</p>
+<h2 id="how-the-250-citations-flowed-through-the-pipeline">How the 250 citations flowed through the pipeline</h2>
+<p>The full story is a sequence: first <code>/citation-lookup/</code>, then
+<a href="https://github.com/rfordon/citation-verifier">citation-verifier</a>'s
+name+date+court fallback against opinion search and RECAP search, then
+audit, then manual review of borderline cases. The diagram below shows
+where each of the 250 citations landed and which signal got it there.</p>
+<div class="chart-placeholder"><div>                            <div id="chart-sankey" class="plotly-graph-div" style="height:560px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart-sankey")) {                    Plotly.newPlot(                        "chart-sankey",                        [{"arrangement":"snap","link":{"color":["rgba(180, 180, 180, 0.3)","rgba(200, 200, 200, 0.25)","rgba(76, 175, 80, 0.35)","rgba(255, 193, 7, 0.35)","rgba(255, 235, 59, 0.35)","rgba(255, 235, 59, 0.35)","rgba(244, 67, 54, 0.35)","rgba(255, 235, 59, 0.3)","rgba(255, 152, 0, 0.4)","rgba(255, 152, 0, 0.4)","rgba(255, 235, 59, 0.3)","rgba(255, 152, 0, 0.4)","rgba(244, 67, 54, 0.35)","rgba(244, 67, 54, 0.35)","rgba(244, 67, 54, 0.35)"],"source":[0,0,1,1,4,4,4,5,5,5,6,6,7,7,7],"target":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"value":[221,29,170,51,27,7,17,22,3,2,5,2,11,5,1]},"node":{"color":["#9e9e9e","#9e9e9e","#bdbdbd","#4caf50","#ffb300","#fdd835","#fdd835","#e53935","#fff176","#ffa726","#ffa726","#fff176","#ffa726","#ef5350","#ef5350","#ef5350"],"label":["250 cited citations","Measurable\u003cbr\u003e(221)","Excluded\u003cbr\u003e(29)","Resolved by \u002fcitation-lookup\u002f\u003cbr\u003e(170)","Missed by \u002fcitation-lookup\u002f\u003cbr\u003e(51)","in_opinions\u003cbr\u003e(27)","in_recap\u003cbr\u003e(7)","not_found_anywhere\u003cbr\u003e(17)","Auto-recovered by name search\u003cbr\u003e(22)","Manual: Rule 25(d)\u002fDoe\u003cbr\u003e(3)","Manual: SSA pseudonym\u003cbr\u003e(2)","Auto-recovered by RECAP search\u003cbr\u003e(5)","Manual: docket-only edge case\u003cbr\u003e(2)","not_in_cl\u003cbr\u003e(11)","Wrong-cluster rescue\u003cbr\u003e(5)","audit_ambiguous\u003cbr\u003e(1)"],"line":{"color":"rgba(0,0,0,0.2)","width":0.5},"pad":18,"thickness":18},"type":"sankey"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"font":{"size":16},"text":"Where each of the 250 cited citations ended up"},"font":{"size":12},"margin":{"l":10,"r":10,"t":60,"b":10},"height":560},                        {"responsive": true}                    )                };            </script>        </div></div>
+
+<p>Reading the diagram: the 170 green box are the happy path — direct
+citation-lookup hits. The 34 yellow boxes are the lookup misses where
+the case nonetheless lives in CL. The 17 red box is what couldn't be
+found by any method.</p>
+<h2 id="methodology">Methodology</h2>
+<ul>
+<li><strong>Corpus</strong>: 78 citing opinions, predominantly 2023–2026, mined from
+  CL across a mix of federal (60) and state (18) courts via the
+  benchmark's <code>mine_citing_opinions</code> step.</li>
+<li><strong>Extraction</strong>: per-opinion JSON via the Anthropic Haiku model
+  (<code>extract_citations.py</code>). Incomplete or incorrectly extracted citations (~13.5% of LLM
+  output) excluded by using <code>citations_valid</code> only.</li>
+<li><strong>Pre-filter &amp; dedup</strong>: drop short-form citations (<code>Id.</code>, bare pin
+  cites) and foreign reporters (<code>Eng. Rep.</code>, <code>Q.B.</code>, etc.); dedup on
+  <code>(citing_cluster, citation_string, parenthetical)</code>; K=5 cap per
+  <code>(citing_cluster, cited_tier)</code> for opinion-level diversity.</li>
+<li><strong>Stratified sample</strong>: 50 cited citations per tier across SCOTUS,
+  Circuit, State_COLR, State_IAC, and Federal_District (250 total).</li>
+<li><strong>Verification pipeline</strong>:</li>
+<li>Phase 4 — <code>/api/rest/v4/citation-lookup/</code> (strict)</li>
+<li>Phase 4c — <a href="https://github.com/rfordon/citation-verifier">citation-verifier</a>
+    fallback: name-based search against the opinion-search and
+    RECAP-search APIs, with court-id + date filters and multi-factor
+    scoring on name, court, date, and docket number
+    (<code>15_staged_fallback_rigorous.py</code>)</li>
+<li>Phase 5 — per-rescue audit: cite-in-cluster cross-check, party-name
+    presence on both sides, court_id match, ±2-year date proximity
+    (<code>16_audit_rescues.py</code>)</li>
+<li>Phase 6 — short-form citation dedup
+    (<code>17_build_unified_review.py</code>): rows whose fuller sibling exists in
+    the same citing opinion are dropped from both numerator and
+    denominator; unresolvable short-forms (no antecedent) are dropped
+    from the denominator only.</li>
+<li><strong>Manual review</strong>: an eyeball pass over <code>rescue_was_false_positive</code>
+  audit verdicts identified 7 false negatives, recorded in
+  <code>manual_corrections.csv</code>. A separate <code>18_diagnose_recap_cases.py</code> pass
+  fetches the recap_document for each <code>in_recap</code> row and sub-classifies
+  why no opinion cluster was ingested.</li>
+</ul>
+<p>The pipeline is reproducible end-to-end from the scripts in
+<code>benchmark/scratch/cl-coverage-offshoot/</code> against an unchanged
+CourtListener corpus.</p>
+<h2 id="headline-coverage">Headline coverage</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;"><div class="chart-placeholder"><div>                            <div id="chart-per-tier" class="plotly-graph-div" style="height:380px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart-per-tier")) {                    Plotly.newPlot(                        "chart-per-tier",                        [{"marker":{"cmax":100,"cmin":70,"color":[100.0,95.65217391304348,90.9090909090909,81.57894736842105,91.66666666666667],"colorscale":[[0,"#ef5350"],[0.5,"#ffa726"],[1,"#4caf50"]],"showscale":false},"text":["45\u002f45\u003cbr\u003e100.0%","44\u002f46\u003cbr\u003e95.7%","40\u002f44\u003cbr\u003e90.9%","31\u002f38\u003cbr\u003e81.6%","44\u002f48\u003cbr\u003e91.7%"],"textposition":"outside","x":["SCOTUS","Circuit","State_COLR","State_IAC","Federal_District"],"y":[100.0,95.65217391304348,90.9090909090909,81.57894736842105,91.66666666666667],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"yaxis":{"title":{"text":"Percent in CL"},"range":[0,110]},"margin":{"l":40,"r":20,"t":60,"b":40},"title":{"text":"Coverage by tier (after manual corrections + Phase 6)"},"xaxis":{"title":{"text":""}},"height":380},                        {"responsive": true}                    )                };            </script>        </div></div><div class="chart-placeholder"><div>                            <div id="chart-coverage-donut" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart-coverage-donut")) {                    Plotly.newPlot(                        "chart-coverage-donut",                        [{"hole":0.45,"labels":["Found via \u002fcitation-lookup\u002f","Cluster in CL; lookup missed","RECAP docket only; no cluster","Not found anywhere","Unmeasurable (Phase 6)"],"marker":{"colors":["#4caf50","#fdd835","#ffa726","#ef5350","#bdbdbd"],"line":{"color":"white","width":2}},"sort":false,"textinfo":"value+percent","textposition":"outside","values":[170,27,7,17,29],"type":"pie"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"legend":{"orientation":"v","x":1.0,"y":0.5},"title":{"text":"Coverage bucket distribution (250 citations)"},"height":400},                        {"responsive": true}                    )                };            </script>        </div></div></div>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>In CL</th>
+<th>Denominator</th>
+<th>Coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SCOTUS</td>
+<td>45</td>
+<td>45</td>
+<td>100.0%</td>
+</tr>
+<tr>
+<td>Circuit</td>
+<td>44</td>
+<td>46</td>
+<td>95.7%</td>
+</tr>
+<tr>
+<td>State_COLR</td>
+<td>40</td>
+<td>44</td>
+<td>90.9%</td>
+</tr>
+<tr>
+<td>State_IAC</td>
+<td>31</td>
+<td>38</td>
+<td>81.6%</td>
+</tr>
+<tr>
+<td>Federal_District</td>
+<td>44</td>
+<td>48</td>
+<td>91.7%</td>
+</tr>
+<tr>
+<td><strong>OVERALL</strong></td>
+<td><strong>204</strong></td>
+<td><strong>221</strong></td>
+<td><strong>92.3%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Coverage bucket distribution (denominator = 221):</p>
+<table>
+<thead>
+<tr>
+<th>Bucket</th>
+<th>Count</th>
+<th>% of denom</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>found_via_lookup</code> (Phase 4 happy path)</td>
+<td>170</td>
+<td>76.9%</td>
+</tr>
+<tr>
+<td><code>in_opinions</code> (cluster exists; lookup missed)</td>
+<td>27</td>
+<td>12.2%</td>
+</tr>
+<tr>
+<td><code>in_recap</code> (docket only; no cluster)</td>
+<td>7</td>
+<td>3.2%</td>
+</tr>
+<tr>
+<td><code>not_found_anywhere</code></td>
+<td>17</td>
+<td>7.7%</td>
+</tr>
+</tbody>
+</table>
+<p>The 17 not-found rows split as: 11 <code>not_in_cl</code> (no plausible match in
+either opinion search or RECAP), 5 <code>rescue_was_false_positive</code> (citation-verifier's 
+fallback found a wrong cluster; audit correctly rejected it
+on cite-in-cluster, court_id, or party mismatch), and 1
+<code>audit_ambiguous</code> (<code>In re Loc. TV Advert.</code> — partial party match plus
+date mismatch).</p>
+<h2 id="the-34-lookup-misses-that-were-in-cl-or-recap-in-detail">The 34 lookup misses that were in CL or RECAP, in detail</h2>
+<h3 id="issue-1-cl_cluster_citations_empty-27-cases">Issue 1 — <code>cl_cluster_citations_empty</code> (27 cases)</h3>
+<p>Pattern: the opinion cluster exists in CL with the case the brief
+cites, but its <code>citations[]</code> array is empty. Without a populated cite
+index, the citation_lookup API has no way to resolve the cite back to
+the cluster, even though everything else about the cluster is correct.
+citation-verifier's name+court+date fallback against opinion search
+recovers it — <em>most of the time</em>.</p>
+<p>In our sample this pattern is <strong>universal among lookup misses where the
+cluster exists</strong> — all 27 in-cluster misses fit it. Zero cases where
+the cite IS in the cluster's <code>citations[]</code> but lookup nonetheless
+missed (would have indicated a lookup-side bug). Zero cases where the
+cluster has populated <code>citations[]</code> containing different cites (would
+have indicated a partial-cite-list bug).</p>
+<p>Sub-patterns within the 27:</p>
+<ul>
+<li><strong>Reporter type</strong>: 17 Westlaw, 6 California state (<code>Cal.5th</code>,
+  <code>Cal.App.5th</code>), 2 <code>F. Supp. 3d</code>, 1 <code>F.4th</code>, 1 <code>So. 3d</code>.</li>
+<li><strong>Year</strong>: 63% of these cases were filed 2022 or later (17/27).
+  Consistent with citation-index ingestion lag for recent opinions.</li>
+<li><strong>Tier</strong>: 19 Federal_District, 5 State_IAC, 2 State_COLR, 1 Circuit,
+  0 SCOTUS.</li>
+</ul>
+<p>Representative "easy recovery" examples (name search bridges
+automatically):</p>
+<ul>
+<li><em>Bay Valley Foods, LLC v. FFI Group</em>, 2025 WL 3089109</li>
+<li><em>People v. Grajeda</em>, 111 Cal.App.5th 829 (2025)</li>
+<li><em>Democracy Forward Found. v. Office of Personnel Mgmt.</em>, 780 F. Supp.
+  3d 61 (2025)</li>
+</ul>
+<h4 id="sub-case-1a-name-search-bridges-the-gap-22-cases">Sub-case 1a: name search bridges the gap (22 cases)</h4>
+<p>For these 22, the cluster's case name matches the cited form closely
+enough that citation-verifier's name-based fallback (opinion search by
+case name + court + date) lands on the right cluster on the first try.
+The audit step then confirms via party-name match and date proximity.
+These represent the largest single discoverability gap fixable by a
+single change: populating <code>citations[]</code>.</p>
+<h4 id="sub-case-1b-name-search-blocked-by-caption-change-5-cases">Sub-case 1b: name search blocked by caption change (5 cases)</h4>
+<p>For these 5, the cluster's case name has diverged from the cited form
+in ways that defeat a name-based search. Two distinct sub-patterns:</p>
+<p><strong>Rule 25(d) substitution / Doe reveal (3 cases)</strong> — an official has
+been substituted under Federal Rule 25(d), or a Doe defendant has been
+replaced with the real name, <em>after</em> CL ingested the opinion. The
+brief cites the historical caption; CL stores the current one.</p>
+<table>
+<thead>
+<tr>
+<th>Cited</th>
+<th>CL caption</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gilliard v. McWilliams, 2019 WL 3304707</td>
+<td>Gilliard v. Gruenberg</td>
+<td><a href="https://www.courtlistener.com/opinion/4642011/">opinion/4642011</a></td>
+</tr>
+<tr>
+<td>Preston v. Smith, 2023 WL 5337430</td>
+<td>Preston v. Unidentified</td>
+<td><a href="https://www.courtlistener.com/opinion/9729396/">opinion/9729396</a></td>
+</tr>
+<tr>
+<td>Viken Detection Corp. v. Doe, 2019 WL 5268725</td>
+<td>Viken Detection Corp. v. Bradshaw</td>
+<td><a href="https://www.courtlistener.com/opinion/9731515/">opinion/9731515</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>SSA pseudonym (2 cases)</strong> — in Social Security appeals, the brief
+uses an SSA pseudonym (<code>Michael B.</code>, <code>John S.</code>); CL indexes the case
+under the plaintiff's real surname.</p>
+<table>
+<thead>
+<tr>
+<th>Cited</th>
+<th>CL caption</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Michael B. v. Berryhill, 2019 WL 2269962</td>
+<td>Buschman v. Berryhill</td>
+<td><a href="https://www.courtlistener.com/opinion/9674181/">opinion/9674181</a></td>
+</tr>
+<tr>
+<td>John S. v. Bisignano, 2025 WL 1505405</td>
+<td>Sims v. Bisignano</td>
+<td><a href="https://www.courtlistener.com/opinion/10593230/">opinion/10593230</a></td>
+</tr>
+</tbody>
+</table>
+<p>All five clusters also have empty <code>citations[]</code>. Once <code>citations[]</code> is
+populated, the underlying issue evaporates — <code>/citation-lookup/</code> would
+resolve them without needing to reason about the caption at all. Until
+then, anyone trying to discover these cases by name (in either an
+automated verifier or a manual CL search) is stuck.</p>
+<blockquote>
+<p><em>Aside: this sample also surfaced a parallel set of issues on the
+search side — cases where citation-verifier itself initially picked
+the wrong cluster and only the audit step caught it, or where it
+picked the right cluster but the audit overrode on weak signals.
+Those are citation-verifier–side concerns more than CL-side ones,
+and we're saving the detailed discussion for a separate write-up.</em></p>
+</blockquote>
+<h3 id="issue-2-cl_docket_only_no_cluster-7-cases">Issue 2 — <code>cl_docket_only_no_cluster</code> (7 cases)</h3>
+<p>Pattern: the cited case appears in CL's RECAP archive as a docket and
+typically as a downloadable document, but no opinion cluster has been
+created from it. The <code>/citation-lookup/</code> API is cluster-scoped, so it
+can't reach docket-only cases at all.</p>
+<p><code>18_diagnose_recap_cases.py</code> inspects each docket's recap_documents and
+sub-classifies these:</p>
+<table>
+<thead>
+<tr>
+<th>Sub-pattern</th>
+<th>Count</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>recap_doc_opinion_not_ingested</code></td>
+<td>3</td>
+<td>PDF on CL, <code>is_free_on_pacer=true</code>, OCR'd text, opinion-typed description — but no cluster created</td>
+</tr>
+<tr>
+<td><code>recap_doc_unavailable</code></td>
+<td>2</td>
+<td>PACER has it, but no one has RECAP'd it; CL has no PDF to work from</td>
+</tr>
+<tr>
+<td><code>recap_doc_not_opinion_typed</code></td>
+<td>2</td>
+<td>PDF on CL with text, but description uses non-canonical opinion language ("ORDER RE:" / "ORDER CERTIFYING")</td>
+</tr>
+</tbody>
+</table>
+<p>The three "opinion not ingested" cases are striking because the docs are
+on CL with everything needed to make a cluster:</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Docket</th>
+<th>recap_document</th>
+<th>Date created on CL</th>
+<th>Entry description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mehar Holdings v. Evanston Ins. Co., 2016 WL 5957681 (W.D. Tex.)</td>
+<td><a href="https://www.courtlistener.com/docket/5474769/mehar-holdings-llc-v-evanston-insurance-company/">5474769</a></td>
+<td><a href="https://www.courtlistener.com/recap-documents/18720567/">18720567</a> (12 pp)</td>
+<td>2017-04-23</td>
+<td>"ORDER GRANTING 14 Motion for Reconsideration … GRANTS 4 Motion to Remand. Signed by Judge Ezra"</td>
+</tr>
+<tr>
+<td>Darensburg v. Metro. Transp. Comm'n, 2009 WL 2392094 (N.D. Cal.)</td>
+<td><a href="https://www.courtlistener.com/docket/4182878/452/darensburg-v-metropolitan-transportation-commission/">4182878</a></td>
+<td><a href="https://www.courtlistener.com/recap-documents/13644995/">13644995</a> (10 pp)</td>
+<td>2017-02-17</td>
+<td>"OPINION ON DEFENDANT'S MOTION FOR ATTORNEYS' FEES. Signed by Mag. J. Laporte on July 7, 2009"</td>
+</tr>
+<tr>
+<td>Doe v. Lawrence Gen. Hosp., 2025 WL 2808055 (D. Mass.)</td>
+<td><a href="https://www.courtlistener.com/docket/69539673/doe-v-lawrence-general-hospital/">69539673</a></td>
+<td><a href="https://www.courtlistener.com/recap-documents/454203499/">454203499</a> (2 pp)</td>
+<td>2025-10-02</td>
+<td>"Memorandum &amp; Order"</td>
+</tr>
+</tbody>
+</table>
+<p>Two of the three were created on CL in 2017, but their underlying
+opinions were filed in 2009 and 2016 — long enough ago that the
+contemporaneous <code>scrape_pacer_free_opinions</code> run for those date ranges
+may have already completed when the doc was eventually uploaded via
+RECAP. The third was created on CL 2025-10-02; whether the live scraper
+for <code>mad</code> has caught up to October 2025 is unknown from our data, but
+the <code>cand</code> and <code>nyed</code> lag documented in
+<a href="https://github.com/freelawproject/courtlistener/issues/7316">CL #7316</a>
+(2–3 months) suggests <code>mad</code> may show a similar pattern.</p>
+<p>The two <code>recap_doc_not_opinion_typed</code> cases (<em>Cabot v. Lewis</em>: "ORDER
+CERTIFYING INTERLOCUTORY APPEAL"; <em>Hunter v. CCSF</em>: "ORDER RE:
+PLAINTIFFS MOTION FOR REVIEW OF CLERKS TAXATION OF COSTS") are
+substantive 4–8 page Magistrate Judge orders that received WL numbers —
+arguably opinion-worthy, but the description text uses non-canonical
+language that PACER's <code>WrtOpRpt.pl</code> may not flag.</p>
+<h3 id="citation-type-breakdown">Citation-type breakdown</h3>
+<p>Across all 34 lookup misses:</p>
+<table>
+<thead>
+<tr>
+<th>Cite type</th>
+<th>Federal_District</th>
+<th>Circuit</th>
+<th>State_COLR</th>
+<th>State_IAC</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Westlaw (<code>YYYY WL N</code>)</td>
+<td>24</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td><strong>24</strong></td>
+</tr>
+<tr>
+<td>California reporters</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>5</td>
+<td><strong>6</strong></td>
+</tr>
+<tr>
+<td><code>F. Supp.</code></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>F.[Nd]</code></td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>So.</code> reporters</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Westlaw cites account for 71% of the misses. All are federal district —
+which is consistent with the underlying mechanism: most district court
+opinions don't appear in official reporters, so the WL cite is often
+the only citable form, and citation_lookup's resolution to a cluster
+depends on someone having put the WL cite in <code>citations[]</code>.</p>
+<p>The California subgroup (6 misses, all 2022–2025) is the second-largest
+discoverability gap. All six clusters exist in CL with the right case
+name; all six have empty <code>citations[]</code>.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;"><div class="chart-placeholder"><div>                            <div id="chart-diagnosis" class="plotly-graph-div" style="height:320px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart-diagnosis")) {                    Plotly.newPlot(                        "chart-diagnosis",                        [{"marker":{"color":["#fdd835","#ffa726","#ffa726","#ff7043"]},"orientation":"h","text":["22","3","2","7"],"textposition":"outside","x":[22,3,2,7],"y":["cluster citations[] empty","Rule 25(d) \u002f Doe reveal","SSA pseudonym","docket only, no cluster"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"yaxis":{"autorange":"reversed"},"margin":{"l":180,"r":40,"t":60,"b":40},"title":{"text":"The 34 lookup misses by diagnosis"},"xaxis":{"title":{"text":"Cases"}},"height":320},                        {"responsive": true}                    )                };            </script>        </div></div><div class="chart-placeholder"><div>                            <div id="chart-cite-type" class="plotly-graph-div" style="height:360px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart-cite-type")) {                    Plotly.newPlot(                        "chart-cite-type",                        [{"marker":{"color":"#5e35b1"},"name":"Federal_District","x":["Westlaw","Cal.","F. Supp.","F.[Nd]","So.","other"],"y":[24,0,2,0,0,0],"type":"bar"},{"marker":{"color":"#1e88e5"},"name":"State_IAC","x":["Westlaw","Cal.","F. Supp.","F.[Nd]","So.","other"],"y":[0,5,0,0,0,0],"type":"bar"},{"marker":{"color":"#00897b"},"name":"State_COLR","x":["Westlaw","Cal.","F. Supp.","F.[Nd]","So.","other"],"y":[0,1,0,0,1,0],"type":"bar"},{"marker":{"color":"#fdd835"},"name":"Circuit","x":["Westlaw","Cal.","F. Supp.","F.[Nd]","So.","other"],"y":[0,0,0,1,0,0],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":40,"r":20,"t":60,"b":40},"legend":{"orientation":"h","y":-0.2},"title":{"text":"The 34 lookup misses by citation type and tier"},"barmode":"stack","xaxis":{"title":{"text":"Citation type"}},"yaxis":{"title":{"text":"Cases"}},"height":360},                        {"responsive": true}                    )                };            </script>        </div></div></div><h2 id="recommendations">Recommendations</h2>
+<p>These are unprioritized observations:</p>
+<ol>
+<li>
+<p><strong>Populate <code>citations[]</code> for existing opinion clusters more
+   aggressively, especially for recent state appellate opinions and
+   federal district court WL cites.</strong> This single change would close
+   27 of the 34 lookup misses (79%) — by far the largest mechanism.
+   The clusters already exist; the cites just aren't indexed. This
+   would also resolve the 5 caption-divergent sub-cases automatically,
+   since <code>/citation-lookup/</code> would hit the cluster directly without
+   needing to reason about the caption. This will likely be addressed
+   by the scanning project.</p>
+</li>
+<li>
+<p><strong>Back-fill opinion clusters from free RECAP documents that
+   bypassed the live <code>scrape_pacer_free_opinions</code> window.</strong> A periodic
+   sweep of <code>recap_documents</code> with <code>is_free_on_pacer=true</code>,
+   <code>is_available=true</code>, opinion-typed entry descriptions, and no
+   associated cluster would catch:</p>
+</li>
+<li>Old docs (e.g., 2009 <em>Darensburg</em>, 2016 <em>Mehar Holdings</em>)
+     uploaded to CL via RECAP after the live scrape window for
+     their date range had already completed.</li>
+<li>
+<p>New docs (e.g., 2025 <em>Doe v. Lawrence</em>) where the live scraper
+     for the relevant court is lagging (see #7316 for the <code>nysd</code>-
+     specific stall and the broader 2-3 month <code>cand</code> / <code>nyed</code> lag).</p>
+</li>
+<li>
+<p><strong>Fix the per-court scraper stall/lag pattern surfaced in #7316.</strong>
+   Three of the seven <code>in_recap</code> cases were docs created on CL in
+   2017 but underlying opinions filed years earlier — these wouldn't
+   be caught by a live-scraper fix alone. But Rec 2 above and the
+   #7316 fix together would catch both the historical and the
+   ongoing gap.</p>
+</li>
+</ol>
+<h2 id="caveats-and-limitations">Caveats and limitations</h2>
+<ul>
+<li>
+<p><strong>Sample size.</strong> 250 rows across five tiers; per-tier sample sizes
+  range 38–48 after Phase 6 exclusions. Confidence intervals on the
+  individual tier coverage numbers are wide. The overall 92.3% should
+  be read as a point estimate with ~±2 pp of slop.</p>
+</li>
+<li>
+<p><strong>NYSD skip.</strong> We initially targeted SDNY (<code>nysd</code>) as one of our
+  federal district sources for citation mining. We had to drop it
+  because the live scraper isn't currently capturing nysd free
+  opinions — see
+  <a href="https://github.com/freelawproject/courtlistener/issues/7316">CL #7316</a>.
+  This biases the sample by under-representing SDNY citations. SDNY
+  is a heavy producer of recent unpublished WL opinions, and those
+  recent opinions are the exact citation pattern most affected by
+  <code>cl_cluster_citations_empty</code>. <strong>The 91.7% federal-district coverage
+  number is therefore likely an overestimate of what a corpus that
+  included SDNY citations would show.</strong></p>
+</li>
+<li>
+<p><strong>Regional reporter tier ambiguity.</strong> <code>A.3d</code>, <code>P.3d</code>, <code>N.E.3d</code>,
+  etc., carry both COLR and IAC opinions. Initial tier classification
+  used the LLM-extracted <code>court_hint</code> from the Bluebook parenthetical
+  when available; otherwise reporter pattern. Mis-classifications
+  within state appellate are possible.</p>
+</li>
+<li>
+<p><strong>Phase 6 exclusions.</strong> 29 of 250 rows are excluded from the
+  denominator: 13 short-form duplicates of a fuller sibling in the
+  same citing opinion (out of both numerator and denominator), 15
+  unresolvable short-forms with no antecedent in the same opinion
+  (out of denominator only — they're not measurable misses), and 1
+  LLM extraction artifact where the case name was dropped. Treating
+  these as "unmeasurable" rather than misses is a judgment call;
+  reasonable people could include some of them.</p>
+</li>
+<li>
+<p><strong>Audit conservatism.</strong> Our audit's <code>parties_present</code> test
+  (requires both <code>X</code> and <code>Y</code> from the cited <code>X v. Y</code> to appear in the
+  citation-verifier-matched cluster's case name) is strict. Without
+  the 7 manual corrections to false-negative audit verdicts, measured
+  coverage would be 197/221 = 89.1%. Whether to include the 7
+  corrected rows in the headline depends on whether you trust hand
+  verification — we do, but it's worth flagging.</p>
+</li>
+<li>
+<p><strong>Audit false positives.</strong> A separate pre-existing
+  <code>parties_present</code>-only verdict rule produced 4 audit false
+  positives (Wilson, Wilmington Trust, Rose Way, Thurman) before we
+  added the cite-in-cluster cross-check rule
+  (<code>16_audit_rescues.py:395-407</code>). In each, citation-verifier picked
+  a different cluster whose own <code>citations[]</code> array contained cites
+  different from the one cited in the brief — definitive evidence of
+  a wrong match. These are now correctly marked
+  <code>rescue_was_false_positive</code> and counted in <code>not_found_anywhere</code>.</p>
+</li>
+<li>
+<p><strong>Invalid citations excluded upfront.</strong> ~13.5% of the LLM's
+  raw extracted citations were invalid (short cites or extraction artifacts) and are excluded from
+  this sample by using <code>citations_valid</code> only. </p>
+</li>
+</ul>
+<h2 id="reproducibility">Reproducibility</h2>
+<p>All code and data live under
+<code>benchmark/scratch/cl-coverage-offshoot/</code>. Key artifacts:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>final_200.csv</code></td>
+<td>Stratified 250-row sample (post-dedup, post-cap)</td>
+</tr>
+<tr>
+<td><code>coverage_per_citation.csv</code></td>
+<td>Phase 4 (<code>/citation-lookup/</code>) results</td>
+</tr>
+<tr>
+<td><code>staged_fallback_rigorous_per_row.csv</code></td>
+<td>Phase 4c (name+RECAP fallback) results</td>
+</tr>
+<tr>
+<td><code>audit_per_row.csv</code></td>
+<td>Phase 5 audit verdicts on each rescue</td>
+</tr>
+<tr>
+<td><code>recap_diagnosis.csv</code></td>
+<td>Phase 18 sub-classification of the 7 <code>in_recap</code> cases</td>
+</tr>
+<tr>
+<td><code>manual_corrections.csv</code></td>
+<td>7 user-investigated false negatives + 3 discoverability category labels</td>
+</tr>
+<tr>
+<td><code>unified_review.csv</code></td>
+<td>Full audit trail (35 columns × 250 rows)</td>
+</tr>
+<tr>
+<td><code>unified_review_concise.csv</code></td>
+<td>Reviewer-facing view (9 columns × 250 rows)</td>
+</tr>
+</tbody>
+</table>
+<p>To regenerate from the raw extractions:
+<code>12_stratify.py</code> → <code>13_lookup_coverage.py</code> → <code>15_staged_fallback_rigorous.py</code>
+→ <code>16_audit_rescues.py</code> → <code>18_diagnose_recap_cases.py</code>
+→ <code>17_build_unified_review.py</code>.</p>
+</body>
+</html>
