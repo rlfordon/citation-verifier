@@ -392,6 +392,18 @@ def audit_one(
     if cite_test == "yes":
         verdict = "VERIFIED_TRUE"
         reason = "citation present in matched cluster's citation list"
+    elif source == "cluster" and cite_test == "no" and (matched_meta or {}).get("citations"):
+        # Cluster has a populated citations[] list and the cited cite isn't in it.
+        # Strong signal that this is a different case, even if party names happen
+        # to overlap. Catches the Wilson/Wilmington/Rose Way/Thurman false-positive
+        # pattern surfaced by the 2026-05-15 eyeball pass (task #1).
+        verdict = "LIKELY_FALSE"
+        cluster_cites = "; ".join(
+            f"{c.get('volume','')} {c.get('reporter','')} {c.get('page','')}"
+            for c in (matched_meta.get("citations", []) or [])
+            if isinstance(c, dict)
+        )[:200]
+        reason = f"cluster's citations[] contradict cited cite: [{cluster_cites}]"
     elif court_id_test == "no":
         # Strong signal of wrong opinion even if names overlap. Catches
         # Coinbase (SCOTUS) -> Bielski (cand district phase) case.
