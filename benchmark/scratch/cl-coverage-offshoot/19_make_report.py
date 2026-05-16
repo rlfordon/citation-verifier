@@ -29,6 +29,7 @@ from pathlib import Path
 
 import markdown
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 HERE = Path(__file__).parent
 MEMO_MD = HERE / "MEMO.md"
@@ -62,6 +63,133 @@ def load_rows() -> list[dict[str, str]]:
 
 
 # ---- Sankey ----------------------------------------------------------------
+
+def make_flow_bars(rows: list[dict[str, str]]) -> str:
+    """Stacked horizontal bars, one row per pipeline stage.
+
+    Reads top-to-bottom as a story:
+      Stage 1: 250 cases   -> 221 measurable / 29 excluded
+      Stage 2: 221         -> 170 found by lookup / 51 missed
+      Stage 3: 51 missed   -> 34 found by verifier / 17 not found
+      Stage 4a: 34 found   -> per-diagnosis breakdown
+      Stage 4b: 17 not     -> per-reason breakdown
+
+    Each row scales to its own total (so widths reflect absolute counts).
+    """
+    # Counts
+    total = len(rows)
+    excluded = sum(1 for r in rows if r["coverage"] == "excluded")
+    measurable = total - excluded
+    found_lookup = sum(1 for r in rows if r["coverage"] == "found_via_lookup")
+    miss = measurable - found_lookup
+
+    in_op = sum(1 for r in rows if r["coverage"] == "in_opinions")
+    in_recap = sum(1 for r in rows if r["coverage"] == "in_recap")
+    not_found = sum(1 for r in rows if r["coverage"] == "not_found_anywhere")
+
+    op_auto = sum(
+        1 for r in rows
+        if r["coverage"] == "in_opinions" and r["diagnosis"] == "cl_cluster_citations_empty"
+    )
+    op_manual_rule25 = sum(1 for r in rows if r["diagnosis"] == "caption_divergence_rule_25d")
+    op_manual_ssa = sum(1 for r in rows if r["diagnosis"] == "ssa_pseudonym")
+    recap_auto = sum(
+        1 for r in rows
+        if r["coverage"] == "in_recap" and not r.get("user_corrected_url")
+    )
+    recap_manual = in_recap - recap_auto
+
+    not_in_cl = sum(1 for r in rows if r["diagnosis"] == "not_in_cl")
+    fpos = sum(1 for r in rows if r["diagnosis"] == "rescue_was_false_positive")
+    amb = sum(1 for r in rows if r["diagnosis"] == "audit_ambiguous")
+
+    # Color palette
+    GREEN = "#4caf50"
+    AMBER = "#ffb300"
+    YELLOW = "#fdd835"
+    LIGHT_YELLOW = "#fff176"
+    ORANGE = "#ff9800"
+    DEEP_ORANGE = "#ff7043"
+    RED = "#ef5350"
+    GREY = "#bdbdbd"
+    BLUE = "#90caf9"
+
+    # Three-stage funnel — keeps the story simple. The diagnosis chart
+    # below handles the within-bucket breakdown for the 34 recovered, and
+    # the not-found breakdown is small enough to live in prose.
+    stage_titles = [
+        "Stage 1: All 250 cases",
+        "Stage 2: 221 measurable",
+        "Stage 3: 51 missed by /citation-lookup/",
+    ]
+
+    fig = make_subplots(
+        rows=3,
+        cols=1,
+        subplot_titles=stage_titles,
+        vertical_spacing=0.18,
+        shared_xaxes=False,
+    )
+
+    def seg(row: int, label: str, count: int, color: str, total_for_pct: int) -> None:
+        if count <= 0:
+            return
+        pct = 100 * count / total_for_pct
+        fig.add_trace(
+            go.Bar(
+                y=[""],  # single category per row
+                x=[count],
+                orientation="h",
+                marker=dict(color=color, line=dict(color="white", width=1.5)),
+                text=[f"<b>{label}</b><br>{count} ({pct:.0f}%)"],
+                textposition="auto",  # inside if fits, outside otherwise
+                insidetextanchor="middle",
+                textfont=dict(size=11, color="#1a1a1a"),
+                cliponaxis=False,
+                hovertemplate=f"{label}<br>{count} of {total_for_pct} ({pct:.1f}%)<extra></extra>",
+                showlegend=False,
+            ),
+            row=row,
+            col=1,
+        )
+
+    # Stage 1
+    seg(1, "Measurable", measurable, BLUE, total)
+    seg(1, "Excluded", excluded, GREY, total)
+    # Stage 2
+    seg(2, "Resolved by /citation-lookup/", found_lookup, GREEN, measurable)
+    seg(2, "Missed by /citation-lookup/", miss, AMBER, measurable)
+    # Stage 3
+    seg(3, "Found by citation-verifier", in_op + in_recap, YELLOW, miss)
+    seg(3, "Not found anywhere", not_found, RED, miss)
+
+    # Stack mode for each subplot
+    fig.update_layout(barmode="stack")
+
+    # Per-subplot x-axis ranges
+    fig.update_xaxes(range=[0, total * 1.02], showticklabels=False, showgrid=False, row=1, col=1)
+    fig.update_xaxes(range=[0, measurable * 1.02], showticklabels=False, showgrid=False, row=2, col=1)
+    fig.update_xaxes(range=[0, miss * 1.02], showticklabels=False, showgrid=False, row=3, col=1)
+    fig.update_yaxes(showticklabels=False, showgrid=False)
+
+    fig.update_layout(
+        title=dict(
+            text="How the 250 citations flowed through the pipeline",
+            font=dict(size=16),
+            y=0.97,
+        ),
+        height=420,
+        margin=dict(l=20, r=20, t=70, b=30),
+        plot_bgcolor="white",
+    )
+    # Tighten subplot title styling — left-align and smaller
+    for ann in fig["layout"]["annotations"]:
+        ann["x"] = 0.0
+        ann["xanchor"] = "left"
+        ann["font"] = dict(size=12, color="#1a1a1a")
+
+    return fig.to_html(include_plotlyjs=False, full_html=False, div_id="chart-flow")
+
 
 def make_sankey(rows: list[dict[str, str]]) -> str:
     """Sankey: 250 -> measurable/excluded -> lookup hit/miss -> recovery -> outcome."""
@@ -477,7 +605,7 @@ CSS = """
 
 
 def build_html(rows: list[dict[str, str]], md_html: str) -> str:
-    sankey_div = make_sankey(rows)
+    sankey_div = make_flow_bars(rows)
     per_tier_div = make_per_tier_chart(rows)
     donut_div = make_coverage_donut(rows)
     diag_div = make_diagnosis_chart(rows)
