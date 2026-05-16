@@ -12,16 +12,22 @@ sit elsewhere in the sample, and one LLM extraction artifact), **204 of
 221 measurable citations (92.3%) are findable in CL**.
 
 For 34 of those 204, CL's `/citation-lookup/` API didn't resolve the
-cite even though the case does live in CL. Five discoverability patterns
-account for those misses, all concentrated in federal district and
-state appellate tiers:
+cite even though the case does live in CL. Two patterns account for all
+of them, both concentrated in federal district and state appellate
+tiers:
 
 | Pattern | Count | Mechanism |
 |---|---|---|
-| `cl_cluster_citations_empty` | 22 | Opinion cluster in CL, `citations[]` array empty |
+| `cl_cluster_citations_empty` | 27 | Opinion cluster in CL, `citations[]` array empty |
 | `cl_docket_only_no_cluster` | 7 | Document in CL via RECAP but no opinion cluster created |
-| `caption_divergence_rule_25d` | 3 | Caption changed (Rule 25(d) substitution / Doe reveal); name-search broke |
-| `ssa_pseudonym` | 2 | Brief used SSA pseudonym (`Michael B.`); CL caption is the real surname |
+
+Five of the 27 `cl_cluster_citations_empty` cases also had captions in
+the cited form that diverged from CL's stored caption — Rule 25(d)
+substitutions, Doe reveals, and SSA pseudonyms — which is what made
+them require manual investigation rather than recover automatically via
+name-based fallback. They are still fundamentally the same CL-side
+issue (empty `citations[]`), but they put extra weight on
+recommendations that would let discovery bypass name matching.
 
 The bulk of the gap — 24 of 34 misses (71%) — sits on Westlaw cites
 filed by federal district courts. A second cluster of 6 misses sits on
@@ -94,38 +100,83 @@ date mismatch).
 
 ## The 34 lookup misses, in detail
 
-### Issue 1 — `cl_cluster_citations_empty` (22 cases)
+### Issue 1 — `cl_cluster_citations_empty` (27 cases)
 
-Pattern: the opinion cluster exists in CL with the right case name, but
-its `citations[]` array is empty. Without a populated cite index, the
-citation_lookup API has no way to resolve the cite back to the cluster,
-even though everything else about the cluster is correct. A name-based
-fallback finds it.
+Pattern: the opinion cluster exists in CL with the case the brief
+cites, but its `citations[]` array is empty. Without a populated cite
+index, the citation_lookup API has no way to resolve the cite back to
+the cluster, even though everything else about the cluster is correct.
+A name-based fallback finds it — *most of the time*.
 
 In our sample this pattern is **universal among lookup misses where the
-cluster exists** — all 22 in-cluster misses fit it. Zero cases where the
-cite IS in the cluster's `citations[]` but lookup nonetheless missed
-(would have indicated a lookup-side bug). Zero cases where the cluster
-has populated `citations[]` containing different cites (would have
-indicated a partial-cite-list bug).
+cluster exists** — all 27 in-cluster misses fit it. Zero cases where
+the cite IS in the cluster's `citations[]` but lookup nonetheless
+missed (would have indicated a lookup-side bug). Zero cases where the
+cluster has populated `citations[]` containing different cites (would
+have indicated a partial-cite-list bug).
 
-Sub-patterns:
+Sub-patterns within the 27:
 
-- **Reporter type**: 12 Westlaw, 6 California state (`Cal.5th`,
+- **Reporter type**: 17 Westlaw, 6 California state (`Cal.5th`,
   `Cal.App.5th`), 2 `F. Supp. 3d`, 1 `F.4th`, 1 `So. 3d`.
-- **Year**: 64% of these cases were filed 2022 or later (14/22).
+- **Year**: 63% of these cases were filed 2022 or later (17/27).
   Consistent with citation-index ingestion lag for recent opinions.
-- **Tier**: 14 Federal_District, 5 State_IAC, 2 State_COLR, 1 Circuit,
+- **Tier**: 19 Federal_District, 5 State_IAC, 2 State_COLR, 1 Circuit,
   0 SCOTUS.
 
-Representative examples:
+Representative "easy recovery" examples (name search bridges
+automatically):
 
-- *Bay Valley Foods, LLC v. FFI Group*, 2025 WL 3089109 (cluster
-  exists; empty `citations[]`)
-- *People v. Grajeda*, 111 Cal.App.5th 829 (2025) (cluster exists;
-  empty `citations[]`)
+- *Bay Valley Foods, LLC v. FFI Group*, 2025 WL 3089109
+- *People v. Grajeda*, 111 Cal.App.5th 829 (2025)
 - *Democracy Forward Found. v. Office of Personnel Mgmt.*, 780 F. Supp.
-  3d 61 (2025) (cluster exists; empty `citations[]`)
+  3d 61 (2025)
+
+#### Sub-case 1a: name search bridges the gap (22 cases)
+
+For these 22, the cluster's case name matches the cited form closely
+enough that our name-based fallback (opinion search by case name +
+court + date) lands on the right cluster on the first try. The audit's
+parties-present test confirms. These represent the largest single
+discoverability gap fixable by a single change: populating `citations[]`.
+
+#### Sub-case 1b: name search blocked by caption change (5 cases)
+
+For these 5, the cluster's case name has diverged from the cited form
+in ways that defeat a name-based search. Two distinct sub-patterns:
+
+**Rule 25(d) substitution / Doe reveal (3 cases)** — an official has
+been substituted under Federal Rule 25(d), or a Doe defendant has been
+replaced with the real name, *after* CL ingested the opinion. The
+brief cites the historical caption; CL stores the current one.
+
+| Cited | CL caption | URL |
+|---|---|---|
+| Gilliard v. McWilliams, 2019 WL 3304707 | Gilliard v. Gruenberg | [opinion/4642011](https://www.courtlistener.com/opinion/4642011/) |
+| Preston v. Smith, 2023 WL 5337430 | Preston v. Unidentified | [opinion/9729396](https://www.courtlistener.com/opinion/9729396/) |
+| Viken Detection Corp. v. Doe, 2019 WL 5268725 | Viken Detection Corp. v. Bradshaw | [opinion/9731515](https://www.courtlistener.com/opinion/9731515/) |
+
+**SSA pseudonym (2 cases)** — in Social Security appeals, the brief
+uses an SSA pseudonym (`Michael B.`, `John S.`); CL indexes the case
+under the plaintiff's real surname.
+
+| Cited | CL caption | URL |
+|---|---|---|
+| Michael B. v. Berryhill, 2019 WL 2269962 | Buschman v. Berryhill | [opinion/9674181](https://www.courtlistener.com/opinion/9674181/) |
+| John S. v. Bisignano, 2025 WL 1505405 | Sims v. Bisignano | [opinion/10593230](https://www.courtlistener.com/opinion/10593230/) |
+
+All five clusters also have empty `citations[]`. Once `citations[]` is
+populated, the underlying issue evaporates — `/citation-lookup/` would
+resolve them without needing to reason about the caption at all. Until
+then, anyone trying to discover these cases by name (in either an
+automated verifier or a manual CL search) is stuck.
+
+> *Aside: this sample also surfaced a parallel set of issues on the
+> search side — cases where the verifier itself initially picked the
+> wrong cluster and only the audit step caught it, or where it picked
+> the right cluster but the audit overrode on weak signals. Those are
+> verifier-side concerns more than CL-side ones, and we're saving the
+> detailed discussion for a separate write-up.*
 
 ### Issue 2 — `cl_docket_only_no_cluster` (7 cases)
 
@@ -169,43 +220,6 @@ substantive 4–8 page Magistrate Judge orders that received WL numbers —
 arguably opinion-worthy, but the description text uses non-canonical
 language that PACER's `WrtOpRpt.pl` may not flag.
 
-### Issue 3 — caption divergence (3 + 2 = 5 cases)
-
-Pattern: the cited case is in CL as a cluster, but the cluster's
-caption differs from the cited form in ways that defeat name-based
-fallback search. Two distinct sub-patterns surfaced:
-
-**Sub-pattern 3a — Rule 25(d) party substitution / Doe reveal (3
-cases)**: an official has been substituted under Rule 25(d), or a Doe
-defendant has been replaced with the real name, before CL ingested the
-opinion. The brief cites the historical caption; CL stores the current
-one.
-
-| Cited | CL caption | URL |
-|---|---|---|
-| Gilliard v. McWilliams, 2019 WL 3304707 | Gilliard v. Gruenberg | [opinion/4642011](https://www.courtlistener.com/opinion/4642011/) |
-| Preston v. Smith, 2023 WL 5337430 | Preston v. Unidentified | [opinion/9729396](https://www.courtlistener.com/opinion/9729396/) |
-| Viken Detection Corp. v. Doe, 2019 WL 5268725 | Viken Detection Corp. v. Bradshaw | [opinion/9731515](https://www.courtlistener.com/opinion/9731515/) |
-
-All three clusters also have empty `citations[]` arrays, so this
-sub-pattern compounds Issue 1: with the cite not indexed and the name
-search broken by the caption change, only manual investigation
-recovered these.
-
-**Sub-pattern 3b — SSA pseudonym (2 cases)**: in Social Security
-appeals the brief uses an SSA pseudonym (`Michael B.`, `John S.`); CL
-indexes the case under the plaintiff's real surname.
-
-| Cited | CL caption | URL |
-|---|---|---|
-| Michael B. v. Berryhill, 2019 WL 2269962 | Buschman v. Berryhill | [opinion/9674181](https://www.courtlistener.com/opinion/9674181/) |
-| John S. v. Bisignano, 2025 WL 1505405 | Sims v. Bisignano | [opinion/10593230](https://www.courtlistener.com/opinion/10593230/) |
-
-A docket-number search would have landed on the right docket
-immediately, but CL doesn't currently index `docket_number` as a
-searchable field on opinion clusters — so neither `/citation-lookup/`
-nor opinion search can bridge the pseudonym → real-name gap.
-
 ### Citation-type breakdown
 
 Across all 34 lookup misses:
@@ -236,8 +250,11 @@ to triage them.
 1. **Populate `citations[]` for existing opinion clusters more
    aggressively, especially for recent state appellate opinions and
    federal district court WL cites.** This single change would close
-   22 of the 34 lookup misses (65%) — the largest mechanism by far.
-   The clusters already exist; the cites just aren't indexed.
+   27 of the 34 lookup misses (79%) — by far the largest mechanism.
+   The clusters already exist; the cites just aren't indexed. This
+   would also resolve the 5 caption-divergent sub-cases automatically,
+   since `/citation-lookup/` would hit the cluster directly without
+   needing to reason about the caption.
 
 2. **Back-fill opinion clusters from free RECAP documents that
    bypassed the live `scrape_pacer_free_opinions` window.** A periodic
@@ -251,27 +268,18 @@ to triage them.
      for the relevant court is lagging (see #7316 for the `nysd`-
      specific stall and the broader 2-3 month `cand` / `nyed` lag).
 
-3. **Add `docket_number` as a searchable field on opinion clusters.**
-   This would have caught all 5 caption-divergence cases (Rule 25(d) +
-   SSA pseudonym) immediately, since the docket number is invariant
-   across caption changes. It would also make verifier-side
-   docket-number fallback (which we already implemented in
-   `15_staged_fallback_rigorous.py` for RECAP search) work against
-   clusters too.
+3. **Fix the per-court scraper stall/lag pattern surfaced in #7316.**
+   Three of the seven `in_recap` cases were docs created on CL in
+   2017 but underlying opinions filed years earlier — these wouldn't
+   be caught by a live-scraper fix alone. But Rec 2 above and the
+   #7316 fix together would catch both the historical and the
+   ongoing gap.
 
-4. **Track caption history on opinion clusters.** When an opinion is
-   re-captioned (Rule 25(d) substitution, Doe reveal, pseudonym
-   reveal), retaining the prior caption as an alias would let
-   name-based search bridge the gap. This is more speculative — the
-   prior captions aren't always available — but CL's existing
-   prior-caption infrastructure on dockets could likely be extended.
-
-5. **Improve `WrtOpRpt.pl`-side typing for substantive orders.** Two
-   of the seven `in_recap` cases (Hunter, Cabot) carry WL numbers
-   despite description text PACER may not flag as opinion-worthy
-   (`ORDER RE:`, `ORDER CERTIFYING`). Whether to chase these depends
-   on whether `WrtOpRpt.pl`'s output is under FLP control or strictly
-   inherited from PACER.
+   *Optional, scoped speculation:* two of the seven (Hunter "ORDER
+   RE:", Cabot "ORDER CERTIFYING") are substantive Magistrate Judge
+   orders with WL numbers but description text that may not match
+   `WrtOpRpt.pl`'s opinion-typing patterns. If `WrtOpRpt.pl`'s output
+   is in FLP control, expanding the typing patterns could help.
 
 ## Caveats and limitations
 
