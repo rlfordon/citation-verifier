@@ -6,6 +6,12 @@
       "runtimeExecutable": "venv/Scripts/python.exe",
       "runtimeArgs": ["web/app.py"],
       "port": 8000
+    },
+    {
+      "name": "coverage-report",
+      "runtimeExecutable": "C:\\Users\\Rebecca Fordon\\Projects\\citation-verifier\\venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "http.server", "8001", "-d", "benchmark/scratch/cl-coverage-offshoot/"],
+      "port": 8001
     }
   ]
 }

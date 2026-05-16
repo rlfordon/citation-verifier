@@ -99,24 +99,45 @@ def make_sankey(rows: list[dict[str, str]]) -> str:
     fpos = sum(1 for r in rows if r["diagnosis"] == "rescue_was_false_positive")
     amb = sum(1 for r in rows if r["diagnosis"] == "audit_ambiguous")
 
-    # Node order matters for layout
+    # Single-line labels with the count inline, so the node boxes stay short.
     labels = [
-        "250 cited citations",                          # 0
-        f"Measurable<br>({measurable})",                # 1
-        f"Excluded<br>({excluded})",                    # 2
-        f"Resolved by /citation-lookup/<br>({found_lookup})",  # 3
-        f"Missed by /citation-lookup/<br>({miss})",     # 4
-        f"in_opinions<br>({in_op})",                    # 5
-        f"in_recap<br>({in_recap})",                    # 6
-        f"not_found_anywhere<br>({not_found})",         # 7
-        f"Auto-recovered by name search<br>({op_auto})",        # 8
-        f"Manual: Rule 25(d)/Doe<br>({op_manual_rule25})",       # 9
-        f"Manual: SSA pseudonym<br>({op_manual_ssa})",           # 10
-        f"Auto-recovered by RECAP search<br>({recap_auto})",     # 11
-        f"Manual: docket-only edge case<br>({recap_manual})",    # 12
-        f"not_in_cl<br>({not_in_cl})",                  # 13
-        f"Wrong-cluster rescue<br>({fpos})",            # 14
-        f"audit_ambiguous<br>({amb})",                  # 15
+        f"250 cited citations",                                        # 0
+        f"Measurable ({measurable})",                                  # 1
+        f"Excluded ({excluded})",                                      # 2
+        f"Resolved by /citation-lookup/ ({found_lookup})",             # 3
+        f"Missed by /citation-lookup/ ({miss})",                       # 4
+        f"in_opinions ({in_op})",                                      # 5
+        f"in_recap ({in_recap})",                                      # 6
+        f"not_found_anywhere ({not_found})",                           # 7
+        f"Auto: name search ({op_auto})",                              # 8
+        f"Manual: Rule 25(d) / Doe ({op_manual_rule25})",              # 9
+        f"Manual: SSA pseudonym ({op_manual_ssa})",                    # 10
+        f"Auto: RECAP search ({recap_auto})",                          # 11
+        f"Manual: docket-only ({recap_manual})",                       # 12
+        f"not_in_cl ({not_in_cl})",                                    # 13
+        f"Wrong-cluster rescue ({fpos})",                              # 14
+        f"audit_ambiguous ({amb})",                                    # 15
+    ]
+    # Explicit x positions create clean columns; explicit y prevents
+    # plotly from stacking the terminal nodes at varied depths in the
+    # rightmost column. Values must be in (0, 1).
+    node_x = [
+        0.01,  # 0 total
+        0.18, 0.18,  # 1 measurable, 2 excluded
+        0.42, 0.42,  # 3 lookup hit, 4 lookup miss
+        0.62, 0.62, 0.62,  # 5 in_op, 6 in_recap, 7 not_found
+        0.99, 0.99, 0.99,  # 8-10 in_op sub-outcomes
+        0.99, 0.99,         # 11-12 in_recap sub-outcomes
+        0.99, 0.99, 0.99,  # 13-15 not_found sub-outcomes
+    ]
+    node_y = [
+        0.50,        # 0 total
+        0.55, 0.05,  # 1 measurable (large), 2 excluded (small, top)
+        0.30, 0.80,  # 3 found (upper area), 4 missed (lower area)
+        0.55, 0.78, 0.92,  # 5 in_op, 6 in_recap, 7 not_found
+        0.45, 0.59, 0.66,  # 8 auto, 9 r25, 10 ssa
+        0.74, 0.82,        # 11 recap auto, 12 recap manual
+        0.86, 0.96, 0.99,  # 13 not_in_cl, 14 wrong-cluster, 15 ambiguous
     ]
     sources, targets, values, colors = [], [], [], []
 
@@ -171,13 +192,15 @@ def make_sankey(rows: list[dict[str, str]]) -> str:
     fig = go.Figure(
         data=[
             go.Sankey(
-                arrangement="snap",
+                arrangement="fixed",
                 node=dict(
-                    pad=18,
-                    thickness=18,
+                    pad=22,
+                    thickness=16,
                     line=dict(color="rgba(0,0,0,0.2)", width=0.5),
                     label=labels,
                     color=node_colors,
+                    x=node_x,
+                    y=node_y,
                 ),
                 link=dict(source=sources, target=targets, value=values, color=colors),
             )
@@ -188,9 +211,9 @@ def make_sankey(rows: list[dict[str, str]]) -> str:
             text="Where each of the 250 cited citations ended up",
             font=dict(size=16),
         ),
-        font=dict(size=12),
-        height=560,
-        margin=dict(l=10, r=10, t=60, b=10),
+        font=dict(size=11),
+        height=620,
+        margin=dict(l=10, r=180, t=60, b=10),  # right margin keeps terminal labels visible
     )
     return fig.to_html(include_plotlyjs=False, full_html=False, div_id="chart-sankey")
 
@@ -225,9 +248,9 @@ def make_per_tier_chart(rows: list[dict[str, str]]) -> str:
     )
     fig.update_layout(
         title="Coverage by tier (after manual corrections + Phase 6)",
-        yaxis=dict(title="Percent in CL", range=[0, 110]),
+        yaxis=dict(title="Percent in CL", range=[0, 120]),
         xaxis=dict(title=""),
-        height=380,
+        height=400,
         margin=dict(l=40, r=20, t=60, b=40),
     )
     return fig.to_html(include_plotlyjs=False, full_html=False, div_id="chart-per-tier")
