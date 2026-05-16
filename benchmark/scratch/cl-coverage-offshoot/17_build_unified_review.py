@@ -128,12 +128,22 @@ OUT_CONCISE_CSV = HERE / "unified_review_concise.csv"
 # bucket for both true misses and audit-rejected wrong-matches.
 
 DIAGNOSIS_TO_COVERAGE = {
+    # Found normally — citation_lookup API resolved it
     "in_cl_via_citation_lookup":       "found_via_lookup",
-    "in_cl_via_opinion_rescue":        "in_opinions",
-    "in_cl_via_recap_rescue":          "in_recap",
+    # Opinion-cluster lookup misses, auto-classified by why lookup failed
+    "cl_cluster_citations_empty":      "in_opinions",
+    "cl_cluster_cites_incomplete":     "in_opinions",  # defensive
+    "cl_lookup_indexed_but_missed":    "in_opinions",  # defensive — would be a CL bug
+    # RECAP-only — case in PACER docket but no opinion cluster ingested
+    "cl_docket_only_no_cluster":       "in_recap",
+    # Manual-override diagnoses (3 user-investigated discoverability patterns)
+    "caption_divergence_rule_25d":     "in_opinions",
+    "ssa_pseudonym":                   "in_opinions",
+    # Not in CL (or audit rejected the rescue)
     "not_in_cl":                       "not_found_anywhere",
     "rescue_was_false_positive":       "not_found_anywhere",
     "audit_ambiguous":                 "not_found_anywhere",
+    # Unmeasurable (Phase 6 dedup / LLM artifacts)
     "extraction_artifact_no_name":     "excluded",
     "extraction_artifact_unparseable": "excluded",
     "duplicate_of_fuller_sibling":     "excluded",
@@ -241,8 +251,43 @@ def main() -> int:
             diagnosis_detail = "couldn't parse citation_string"
         elif p4c_outcome == "rescued_by_opinion_search":
             if p5_verdict == "VERIFIED_TRUE":
-                diagnosis = "in_cl_via_opinion_rescue"
-                diagnosis_detail = f"audit confirmed: {p5_reason}"
+                # Why did citation_lookup miss an opinion that's in CL?
+                # Derive the discoverability issue from the audit's
+                # cite-in-cluster test:
+                #   cite_test=='no' + empty citations[] -> cluster ingested
+                #     but citations[] not populated (CL ingestion lag).
+                #     This is THE dominant lookup-miss pattern (the
+                #     2026-05-15 analysis found 22/22 opinion rescues fit
+                #     this shape).
+                #   cite_test=='no' + populated citations[] -> cluster has
+                #     a partial cite list and the cited cite isn't on it.
+                #     (None observed in this sample.)
+                #   cite_test=='yes' -> cite IS in citations[]; would be a
+                #     CL lookup bug. (None observed in this sample.)
+                if p5_test_cite == "no" and not p5_cluster_citations.strip():
+                    diagnosis = "cl_cluster_citations_empty"
+                    diagnosis_detail = (
+                        "Opinion cluster in CL but citations[] field is empty. "
+                        "Citation lookup can't resolve the cite to this cluster. "
+                        "Verifier's name-based fallback found it."
+                    )
+                elif p5_test_cite == "no":
+                    diagnosis = "cl_cluster_cites_incomplete"
+                    diagnosis_detail = (
+                        f"Cluster has populated citations[] but the cited "
+                        f"cite isn't among them: [{p5_cluster_citations[:120]}]. "
+                        f"Partial cite list."
+                    )
+                elif p5_test_cite == "yes":
+                    diagnosis = "cl_lookup_indexed_but_missed"
+                    diagnosis_detail = (
+                        f"Cite IS in cluster's citations[] but citation_lookup "
+                        f"failed to find it. Would indicate a CL lookup-side bug. "
+                        f"Cluster cites: [{p5_cluster_citations[:120]}]"
+                    )
+                else:
+                    diagnosis = "cl_cluster_audit_unclear"
+                    diagnosis_detail = f"audit confirmed but cite-test inconclusive: {p5_reason}"
             elif p5_verdict == "LIKELY_FALSE":
                 diagnosis = "rescue_was_false_positive"
                 diagnosis_detail = f"audit overturned: {p5_reason}"
@@ -251,8 +296,15 @@ def main() -> int:
                 diagnosis_detail = p5_reason
         elif p4c_outcome == "rescued_by_recap":
             if p5_verdict == "VERIFIED_TRUE":
-                diagnosis = "in_cl_via_recap_rescue"
-                diagnosis_detail = f"audit confirmed: {p5_reason}"
+                # RECAP rescue = case lives in PACER as a docket but no
+                # opinion cluster was ingested. citation_lookup is
+                # cluster-scoped, so it can't reach RECAP-only cases at all.
+                diagnosis = "cl_docket_only_no_cluster"
+                diagnosis_detail = (
+                    "Case present in CL's RECAP/PACER data as a docket, but "
+                    "no opinion cluster has been ingested. Citation lookup "
+                    "is cluster-scoped and can't reach docket-only cases."
+                )
             elif p5_verdict == "LIKELY_FALSE":
                 diagnosis = "rescue_was_false_positive"
                 diagnosis_detail = f"audit overturned: {p5_reason}"
