@@ -456,6 +456,66 @@ def make_diagnosis_chart(rows: list[dict[str, str]]) -> str:
     return fig.to_html(include_plotlyjs=False, full_html=False, div_id="chart-diagnosis")
 
 
+# ---- Year recency of cl_cluster_citations_empty cases -----------------------
+
+def make_year_chart(rows: list[dict[str, str]]) -> str:
+    """Year distribution of all 27 cl_cluster_citations_empty cases (incl.
+    the 5 caption-divergent sub-cases). Supports the prose claim that the
+    pattern is recency-skewed (citation-index ingestion lag)."""
+    relevant = [
+        r for r in rows
+        if r["diagnosis"] in (
+            "cl_cluster_citations_empty",
+            "caption_divergence_rule_25d",
+            "ssa_pseudonym",
+        )
+    ]
+    by_year: Counter = Counter()
+    for r in relevant:
+        y = r.get("cited_year") or "(blank)"
+        by_year[y] += 1
+
+    years = sorted([y for y in by_year if y != "(blank)"])
+    counts = [by_year[y] for y in years]
+    if "(blank)" in by_year:
+        years.append("(blank)")
+        counts.append(by_year["(blank)"])
+
+    # Color the recent years (2022+) one shade, older years another
+    colors = []
+    for y in years:
+        if y == "(blank)":
+            colors.append("#bdbdbd")
+        elif y >= "2022":
+            colors.append("#ff7043")  # accent recency-affected
+        else:
+            colors.append("#90caf9")
+
+    fig = go.Figure(
+        data=[
+            go.Bar(
+                x=years,
+                y=counts,
+                marker=dict(color=colors),
+                text=counts,
+                textposition="outside",
+            )
+        ]
+    )
+    fig.update_layout(
+        title=(
+            "When were the 27 'cluster exists, citations[] empty' cases filed? "
+            "(63% are 2022+)"
+        ),
+        xaxis=dict(title="Cited year"),
+        yaxis=dict(title="Cases", range=[0, max(counts) + 2]),
+        height=320,
+        margin=dict(l=40, r=20, t=60, b=40),
+        plot_bgcolor="white",
+    )
+    return fig.to_html(include_plotlyjs=False, full_html=False, div_id="chart-year")
+
+
 # ---- Cite type × tier of the 34 misses --------------------------------------
 
 def make_cite_type_chart(rows: list[dict[str, str]]) -> str:
@@ -501,7 +561,19 @@ _MERMAID_RE = re.compile(r"```mermaid\n.*?\n```", re.DOTALL)
 
 def render_md(md_text: str) -> str:
     md_text = _MERMAID_RE.sub('<div class="chart-placeholder" id="sankey-anchor"></div>', md_text)
-    html = markdown.markdown(md_text, extensions=["tables", "fenced_code", "toc"])
+    # Insert a TOC placeholder right after the meta/author line. The toc
+    # extension expands [TOC] into a generated nav block.
+    if "[TOC]" not in md_text:
+        md_text = md_text.replace(
+            "## TL;DR",
+            "## Contents\n\n[TOC]\n\n## TL;DR",
+            1,
+        )
+    html = markdown.markdown(
+        md_text,
+        extensions=["tables", "fenced_code", "toc"],
+        extension_configs={"toc": {"toc_depth": "2-3"}},
+    )
     return html
 
 
@@ -586,6 +658,13 @@ CSS = """
     border-radius: 4px;
     padding: 0.5rem;
     margin: 1.2rem 0;
+    overflow-x: auto;
+  }
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
   }
   .meta {
     color: var(--muted);
@@ -599,7 +678,30 @@ CSS = """
     margin: 1rem 0 2rem;
     font-size: 0.95em;
   }
-  .toc ul { margin: 0.2rem 0; }
+  .toc ul { margin: 0.2rem 0; padding-left: 1.2rem; }
+  .toc > ul { padding-left: 1rem; }
+  .table-wrap { overflow-x: auto; margin: 1rem 0; }
+
+  /* Mobile responsiveness */
+  @media (max-width: 720px) {
+    body {
+      padding: 1rem 0.9rem 2rem;
+      font-size: 0.95em;
+    }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.15rem; }
+    h3 { font-size: 1.02rem; }
+    .chart-grid {
+      grid-template-columns: 1fr;  /* stack charts vertically */
+    }
+    table { font-size: 0.86em; }
+    th, td { padding: 0.3rem 0.45rem; }
+    blockquote {
+      margin: 0.8rem 0;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.92em;
+    }
+  }
 </style>
 """
 
@@ -610,6 +712,7 @@ def build_html(rows: list[dict[str, str]], md_html: str) -> str:
     donut_div = make_coverage_donut(rows)
     diag_div = make_diagnosis_chart(rows)
     cite_type_div = make_cite_type_chart(rows)
+    year_div = make_year_chart(rows)
 
     # Substitute the Sankey anchor in the markdown HTML
     md_html = md_html.replace(
@@ -634,7 +737,7 @@ def build_html(rows: list[dict[str, str]], md_html: str) -> str:
     md_html = insert_after_h2(
         md_html,
         "Headline coverage",
-        f'<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;">'
+        f'<div class="chart-grid">'
         f'<div class="chart-placeholder">{per_tier_div}</div>'
         f'<div class="chart-placeholder">{donut_div}</div>'
         f'</div>',
@@ -642,10 +745,11 @@ def build_html(rows: list[dict[str, str]], md_html: str) -> str:
     md_html = insert_before_h2(
         md_html,
         "Recommendations",
-        f'<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;">'
+        f'<div class="chart-grid">'
         f'<div class="chart-placeholder">{diag_div}</div>'
         f'<div class="chart-placeholder">{cite_type_div}</div>'
-        f'</div>',
+        f'</div>'
+        f'<div class="chart-placeholder">{year_div}</div>',
     )
 
     html = (
