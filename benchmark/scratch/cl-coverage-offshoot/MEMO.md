@@ -83,8 +83,24 @@ found by any method.
   CL across a mix of federal (60) and state (18) courts via the
   benchmark's `mine_citing_opinions` step.
 - **Extraction**: per-opinion JSON via the Anthropic Haiku model
-  (`extract_citations.py`). Incomplete or incorrectly extracted citations (~13.5% of LLM
-  output) excluded by using `citations_valid` only.
+  (`extract_citations.py`). LLM extraction rather than eyecite for
+  three reasons that surfaced in an earlier v1 pass: (a) eyecite's
+  paren-attribution bug propagates wrong years when a citation has
+  multiple parallel reporters; (b) smart quotes and apostrophes in
+  case names sometimes truncate the extracted name; and (c) slip-
+  opinion placeholders like `-- F. Supp. 3d ----` get absorbed into
+  the defendant field, poisoning case_name for downstream search.
+  The LLM extraction also captures fields eyecite doesn't surface
+  directly — `court_hint` (separated cleanly from editorial
+  parentheticals), `month`/`day`, and `docket_number` — which are
+  needed for the WL/LEXIS docket-search fallback that recovers
+  caption-divergent cases (Rule 25(d) substitutions, SSA pseudonyms).
+  Tradeoffs: temp=1.0 (the `claude -p` default; no flag exposed),
+  higher cost per opinion than eyecite, and LLM hallucination risk —
+  mitigated by validating each `citation_string` as a verbatim
+  substring of the source opinion before downstream use. Incomplete
+  or extraction-artifact citations (~13.5% of raw LLM output) are
+  excluded by using `citations_valid` only.
 - **Pre-filter & dedup**: drop short-form citations (`Id.`, bare pin
   cites) and foreign reporters (`Eng. Rep.`, `Q.B.`, etc.); dedup on
   `(citing_cluster, citation_string, parenthetical)`; K=5 cap per
