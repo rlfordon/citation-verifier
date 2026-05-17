@@ -38,11 +38,12 @@ concentrated in federal district and state appellate tiers:
 | `cl_cluster_extraction_mismatch` | 1 | Cluster fully in CL with proper `citations[]`; pipeline-side normalization issue prevented discovery |
 | `verifier_audit_date_bug` | 1 | Verifier found the right RECAP entry; audit threshold issue blocked it |
 
-The bulk of the gap — 24 of 43 lookup misses — are from **Westlaw
-cites to opinions by federal district courts**. The next-largest
-clusters are 6 California state appellate reporters (`Cal.5th` /
-`Cal.App.5th`, 2022–2025) and the 5 NY Appellate Division opinions
-(A.D.3d, 2024–2025) where CL has only the slip-op cite indexed.
+The bulk of the gap — 25 of 43 lookup misses (58%) — are from
+**Westlaw cites to opinions by federal district courts**. The
+next-largest clusters are 6 California state appellate reporters
+(`Cal.5th` / `Cal.App.5th`, 2022–2025) and the 5 NY Appellate Division
+opinions (A.D.3d, 2024–2025) where CL has only the slip-op cite
+indexed.
 
 §   §   §
 
@@ -135,11 +136,12 @@ Westlaw cites in federal district courts dominate.*
 
 Sub-patterns within the 24:
 
-- **Reporter type:** 17 Westlaw, 6 California state (`Cal.5th`,
+- **Reporter type:** 12 Westlaw, 6 California state (`Cal.5th`,
   `Cal.App.5th`), 2 `F. Supp. 3d`, 2 `S.W.3d` (Tex. Sup. Ct.),
   1 `F.4th`, 1 `So. 3d`.
-- **Year:** 21 of 24 cases were filed 2021 or later. Consistent with
-  citation-index ingestion lag for recent opinions.
+- **Year:** 18 of 24 cases were filed 2021 or later (75%); 16 of 24
+  (67%) filed 2022 or later. Consistent with citation-index ingestion
+  lag for recent opinions.
 - **Tier:** 14 Federal_District, 5 State_IAC, 4 State_COLR, 1 Circuit,
   0 SCOTUS.
 
@@ -268,12 +270,12 @@ MDL dockets. Fix is in `16_audit_rescues.py`; no CL action needed.
 ### Citation-type breakdown
 
 *Figure 5.  Reporter type within the 43 lookup misses, split by court
-tier.  Westlaw cites account for 56% of the misses; all are federal
+tier.  Westlaw cites account for 58% of the misses; all are federal
 district. NY A.D.3d and Tex S.W.3d are the next clusters.*
 
 | Cite type | Federal_District | Circuit | State_COLR | State_IAC | Total |
 |---|---|---|---|---|---|
-| Westlaw (`YYYY WL N`) | 24 | 0 | 0 | 0 | **24** |
+| Westlaw (`YYYY WL N`) | 25 | 0 | 0 | 0 | **25** |
 | NY A.D.3d (parallel-cite gap) | 0 | 0 | 0 | 5 | **5** |
 | California reporters | 0 | 0 | 1 | 5 | **6** |
 | Tex S.W.3d | 0 | 0 | 2 | 0 | **2** |
@@ -281,9 +283,9 @@ district. NY A.D.3d and Tex S.W.3d are the next clusters.*
 | `F.4th` | 0 | 2 | 0 | 0 | 2 |
 | `So.` reporters | 0 | 0 | 1 | 0 | 1 |
 
-Westlaw cites account for 56% of the lookup misses. All are federal
-district — most district court opinions don't appear in print
-reporters, so the WL cite is often the only citable form, and
+Westlaw cites account for 58% of the lookup misses (25 of 43). All
+are federal district — most district court opinions don't appear in
+print reporters, so the WL cite is often the only citable form, and
 citation_lookup's resolution to a cluster depends on someone having
 put the WL cite in `citations[]`.
 
@@ -297,10 +299,11 @@ put the WL cite in `citations[]`.
    clusters in CL with empty `citations[]`, plus the 5 NY A.D.3d cases
    whose clusters have only the slip-op cite indexed (needing the
    parallel A.D.3d cite added) — scanning the print reporters will
-   populate or add these. This would also resolve the 5 caption-
-   divergent sub-cases automatically, since `/citation-lookup/` would
-   hit the cluster directly without needing to reason about the
-   caption.
+   populate or add these. Note that the 5 caption-divergent cases
+   (Rule 25(d) / SSA pseudonym) are NOT addressed here: those are all
+   WL-only district court opinions with no print reporter equivalent.
+   Recommendation 4 (RECAP brief mining) is the lever for those plus
+   the broader WL bucket.
 
 2. **Back-fill opinion clusters from free RECAP documents that
    bypassed the live `scrape_pacer_free_opinions` window.** A periodic
@@ -319,7 +322,7 @@ put the WL cite in `citations[]`.
    ongoing gap.
 
 4. **Mine RECAP for WL ↔ cluster mappings.** The scanning project
-   only addresses print reporters; it won't touch the 17 WL cases
+   only addresses print reporters; it won't touch the 25 WL cases
    that are the single largest miss bucket. CL's RECAP archive,
    however, has millions of briefs/motions that cite cases by *both*
    their WL number *and* their case name (and often docket/year/
