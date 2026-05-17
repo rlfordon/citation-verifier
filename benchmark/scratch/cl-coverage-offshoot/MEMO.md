@@ -112,11 +112,24 @@ recent appellate. SCOTUS shows no gap at all.
 *Figure 3.  Where the 221 measurable citations end up.  Distribution
 across the four buckets above.*
 
-The 8 not-found rows split as: 6 `not_in_cl` (no plausible match in
-either opinion search or RECAP — for some, manual investigation could
-not find them either), 5 of these were `rescue_was_false_positive`
-(citation-verifier's fallback found a wrong cluster; audit correctly
-rejected; right cluster also unfindable manually).
+Closer inspection makes clear the 8 not-found rows aren't equivalent.
+Three are true structural CL gaps for Westlaw/Lexis-only district
+court orders that never appeared in bound reporters and weren't in
+Harvard CAP's scan (*In re Rose Way*, *In re Wilson*, *In re
+Wilmington Trust* — though Wilmington Trust is findable in CL as a
+RECAP docket entry, just never promoted to a cluster). One more is a
+chronic state-IAC coverage gap (*Iglesias*, Fla. 3d DCA). One is an
+Ill. App. Rule 23 unpublished order served from a separate URL
+pattern, compounded by a citation-side typo (*People v. Thurman*).
+One is a clean single-day Juriscraper miss on the 5th Cir. that
+should be filed as a bug (*Terry Black's Barbecue*, Jan. 5, 2022 —
+every neighboring page from that week is in CL). One is a Court of
+Appeals motion-for-leave-to-appeal denial published only as a table
+row, not a substantive opinion (*Azad*). And one (*People v.
+Campbell*, 243 A.D.3d 1221) appears not to exist in any reporter at
+that volume/page combination and is most likely a hallucinated cite
+in the citing brief. So the real "CL fundamentally can't reach this"
+count is closer to 4 than 8.
 
 §   §   §
 
