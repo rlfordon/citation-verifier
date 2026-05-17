@@ -137,9 +137,12 @@ DIAGNOSIS_TO_COVERAGE = {
     "cl_lookup_indexed_but_missed":    "in_opinions",  # defensive — would be a CL bug
     # RECAP-only — case in PACER docket but no opinion cluster ingested
     "cl_docket_only_no_cluster":       "in_recap",
-    # Manual-override diagnoses (3 user-investigated discoverability patterns)
+    # Manual-override diagnoses (user-investigated discoverability patterns)
     "caption_divergence_rule_25d":     "in_opinions",
     "ssa_pseudonym":                   "in_opinions",
+    "cl_cluster_parallel_cite_missing": "in_opinions",  # 5 NY A.D.3d cases (slip op only)
+    "cl_cluster_extraction_mismatch":  "in_opinions",   # Frankling/Franlink — pipeline-side issue
+    "verifier_audit_date_bug":         "in_opinions",   # In re Local TV — audit-side bug
     # Not in CL (or audit rejected the rescue)
     "not_in_cl":                       "not_found_anywhere",
     "rescue_was_false_positive":       "not_found_anywhere",
