@@ -10,28 +10,30 @@ until then it lives at `benchmark/scratch/cl-coverage-offshoot/`.
 
 ## Results
 
-| Tier | In CL | Denom | Coverage |
-|---|---|---|---|
-| SCOTUS | 45 | 45 | 100.0% |
-| Circuit | 44 | 46 | 95.7% |
-| State_COLR | 40 | 44 | 90.9% |
-| State_IAC | 31 | 38 | 81.6% |
-| Federal_District | 44 | 48 | 91.7% |
-| **OVERALL** | **204** | **221** | **92.3%** |
+| Tier | Found via lookup | + verifier-auto | + manual | Total in CL | Denom | Lookup rate | Total coverage |
+|---|---|---|---|---|---|---|---|
+| SCOTUS | 45 | +0 | +0 | 45 | 45 | 100.0% | 100.0% |
+| Circuit | 43 | +1 | +1 | 45 | 46 | 93.5% | 97.8% |
+| State_COLR | 38 | +2 | +2 | 42 | 44 | 86.4% | 95.5% |
+| State_IAC | 26 | +5 | +5 | 36 | 38 | 68.4% | 94.7% |
+| Federal_District | 18 | +19 | +8 | 45 | 48 | 37.5% | 93.8% |
+| **OVERALL** | **170** | **+27** | **+16** | **213** | **221** | **76.9%** | **96.4%** |
 
-The 34 lookup misses where the case nonetheless lives in CL fall into
-two patterns:
+The 43 lookup misses (cases in CL that `/citation-lookup/` didn't
+resolve) fall into a few patterns:
 
-- `cl_cluster_citations_empty` (27) — opinion cluster in CL but its
-  `citations[]` array is empty, so `/citation-lookup/` can't resolve
-  the cite. citation-verifier's name+date+court fallback recovers it
-  most of the time. 5 of these 27 also had a caption change (Rule
-  25(d), Doe reveal, SSA pseudonym) that required manual review.
-- `cl_docket_only_no_cluster` (7) — case sits in CL's RECAP/PACER
-  archive as a docket but no opinion cluster was ingested.
+- **35** cases where the cluster exists but the citation index is
+  incomplete — `citations[]` empty entirely (30, including 5 with a
+  caption-divergent cited form from Rule 25(d) substitution / Doe
+  reveal / SSA pseudonym), or populated with only the slip-op cite
+  for 5 NY A.D.3d cases.
+- **7** cases that are docket-only in RECAP, with no opinion cluster
+  ever created.
+- **1** is a pipeline-side normalization issue (extracted as
+  `50 F 4th 432` instead of `50 F.4th 432`) — the cluster is fine in
+  CL.
 
-Full narrative: [`MEMO.md`](MEMO.md). Reader-friendly HTML version:
-[`coverage_memo.html`](coverage_memo.html).
+Full narrative: [`coverage_memo.docx`](coverage_memo.docx).
 
 ## Pipeline
 
@@ -42,7 +44,7 @@ minutes depending on CL API responsiveness.
 | # | Script | What it does |
 |---|---|---|
 | 10 | `10_mine_citing_opinions.py` | Mines 78 citing opinions from CL (federal + state, 2023–2026). Writes one `.txt` per cluster to `citing_opinions/`. |
-| 11 | `11_run_extraction.py` | Drives `extract_citations.py` over each mined opinion. Writes one `.json` per cluster to `real_extractions/`. Uses Anthropic Haiku via `claude -p` rather than eyecite — see [MEMO §Methodology](MEMO.md#methodology) for the tradeoffs (paren-attribution bug, smart-quote contamination, slip-opinion placeholder absorption, plus LLM-only fields like `court_hint` / `month` / `day` / `docket_number`). |
+| 11 | `11_run_extraction.py` | Drives `extract_citations.py` over each mined opinion. Writes one `.json` per cluster to `real_extractions/`. Uses Anthropic Haiku via `claude -p` rather than eyecite — eyecite has known issues extracting case names and parentheticals from PDF text and from opinions with slip-opinion placeholders or smart quotes. |
 | 12 | `12_stratify.py` | Pre-filters short-form / foreign citations; dedups; applies K=5 per-opinion cap; stratifies 50 per tier across SCOTUS / Circuit / State_COLR / State_IAC / Federal_District. Writes `final_pool.csv` (all tiers post-dedup-and-cap) and `final_200.csv` (the 250-row stratified sample). |
 | 13 | `13_lookup_coverage.py` | Phase 4: runs `/citation-lookup/` on every row of `final_200.csv`. Writes `coverage_per_citation.csv`, `coverage_per_tier.csv`, `coverage_summary.md`. |
 | 15 | `15_staged_fallback_rigorous.py` | Phase 4c: citation-verifier name-based fallback against opinion search and RECAP search for the NOT_FOUND rows from Phase 4. Multi-factor scoring (name + court + date + docket). Writes `staged_fallback_rigorous_per_row.csv`. |
@@ -62,12 +64,10 @@ fallback path for unpublished district court opinions.
 
 | File | What it is |
 |---|---|
-| `MEMO.md` | The findings memo, drafted for FLP/CL |
-| `coverage_memo.html` | Standalone HTML version of the memo, with embedded Chart.js charts (built externally) |
-| `unified_review.csv` | Full audit trail — 35 columns × 250 rows. The canonical row-by-row record of every decision the pipeline made. |
+| `coverage_memo.docx` | The findings memo, drafted for FLP/CL (Word doc with charts; primary deliverable) |
+| `unified_review.csv` | Full audit trail — 37 columns × 250 rows. The canonical row-by-row record of every decision the pipeline made. |
 | `unified_review_concise.csv` | Reviewer-facing view — 9 columns × 250 rows. Filter on `coverage` for the headline number; on `diagnosis` for the mechanism. |
-| `unified_review.xlsx` | Excel-friendly version of `unified_review.csv` for non-coders. **Note:** regenerated by hand from the CSV; not produced by any script. |
-| `manual_corrections.csv` | 7 user-investigated false negatives (3 Rule 25(d) / 2 SSA pseudonym / 2 docket-only edge cases). Joined into `unified_review.csv` by 17 to override the pipeline's verdict. |
+| `manual_corrections.csv` | 16 user-investigated rescues (7 original from the initial false-negative review: 3 Rule 25(d), 2 SSA pseudonym, 2 docket-only edge cases; plus 9 from a follow-up review of cases that initially appeared not-found: 5 NY A.D.3d parallel-cite gap, 2 Texas S.W.3d cluster-empty, 1 F.4th extraction mismatch, 1 RECAP audit-date edge case). Joined into `unified_review.csv` by 17 to override the pipeline's verdict. |
 | `recap_diagnosis.csv` | Sub-classification of the 7 `in_recap` rows by why CL didn't create an opinion cluster. Joined into `unified_review.csv` by 17. |
 
 ## Intermediate data (the pipeline depends on these)
@@ -85,11 +85,12 @@ fallback path for unpublished district court opinions.
 
 ## Reference docs
 
-- [`MEMO.md`](MEMO.md) — primary deliverable, the findings memo
-- [`HANDOFF.md`](HANDOFF.md) — mid-project handoff note (pre-pivot session
-  context); kept for the design-decision provenance it captures
+- [`coverage_memo.docx`](coverage_memo.docx) — primary deliverable,
+  the findings memo (Word doc with embedded charts)
+- [`HANDOFF.md`](HANDOFF.md) — mid-project handoff note (pre-pivot
+  session context); kept for the design-decision provenance
 - [`LIMITATIONS.md`](LIMITATIONS.md) — caveats predating the memo;
-  most are now folded into MEMO.md's Caveats section
+  most are folded into the memo's Caveats section
 - [`REAL_RUN_DESIGN.md`](REAL_RUN_DESIGN.md) — design doc for the
   current (post-pilot) pipeline; useful if you want to understand the
   shape decisions (K=5 cap, stratification, etc.)
