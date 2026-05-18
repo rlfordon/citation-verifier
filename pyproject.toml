@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "citation-verifier"
-version = "0.1.0"
+version = "0.2.0"
 description = "Verify legal citations against CourtListener"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
@@ -44,4 +44,4 @@ markers = [
     "live_api: tests that hit the real CourtListener API (deselect with -m 'not live_api')",
 ]
 addopts = "-m 'not live_api'"
-testpaths = ["tests", "benchmark/runners/tests"]
+testpaths = ["tests"]

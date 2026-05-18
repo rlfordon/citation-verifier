@@ -1,6 +1,0 @@
-tier,n,VERIFIED,LIKELY_REAL,POSSIBLE_MATCH,NOT_FOUND,in_cl,miss_rate_pct
-SCOTUS,50,47,0,0,3,47,6.0
-Circuit,50,42,0,1,7,43,14.0
-State_COLR,50,41,0,0,9,41,18.0
-State_IAC,50,26,0,0,24,26,48.0
-Federal_District,50,19,0,0,31,19,62.0

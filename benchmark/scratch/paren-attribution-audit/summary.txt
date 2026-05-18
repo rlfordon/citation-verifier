@@ -1,8 +1,0 @@
-Parenthetical-attribution audit pack -- 30 random non-Red Sonnet@FT gold pairs (seed=42)
-
-Total pairs: 30
-Heuristic clean (cited name found in preceding 500c): 24
-Heuristic flagged (cited name NOT in preceding 500c): 6
-Unfound (parenthetical not located in citing opinion):  0
-
-Next step: open audit_pack.csv, read ctx_before / matched_paren / ctx_after for each row, and fill in user_classification (bug | clean | ambiguous) plus user_notes. Heuristic flags are a hint, not ground truth -- the false-positive rate is unknown until the manual pass classifies enough rows. Same review method as the 2026-05-04 5-Red audit.

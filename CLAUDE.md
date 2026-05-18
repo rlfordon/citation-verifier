@@ -6,19 +6,6 @@ Legal citation verification tool that checks citations against [CourtListener](h
 
 Uses a forked [eyecite](https://github.com/freelawproject/eyecite) (rlfordon/eyecite branch `fix-pdf-metadata-parsing`) with PDF parsing improvements: apostrophe preservation in case names, single newline = space (PDF line breaks), consecutive newlines = paragraph break. Installed as editable: `pip install -e /Users/fordon.4/Projects/eyecite`.
 
-## Benchmark sub-project
-
-A separate effort lives at [`benchmark/`](benchmark/) — a case-law retrieval benchmark
-that depends on this verifier but is otherwise self-contained. See
-[`benchmark/README.md`](benchmark/README.md) for orientation, [`benchmark/docs/plans/benchmark-roadmap.md`](benchmark/docs/plans/benchmark-roadmap.md)
-for the engineering roadmap, and [`benchmark/docs/plans/2026-05-05-publication-plan.md`](benchmark/docs/plans/2026-05-05-publication-plan.md)
-for the publication track.
-
-The `gold_db.py` module under `src/citation_verifier/gold_db.py` is the
-benchmark's persistence layer but ships in this package because it's
-reusable infrastructure. The SQLite database, schema, and exports live
-under `benchmark/gold_db/`.
-
 ## Workflow Preferences
 
 - **Always commit and push all changes** (not just code). Working data in `scratch/`, CSV files, etc. should all be committed and pushed unless gitignored. The user works across multiple computers and uses git to sync everything.

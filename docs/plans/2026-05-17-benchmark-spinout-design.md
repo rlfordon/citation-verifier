@@ -2,7 +2,7 @@
 
 **Date:** 2026-05-17
 **Status:** Approved, ready for implementation plan
-**Supersedes:** [`benchmark/docs/plans/benchmark-spinout-prep.md`](../../benchmark/docs/plans/benchmark-spinout-prep.md) (the earlier "API-stability prep" framing — this design moves benchmark out now, accepting that citation-verifier's library API is not yet formalized)
+**Supersedes:** `benchmark/docs/plans/benchmark-spinout-prep.md` (preserved in git history before commit that deleted `benchmark/` — the earlier "API-stability prep" framing, walked back in favor of moving benchmark out now)
 
 ---
 

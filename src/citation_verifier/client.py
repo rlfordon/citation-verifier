@@ -24,8 +24,7 @@ load_dotenv(_env_path)
 # CL opinion content can live in several fields. `plain_text` is empty for
 # many state opinions (and some older federal ones); `html_lawbox` and
 # `xml_harvard` cover most of the gap. This list is the canonical fallback
-# order used everywhere we need opinion text. Keep in sync with any local
-# fallback chains in benchmark/pilot_a/score.py.
+# order used everywhere we need opinion text.
 _OPINION_HTML_FIELDS: tuple[str, ...] = (
     "html_with_citations",
     "html",

@@ -1,9 +1,0 @@
-run_id: v1-score-20260504-0447
-Loaded 600 (model, example) cells
-Verifying extracted citations...
-Resuming: 600 cells already scored
-
-Wrote C:\Users\Rebecca Fordon\Projects\citation-verifier\benchmark_v1\results.csv
-Assessor cost this run: $0.00
-rolling_recheck: re-scoring 10 random pairs under prompt_version='v1-drift-v1-score-20260504-0447'
-rolling_recheck: recorded 10 drift samples
