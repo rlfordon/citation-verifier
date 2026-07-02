@@ -168,3 +168,41 @@ class TestDryRun:
                           corpora=("payne",))
         out = capsys.readouterr().out
         assert "assess jobs" in out
+
+
+def test_hybrid_arm_runs_triage_and_guards_vacuous(tmp_path):
+    """The frozen corpora lack triage_track; the hybrid branch must run
+    run_triage on the copy so Sonnet actually fires. With a corpus that
+    triages to some fast-track claims, the fake factory's fast executor
+    must see >=1 claim."""
+    import tools.ab_test_runner as abr
+    from citation_verifier.executor import Verdict
+
+    class _Fake:
+        def __init__(self, model):
+            self.model = model
+            self.failures = []
+            self.seen = []
+        def run(self, jobs):
+            out = []
+            for job in jobs:
+                for cid in job.claim_ids:
+                    self.seen.append(cid)
+                    out.append(Verdict(claim_id=cid,
+                        fields={"support": "supported"},
+                        model=self.model, prompt_version=job.prompt_version))
+            return out
+
+    made = {}
+    def factory(config, workdir, phase):
+        ex = _Fake(config.get("model", "?"))
+        made.setdefault(config.get("model"), ex)
+        return ex
+
+    config = {"route": "hybrid", "fast_model": "claude-sonnet-5",
+              "full_model": "claude-opus-4-8", "executor": "api",
+              "prompt_version": "assess-v2"}
+    abr.run_ab_config("hybrid-test", config, corpora=["withers"],
+                      run_root=tmp_path, executor_factory=factory)
+    # The Sonnet (fast) executor must have seen at least one fast-track claim.
+    assert made["claude-sonnet-5"].seen, "Sonnet never ran -- vacuous arm"
