@@ -166,3 +166,48 @@ persisted verdict short-circuits both passes for that claim.
 - Prescreen deletion (F4 — independent cleanup).
 - Deleting the triage verb (F2 supersedes the "delete it" alternative by
   giving `triage_track` a consumer).
+
+## Validation outcome (2026-07-02) — FAILED gate, shelved
+
+Ran the metered `hybrid-v2-api` arm over withers/payne/wainwright (Sonnet
+`claude-sonnet-5` fast-track + Opus `claude-opus-4-8` escalation, API
+transport). Same-day Opus control was skipped; misses were attributed by
+authoring model instead (cleaner than a variance control). Score rows:
+`scratch/ab_runs/ab_hybrid-v2-api_20260702-095708.jsonl`.
+
+**Gate scorecard:**
+
+| Criterion | Threshold | Result | |
+|---|---|---|---|
+| withers yellows | >= 14 | 16 | pass |
+| reds (withers hallucinations) | 3/3 | 3/3 | pass |
+| A/B accuracy (payne+wainwright) | >= 55/61 | 57/61 | pass |
+| 0 lenient-direction errors on A/B set | 0 | 1 (payne-58) | **HARD FAIL** |
+
+**Diagnosis (why we shelved, not shipped):**
+
+- The gate-failing A/B lenient error, **payne-58 (Yellow -> Green,
+  support="supported"), was authored by Opus**, not Sonnet — a pure-Opus
+  arm makes the identical call, so this is Opus model variance, not a
+  routing regression. (The recorded opus-v2 baseline's lone lenient miss
+  was payne-03; hybrid got payne-03 right this run and tripped payne-58 —
+  a variance shuffle.) On the A/B set Sonnet made zero errors (6 payne +
+  19 wainwright kept, all correct; wainwright 34/34).
+- **But** on withers (not in the gate's lenient scope; still cleared
+  yellows >= 14), **Sonnet kept two Yellow claims as "supported"/Green
+  (withers-32, withers-49)** — genuine fast-track false-negatives that
+  escalation cannot catch because "supported" is exactly the kept verdict.
+  This is the fast-track risk the plan flagged, observed twice.
+- **Cost undershoots target.** Escalation rate: withers 74% (14/19),
+  payne 50% (6/12), wainwright 9.5% (2/21). Hybrid total ~$8.06/90 claims
+  (incl. $1.53 discarded Sonnet). Rough all-Opus estimate ~$9.8 -> only
+  ~18% savings vs the 25-35% target; withers' high escalation makes Opus
+  do most of the work anyway and nearly erases the savings there. Only
+  wainwright (low escalation) delivers the promised savings.
+
+**Disposition:** code is correct and merged-ready (fast pipeline fired,
+escalation invariant held, math reconciles), but `--route hybrid` stays
+**opt-in and unrecommended**. Not shipped as a default. Revisit only with
+routing tuning (stricter fast-track admission, or escalate Sonnet
+"supported" when quote/floor signals are weak) to cut the withers
+false-negatives and raise the escalation-avoidance rate.
