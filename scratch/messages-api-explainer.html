@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three Switches That Decide What a Batch of Claude Calls Costs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f7f6f2;
+    --paper-tint: #eeece4;
+    --ink: #16181c;
+    --ink-soft: #4a4d54;
+    --ink-faint: #8a8d94;
+    --line: #dcdad2;
+    --panel-bg: #13161c;
+    --panel-bg-2: #1a1e26;
+    --panel-line: #2c313c;
+    --panel-ink: #eef0f4;
+    --panel-ink-soft: #9aa0ac;
+    --go: #1c9d6d;
+    --go-dim: #16794f;
+    --go-glow: rgba(28, 157, 109, 0.35);
+    --warn: #c1443a;
+    --warn-dim: #9c362e;
+    --warn-glow: rgba(193, 68, 58, 0.32);
+    --amber: #c47a1f;
+
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "Source Serif 4", Georgia, serif;
+    --font-mono: "IBM Plex Mono", monospace;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+    --space-7: 64px;
+    --space-8: 96px;
+
+    --measure: 66ch;
+    --container: 1180px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-padding-top: 64px; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .display {
+    font-family: var(--font-display);
+    color: var(--ink);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  p { margin: 0 0 1em; }
+  p:last-child { margin-bottom: 0; }
+
+  .wrap {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+  }
+
+  .prose { max-width: var(--measure); }
+
+  .eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--go-dim);
+    margin-bottom: var(--space-2);
+    display: block;
+  }
+
+  section { padding: var(--space-7) 0; }
+  section.band { background: var(--paper-tint); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
+  /* ---------- nav ---------- */
+  .topnav {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(247,246,242,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topnav .wrap { display: flex; align-items: center; justify-content: space-between; padding-top: var(--space-2); padding-bottom: var(--space-2); }
+  .topnav .brand { font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: 0.02em; }
+  .topnav .links { display: flex; gap: var(--space-4); }
+  .topnav a { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--ink-soft); text-decoration: none; }
+  .topnav a:hover { color: var(--go-dim); }
+  @media (max-width: 720px) { .topnav .links { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero { padding: var(--space-7) 0 var(--space-6); }
+  .hero h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 700; max-width: 16ch; }
+  .hero .dek { font-size: 20px; color: var(--ink-soft); max-width: 58ch; margin-top: var(--space-4); font-family: var(--font-body); }
+  .hero .dek strong { color: var(--ink); font-weight: 600; }
+  .hero-panel {
+    margin-top: var(--space-6);
+    background: linear-gradient(180deg, var(--panel-bg) 0%, var(--panel-bg-2) 100%);
+    border-radius: 14px;
+    padding: var(--space-5) var(--space-5);
+    display: flex; gap: var(--space-6); flex-wrap: wrap; align-items: center;
+    border: 1px solid var(--panel-line);
+  }
+  .hero-stat { flex: 1 1 160px; }
+  .hero-stat .k { font-family: var(--font-mono); font-weight: 600; font-size: 30px; color: var(--panel-ink); }
+  .hero-stat .k.go { color: var(--go); }
+  .hero-stat .k.warn { color: var(--warn); }
+  .hero-stat .l { font-family: var(--font-display); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--panel-ink-soft); margin-top: 2px; }
+  .hero-stat .sub { font-family: var(--font-mono); font-size: 12px; color: var(--panel-ink-soft); margin-top: 6px; }
+
+  /* ---------- generic section heading ---------- */
+  .sec-head { max-width: var(--measure); margin-bottom: var(--space-5); }
+  .sec-head h2 { font-size: clamp(24px, 3vw, 32px); font-weight: 600; }
+  .sec-head .lede { color: var(--ink-soft); font-size: 18px; margin-top: var(--space-2); }
+
+  /* ---------- endpoint diagram ---------- */
+  .endpoint-row { display: flex; gap: var(--space-4); align-items: stretch; flex-wrap: wrap; margin-top: var(--space-5); }
+  .endpoint-box {
+    flex: 1 1 260px; background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: var(--space-4); position: relative;
+  }
+  .endpoint-box .tag { font-family: var(--font-mono); font-size: 12px; color: var(--go-dim); font-weight: 600; }
+  .endpoint-box h3 { font-size: 17px; margin-top: var(--space-2); font-weight: 600; }
+  .endpoint-box p { color: var(--ink-soft); font-size: 15.5px; margin-top: var(--space-2); }
+  .endpoint-core {
+    flex: 1 1 260px; background: var(--panel-bg); border-radius: 10px; padding: var(--space-4);
+    display: flex; flex-direction: column; justify-content: center; text-align: center;
+    border: 1px solid var(--panel-line);
+  }
+  .endpoint-core .code { font-family: var(--font-mono); color: var(--go); font-size: 15px; font-weight: 600; }
+  .endpoint-core p { color: var(--panel-ink-soft); font-size: 14.5px; margin-top: var(--space-2); }
+  .endpoint-arrow { display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 22px; flex: 0 0 auto; }
+  @media (max-width: 860px) { .endpoint-arrow { transform: rotate(90deg); } }
+
+  /* ---------- three switches intro ---------- */
+  .switch-intro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-top: var(--space-5); }
+  @media (max-width: 860px) { .switch-intro-grid { grid-template-columns: 1fr; } }
+  .switch-intro-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: var(--space-4); }
+  .switch-intro-card .num { font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); }
+  .switch-intro-card h3 { font-size: 18px; margin-top: var(--space-1); font-weight: 600; }
+  .switch-intro-card .vs { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3); font-family: var(--font-display); font-weight: 600; font-size: 14px; }
+  .switch-intro-card .vs .a { color: var(--warn); }
+  .switch-intro-card .vs .b { color: var(--go-dim); }
+  .switch-intro-card .vs .sep { color: var(--ink-faint); font-weight: 400; }
+  .switch-intro-card p { color: var(--ink-soft); font-size: 15.5px; margin-top: var(--space-3); }
+
+  /* ---------- centerpiece dispatch board ---------- */
+  .dispatch {
+    margin-top: var(--space-5);
+    background: radial-gradient(circle at 20% 0%, var(--panel-bg-2), var(--panel-bg) 60%);
+    border: 1px solid var(--panel-line);
+    border-radius: 16px;
+    padding: var(--space-5);
+  }
+  .dispatch-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
+  .dispatch-head .title { font-family: var(--font-display); color: var(--panel-ink); font-weight: 600; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .dispatch-head .n-count { font-family: var(--font-mono); color: var(--panel-ink-soft); font-size: 13px; }
+
+  .dispatch-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--space-6); align-items: start; }
+  @media (max-width: 900px) { .dispatch-body { grid-template-columns: 1fr; } }
+
+  .switch-row { border-top: 1px solid var(--panel-line); padding: var(--space-4) 0; }
+  .switch-row:first-child { border-top: none; padding-top: 0; }
+  .switch-row .row-label { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--panel-ink-soft); margin-bottom: var(--space-3); }
+
+  .rocker-track { display: flex; gap: 2px; background: #0b0d11; border-radius: 999px; padding: 3px; width: fit-content; border: 1px solid var(--panel-line); }
+  .rocker-opt {
+    font-family: var(--font-display); font-weight: 600; font-size: 13.5px;
+    padding: 9px 18px; border-radius: 999px; cursor: pointer; border: none;
+    background: transparent; color: var(--panel-ink-soft);
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .rocker-opt .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.35; }
+  .rocker-opt[aria-pressed="true"] { color: #0b0d11; }
+  .rocker-opt[aria-pressed="true"] .dot { opacity: 1; }
+  .rocker-opt.go[aria-pressed="true"] { background: var(--go); box-shadow: 0 0 14px var(--go-glow); }
+  .rocker-opt.warn[aria-pressed="true"] { background: var(--warn); box-shadow: 0 0 14px var(--warn-glow); }
+  .rocker-opt:disabled { opacity: 0.3; cursor: not-allowed; }
+  .switch-row .note { font-size: 13.5px; color: var(--panel-ink-soft); margin-top: var(--space-2); font-family: var(--font-body); min-height: 1.4em; }
+
+  .n-slider-wrap { margin-top: var(--space-2); }
+  .n-slider-wrap input[type=range] {
+    width: 100%; accent-color: var(--go); height: 4px;
+  }
+  .n-slider-wrap .n-labels { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11.5px; color: var(--panel-ink-soft); margin-top: 4px; }
+
+  .readout {
+    background: #0b0d11; border: 1px solid var(--panel-line); border-radius: 12px; padding: var(--space-5);
+    position: sticky; top: 80px;
+  }
+  .readout .r-label { font-family: var(--font-display); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--panel-ink-soft); }
+  .readout .r-value { font-family: var(--font-mono); font-weight: 600; font-size: 40px; margin-top: 6px; color: var(--panel-ink); transition: color 0.25s ease; }
+  .readout .r-sub { font-family: var(--font-mono); font-size: 13px; color: var(--panel-ink-soft); margin-top: 4px; }
+  .readout hr { border: none; border-top: 1px solid var(--panel-line); margin: var(--space-4) 0; }
+  .readout .r-badge { display: inline-block; margin-top: var(--space-3); font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; }
+  .readout .r-badge.go { background: var(--go-glow); color: var(--go); }
+  .readout .r-badge.warn { background: var(--warn-glow); color: #ef8377; }
+  .readout .r-badge.mid { background: rgba(196,122,31,0.28); color: #e2a04a; }
+
+  /* ---------- position strip ---------- */
+  .strip { margin-top: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+  .strip-row { display: grid; grid-template-columns: 170px repeat(3, 1fr); gap: var(--space-3); align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: var(--space-3) var(--space-4); }
+  @media (max-width: 780px) { .strip-row { grid-template-columns: 1fr; gap: var(--space-2); } }
+  .strip-row .tool-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; }
+  .strip-row .tool-name .sub { display: block; font-family: var(--font-mono); font-weight: 500; font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+  .chip { font-family: var(--font-display); font-size: 12.5px; font-weight: 600; padding: 5px 11px; border-radius: 999px; width: fit-content; }
+  .chip.warn { background: rgba(193,68,58,0.11); color: var(--warn-dim); }
+  .chip.go { background: rgba(28,157,109,0.12); color: var(--go-dim); }
+  .chip.mid { background: rgba(196,122,31,0.14); color: var(--amber); }
+
+  .strip-legend { display: flex; gap: var(--space-4); margin-top: var(--space-3); font-size: 13.5px; color: var(--ink-faint); flex-wrap: wrap; }
+
+  /* ---------- billing aside ---------- */
+  .aside {
+    margin-top: var(--space-5); background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--amber);
+    border-radius: 4px 10px 10px 4px; padding: var(--space-5);
+  }
+  .aside .a-label { font-family: var(--font-display); font-weight: 700; font-size: 12.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--amber); }
+  .aside p { margin-top: var(--space-3); color: var(--ink-soft); font-size: 17px; }
+  .aside p:first-of-type { margin-top: var(--space-3); }
+
+  /* ---------- predict-reveal demo ---------- */
+  .predict { margin-top: var(--space-5); background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: var(--space-5); }
+  .predict-q { font-family: var(--font-display); font-weight: 600; font-size: 19px; margin-bottom: var(--space-4); }
+  .predict-row { margin-bottom: var(--space-4); }
+  .predict-row label { display: flex; justify-content: space-between; font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+  .predict-row label .val { font-family: var(--font-mono); color: var(--ink); }
+  .predict-row input[type=range] { width: 100%; accent-color: var(--ink-faint); }
+  .btn { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; border: none; border-radius: 8px; padding: 12px 22px; cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease; }
+  .btn.primary { background: var(--go); color: #fff; box-shadow: 0 4px 14px rgba(28,157,109,0.35); }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn.ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+  .predict-actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); }
+
+  .reveal { margin-top: var(--space-5); display: none; }
+  .reveal.shown { display: block; }
+  .bar-group { margin-bottom: var(--space-4); padding-bottom: var(--space-4); }
+  .bar-group .bg-label { font-family: var(--font-display); font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .bar-track { position: relative; height: 34px; background: var(--paper-tint); border-radius: 6px; overflow: visible; }
+  .bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 6px; transition: width 0.6s cubic-bezier(.2,.8,.2,1); }
+  .bar-fill.actual { background: var(--go); }
+  .guess-marker { position: absolute; top: -4px; width: 2px; height: 42px; background: var(--warn); }
+  .guess-marker::after { content: attr(data-label); position: absolute; top: 44px; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 11px; color: var(--warn-dim); white-space: nowrap; }
+  .reveal-note { font-size: 15.5px; color: var(--ink-soft); margin-top: var(--space-3); }
+
+  /* ---------- takeaway ---------- */
+  .takeaway-panel { margin-top: var(--space-5); background: var(--panel-bg); border-radius: 14px; padding: var(--space-6); border: 1px solid var(--panel-line); }
+  .takeaway-panel h2 { color: var(--panel-ink); font-size: 24px; }
+  .takeaway-list { margin-top: var(--space-4); display: grid; gap: var(--space-3); }
+  .takeaway-item { display: flex; gap: var(--space-3); align-items: baseline; }
+  .takeaway-item .idx { font-family: var(--font-mono); color: var(--go); font-weight: 600; font-size: 15px; flex: 0 0 24px; }
+  .takeaway-item p { color: var(--panel-ink-soft); font-size: 16.5px; margin: 0; }
+  .takeaway-item strong { color: var(--panel-ink); }
+
+  footer { padding: var(--space-6) 0 var(--space-7); }
+  footer .prose { color: var(--ink-faint); font-size: 14.5px; }
+  footer a { color: var(--ink-soft); }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 0 var(--space-3); }
+    body { font-size: 16.5px; }
+    .readout { position: static; }
+  }
+</style>
+</head>
+<body data-review-toggle>
+
+<div class="topnav">
+  <div class="wrap">
+    <div class="brand">Three Switches</div>
+    <div class="links">
+      <a href="#switches">The switches</a>
+      <a href="#dispatch">Try it</a>
+      <a href="#billing">Billing mirage</a>
+      <a href="#takeaway">Takeaway</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Messages API · Agent SDK · claude&nbsp;-p · Batches API</span>
+    <h1>Three switches that decide what a batch of Claude calls costs</h1>
+    <p class="dek">Same model. Same task — verifying legal citations, one opinion at a time. <strong>$0.42 a claim and fifty minutes</strong> one way, <strong>$0.08 a claim and two and a half minutes</strong> the other. The difference wasn't the model. It was three separate choices about how the requests got made, stacked on top of each other without anyone deciding to stack them.</p>
+    <div class="hero-panel">
+      <div class="hero-stat">
+        <div class="k warn">$0.42</div>
+        <div class="l">Per claim, before</div>
+        <div class="sub">agentic · serial · real-time</div>
+      </div>
+      <div class="hero-stat">
+        <div class="k go">$0.08</div>
+        <div class="l">Per claim, after</div>
+        <div class="sub">single-shot · concurrent · real-time</div>
+      </div>
+      <div class="hero-stat">
+        <div class="k">~5x</div>
+        <div class="l">Cheaper</div>
+        <div class="sub">same model, same accuracy</div>
+      </div>
+      <div class="hero-stat">
+        <div class="k">~20x</div>
+        <div class="l">Faster</div>
+        <div class="sub">90 claims: ~50 min → ~2.5 min</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="one-endpoint">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">§1 · The primitive</span>
+      <h2>One endpoint, several ways of using it</h2>
+      <p class="lede">The Messages API is not a product with its own personality. It's a single HTTP endpoint that everything else is built on top of.</p>
+    </div>
+    <div class="endpoint-row">
+      <div class="endpoint-box">
+        <span class="tag">YOU SEND</span>
+        <h3>A list of messages</h3>
+        <p>System prompt, conversation so far, and — if you want — a document pasted right in. No memory of past calls, no state on Anthropic's side.</p>
+      </div>
+      <div class="endpoint-arrow">→</div>
+      <div class="endpoint-core">
+        <div class="code">POST /v1/messages</div>
+        <p>The base primitive. Every pattern below — agent, CLI, batch job — is a particular way of calling this one endpoint, not a different technology.</p>
+      </div>
+      <div class="endpoint-arrow">→</div>
+      <div class="endpoint-box">
+        <span class="tag">YOU GET BACK</span>
+        <h3>One completion</h3>
+        <p>A single response. What happens next — another call, a tool result, nothing — is entirely up to whatever's calling the endpoint.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="switches">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">§2 · The mental model</span>
+      <h2>Three switches, each set independently</h2>
+      <p class="lede">Every way of running a batch of Claude requests is really just a position on three separate dials. Conflating them is the easiest mistake to make — and the one that quietly cost 5x here.</p>
+    </div>
+    <div class="switch-intro-grid">
+      <div class="switch-intro-card">
+        <span class="num">SWITCH 1</span>
+        <h3>What the model can do mid-task</h3>
+        <div class="vs"><span class="a">Agentic</span><span class="sep">vs.</span><span class="b">Single-shot</span></div>
+        <p>Agentic means Claude gets tools — like <em>Read a file</em> — and decides turn by turn what to fetch, chaining many API calls with the conversation re-sent (and regrowing) each time. Single-shot means everything it needs is already in the prompt: one call, one answer.</p>
+      </div>
+      <div class="switch-intro-card">
+        <span class="num">SWITCH 2</span>
+        <h3>How many requests run at once</h3>
+        <div class="vs"><span class="a">Serial</span><span class="sep">vs.</span><span class="b">Concurrent</span></div>
+        <p>Serial waits for each request to finish before starting the next — wall-clock time is the sum of everything. Concurrent fires several independent requests at once, so wall-clock shrinks toward the slowest single one.</p>
+      </div>
+      <div class="switch-intro-card">
+        <span class="num">SWITCH 3</span>
+        <h3>When you need the answer</h3>
+        <div class="vs"><span class="a">Real-time</span><span class="sep">vs.</span><span class="b">Batch</span></div>
+        <p>Real-time answers in seconds. The Batches API queues up to 100K requests as one job, works through them within hours, and costs half as much — a trade of latency for a discount. It only works for self-contained, single-shot requests.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dispatch">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">§3 · Try it</span>
+      <h2>Flip the switches, watch the bill move</h2>
+      <p class="lede">Numbers below are today's real measured rates from a legal citation-verification pipeline — not universal constants, but the shape holds for most "process N independent things" workloads.</p>
+    </div>
+
+    <div class="dispatch">
+      <div class="dispatch-head">
+        <span class="title">Dispatch board — claims processed: <span id="nEcho">90</span></span>
+        <span class="n-count">real run: 90 claims, three legal briefs</span>
+      </div>
+      <div class="dispatch-body">
+        <div class="controls">
+          <div class="switch-row">
+            <div class="row-label">Switch 1 · Mode</div>
+            <div class="rocker-track" role="group" aria-label="Mode">
+              <button class="rocker-opt warn" id="btnAgentic" aria-pressed="true"><span class="dot"></span>Agentic</button>
+              <button class="rocker-opt go" id="btnSingle" aria-pressed="false"><span class="dot"></span>Single-shot</button>
+            </div>
+            <div class="note">Agentic: Claude reads the opinion itself, turn by turn, via a tool call. Single-shot: the opinion is pasted straight into the prompt.</div>
+          </div>
+          <div class="switch-row">
+            <div class="row-label">Switch 2 · Pacing</div>
+            <div class="rocker-track" role="group" aria-label="Pacing">
+              <button class="rocker-opt warn" id="btnSerial" aria-pressed="true"><span class="dot"></span>Serial</button>
+              <button class="rocker-opt go" id="btnConcurrent" aria-pressed="false"><span class="dot"></span>Concurrent (×8)</button>
+            </div>
+            <div class="note" id="pacingNote">One request at a time.</div>
+          </div>
+          <div class="switch-row">
+            <div class="row-label">Switch 3 · Timing</div>
+            <div class="rocker-track" role="group" aria-label="Timing">
+              <button class="rocker-opt warn" id="btnRealtime" aria-pressed="true"><span class="dot"></span>Real-time</button>
+              <button class="rocker-opt go" id="btnBatch" aria-pressed="false"><span class="dot"></span>Batch (−50%)</button>
+            </div>
+            <div class="note" id="timingNote">Answer comes back immediately.</div>
+          </div>
+          <div class="switch-row">
+            <div class="row-label">Claims in this run</div>
+            <div class="n-slider-wrap">
+              <input type="range" id="nSlider" min="10" max="300" step="10" value="90">
+              <div class="n-labels"><span>10</span><span>300 claims</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="readout">
+          <div class="r-label">Estimated total cost</div>
+          <div class="r-value" id="rCost">$7.20</div>
+          <div class="r-sub" id="rCostPer">$0.080 / claim</div>
+          <hr>
+          <div class="r-label">Estimated wall-clock</div>
+          <div class="r-value" id="rTime" style="font-size:28px;">2m 27s</div>
+          <div class="r-sub" id="rTimeDetail">8 requests in flight at once</div>
+          <span class="r-badge go" id="rBadge">Efficient corner</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip">
+      <div class="strip-legend"><span>Where the real tools from today actually sit:</span></div>
+      <div class="strip-row">
+        <div class="tool-name">claude&nbsp;-p<span class="sub">headless CLI</span></div>
+        <span class="chip warn">Agentic</span>
+        <span class="chip warn">Usually serial</span>
+        <span class="chip warn">Real-time</span>
+      </div>
+      <div class="strip-row">
+        <div class="tool-name">Agent SDK<span class="sub">today's "before"</span></div>
+        <span class="chip warn">Agentic</span>
+        <span class="chip warn">Serial</span>
+        <span class="chip warn">Real-time</span>
+      </div>
+      <div class="strip-row">
+        <div class="tool-name">Messages API<span class="sub">today's "after"</span></div>
+        <span class="chip go">Single-shot</span>
+        <span class="chip go">Concurrent</span>
+        <span class="chip warn">Real-time</span>
+      </div>
+      <div class="strip-row">
+        <div class="tool-name">Batches API<span class="sub">unused lever</span></div>
+        <span class="chip go">Single-shot</span>
+        <span class="chip mid">Queued</span>
+        <span class="chip go">Batch</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="billing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">§4 · The wrinkle</span>
+      <h2>Why the expensive corner can feel free</h2>
+      <p class="lede">There's a fourth thing that gets tangled up with the three switches, and it's the reason the agentic corner is so easy to reach for.</p>
+    </div>
+    <div class="aside">
+      <span class="a-label">Billing model ≠ architecture</span>
+      <p><strong>claude -p</strong> and the Agent SDK sit in the exact same corner: agentic, and usually serial, and real-time. But <strong>claude -p</strong> is often run through a Pro or Max subscription — a flat monthly fee with usage included — while the Agent SDK, used to build something outside an interactive session, is typically billed per token through the API.</p>
+      <p>Run the same agentic, serial task through a subscription instead of a metered key, and it looks free. It isn't — the compute cost is the same either way. Subscription vs. metered is a question of <em>who pays and how</em>, completely separate from the three architecture switches above. It's exactly why the Agent SDK path here felt reasonable at first: it was subscription-covered, right up until it wasn't, and the $0.42-a-claim bill that had been there the whole time became visible.</p>
+    </div>
+  </div>
+</section>
+
+<section id="predict">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">§5 · Before you scroll past this</span>
+      <h2>Guess the real numbers</h2>
+      <p class="lede">90 real claims, processed both ways today. Drag each slider to your guess, then reveal what actually happened.</p>
+    </div>
+    <div class="predict">
+      <div class="predict-q">How long did 90 claims take, start to finish?</div>
+      <div class="predict-row">
+        <label>Old way — agentic, serial <span class="val" id="guessOldLabel">25 min</span></label>
+        <input type="range" id="guessOld" min="1" max="90" value="25">
+      </div>
+      <div class="predict-row">
+        <label>New way — single-shot, concurrent <span class="val" id="guessNewLabel">5 min</span></label>
+        <input type="range" id="guessNew" min="1" max="30" value="5">
+      </div>
+      <div class="predict-actions">
+        <button class="btn primary" id="revealBtn">Reveal the real numbers</button>
+        <button class="btn ghost" id="resetBtn" style="display:none;">Guess again</button>
+      </div>
+
+      <div class="reveal" id="revealBlock">
+        <div class="bar-group">
+          <div class="bg-label"><span>Old way (agentic, serial)</span><span>~50 min</span></div>
+          <div class="bar-track">
+            <div class="bar-fill actual" id="barOld" style="width:0%; background: var(--warn);"></div>
+            <div class="guess-marker" id="markerOld" data-label="your guess"></div>
+          </div>
+        </div>
+        <div class="bar-group">
+          <div class="bg-label"><span>New way (single-shot, concurrent)</span><span>~2.5 min</span></div>
+          <div class="bar-track">
+            <div class="bar-fill actual" id="barNew" style="width:0%;"></div>
+            <div class="guess-marker" id="markerNew" data-label="your guess"></div>
+          </div>
+        </div>
+        <p class="reveal-note">Both processed the exact same 90 claims through the exact same model. The gap is entirely the serial-vs-concurrent switch plus the agentic-vs-single-shot switch, stacked.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="takeaway">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">§6 · The takeaway</span>
+      <h2>Pick each switch on purpose</h2>
+    </div>
+    <div class="takeaway-panel">
+      <h2>Three switches. Set each one deliberately.</h2>
+      <div class="takeaway-list">
+        <div class="takeaway-item"><span class="idx">01</span><p><strong>Does the model actually need tools?</strong> If everything it needs fits in the prompt, agentic is pure overhead — you're paying for a negotiation the task never asked for.</p></div>
+        <div class="takeaway-item"><span class="idx">02</span><p><strong>Are the requests independent?</strong> If claim 12 doesn't depend on claim 11, there is no reason to run them serially. Concurrent costs the same per call and finishes in a fraction of the time.</p></div>
+        <div class="takeaway-item"><span class="idx">03</span><p><strong>Do you need the answer right now?</strong> If not, the Batches API is 50% off sitting unused for most workloads that already tolerate "later today."</p></div>
+        <div class="takeaway-item"><span class="idx">04</span><p><strong>Separate the bill from the architecture.</strong> A subscription can hide a metered cost; it can't make an inefficient architecture efficient. Check what you'd pay if it weren't covered.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap prose">
+    <p>Cost and timing figures are real, measured numbers from a single legal-citation-verification pipeline processing 90 claims across three briefs on the same day, same model, same prompts, on both paths. They're illustrative of the shape of the trade-off, not a universal benchmark — your per-request overhead, document size, and concurrency ceiling will differ. Messages API, Agent SDK, and Batches API are Anthropic products; pricing and specific limits (e.g. batch turnaround, concurrency caps) can change — check current docs before budgeting a production workload on these exact figures.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var RATES = {
+    agenticCostPerClaim: 0.42,
+    agenticSecPerClaim: 35,
+    singleCostPerClaim: 0.08,
+    singleSecPerClaim: 13,
+    batchCostPerClaim: 0.04,
+  };
+  var CONCURRENCY = 8;
+
+  var state = { mode: 'agentic', pacing: 'serial', timing: 'realtime', n: 90 };
+
+  var els = {
+    btnAgentic: document.getElementById('btnAgentic'),
+    btnSingle: document.getElementById('btnSingle'),
+    btnSerial: document.getElementById('btnSerial'),
+    btnConcurrent: document.getElementById('btnConcurrent'),
+    btnRealtime: document.getElementById('btnRealtime'),
+    btnBatch: document.getElementById('btnBatch'),
+    nSlider: document.getElementById('nSlider'),
+    nEcho: document.getElementById('nEcho'),
+    rCost: document.getElementById('rCost'),
+    rCostPer: document.getElementById('rCostPer'),
+    rTime: document.getElementById('rTime'),
+    rTimeDetail: document.getElementById('rTimeDetail'),
+    rBadge: document.getElementById('rBadge'),
+    pacingNote: document.getElementById('pacingNote'),
+    timingNote: document.getElementById('timingNote'),
+  };
+
+  function fmtTime(sec) {
+    if (sec < 60) return Math.round(sec) + 's';
+    if (sec < 3600) {
+      var m = Math.floor(sec / 60), s = Math.round(sec % 60);
+      return m + 'm ' + s + 's';
+    }
+    var h = Math.floor(sec / 3600), m2 = Math.round((sec % 3600) / 60);
+    return h + 'h ' + m2 + 'm';
+  }
+
+  function setPressed(btn, on) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+
+  function render() {
+    var n = state.n;
+    els.nEcho.textContent = n;
+
+    setPressed(els.btnAgentic, state.mode === 'agentic');
+    setPressed(els.btnSingle, state.mode === 'single');
+    setPressed(els.btnSerial, state.pacing === 'serial');
+    setPressed(els.btnConcurrent, state.pacing === 'concurrent');
+    setPressed(els.btnRealtime, state.timing === 'realtime');
+    setPressed(els.btnBatch, state.timing === 'batch');
+
+    // Batch only valid for single-shot.
+    els.btnBatch.disabled = state.mode === 'agentic';
+    if (state.mode === 'agentic' && state.timing === 'batch') { state.timing = 'realtime'; }
+
+    // Pacing is moot once queued as a batch.
+    var pacingDisabled = state.timing === 'batch';
+    els.btnSerial.disabled = pacingDisabled;
+    els.btnConcurrent.disabled = pacingDisabled;
+
+    els.pacingNote.textContent = pacingDisabled
+      ? 'Batched requests are queued together — concurrency is Anthropic\'s problem, not yours.'
+      : (state.pacing === 'serial' ? 'One request at a time — wall-clock is the sum of every call.'
+                                    : 'Up to 8 requests in flight — wall-clock ≈ the slowest single call.');
+    els.timingNote.textContent = state.mode === 'agentic'
+      ? 'Batch isn\'t available here — a tool-using loop needs an immediate reply each turn, so it can\'t be queued as one self-contained request.'
+      : (state.timing === 'realtime' ? 'Answer comes back in seconds.' : 'Queued — results within hours, not seconds, for half the price.');
+
+    var cost, perClaimSec, wallSec, wallLabel, wallDetail;
+
+    if (state.mode === 'agentic') {
+      cost = RATES.agenticCostPerClaim * n;
+      perClaimSec = RATES.agenticSecPerClaim;
+      wallSec = state.pacing === 'concurrent' ? Math.max(perClaimSec, perClaimSec * n / CONCURRENCY) : perClaimSec * n;
+      wallLabel = fmtTime(wallSec);
+      wallDetail = state.pacing === 'concurrent' ? (CONCURRENCY + ' agent sessions in flight') : 'one agent session at a time';
+      els.rCostPer.textContent = '$' + RATES.agenticCostPerClaim.toFixed(3) + ' / claim';
+    } else if (state.timing === 'batch') {
+      cost = RATES.batchCostPerClaim * n;
+      wallLabel = '~1–24 hrs';
+      wallDetail = 'queued as one job, not real-time';
+      els.rCostPer.textContent = '$' + RATES.batchCostPerClaim.toFixed(3) + ' / claim (50% off)';
+    } else {
+      cost = RATES.singleCostPerClaim * n;
+      perClaimSec = RATES.singleSecPerClaim;
+      wallSec = state.pacing === 'concurrent' ? Math.max(perClaimSec, perClaimSec * n / CONCURRENCY) : perClaimSec * n;
+      wallLabel = fmtTime(wallSec);
+      wallDetail = state.pacing === 'concurrent' ? (CONCURRENCY + ' requests in flight at once') : 'one request at a time';
+      els.rCostPer.textContent = '$' + RATES.singleCostPerClaim.toFixed(3) + ' / claim';
+    }
+
+    els.rCost.textContent = '$' + cost.toFixed(2);
+    els.rTime.textContent = wallLabel;
+    els.rTimeDetail.textContent = wallDetail;
+
+    var expensive = state.mode === 'agentic' && state.pacing === 'serial';
+    var cheap = state.mode === 'single' && (state.pacing === 'concurrent' || state.timing === 'batch');
+    var tone = expensive ? 'var(--warn)' : (cheap ? 'var(--go)' : 'var(--panel-ink)');
+    els.rCost.style.color = tone;
+    els.rTime.style.color = tone;
+    els.rBadge.className = 'r-badge ' + (expensive ? 'warn' : (cheap ? 'go' : 'mid'));
+    els.rBadge.textContent = expensive ? 'Expensive corner' : (cheap ? 'Efficient corner' : 'In between');
+  }
+
+  els.btnAgentic.addEventListener('click', function () { state.mode = 'agentic'; render(); });
+  els.btnSingle.addEventListener('click', function () { state.mode = 'single'; render(); });
+  els.btnSerial.addEventListener('click', function () { if (!els.btnSerial.disabled) { state.pacing = 'serial'; render(); } });
+  els.btnConcurrent.addEventListener('click', function () { if (!els.btnConcurrent.disabled) { state.pacing = 'concurrent'; render(); } });
+  els.btnRealtime.addEventListener('click', function () { state.timing = 'realtime'; render(); });
+  els.btnBatch.addEventListener('click', function () { if (!els.btnBatch.disabled) { state.timing = 'batch'; render(); } });
+  els.nSlider.addEventListener('input', function () { state.n = parseInt(els.nSlider.value, 10); render(); });
+
+  render();
+
+  // ---- predict-then-reveal demo ----
+  var guessOld = document.getElementById('guessOld');
+  var guessNew = document.getElementById('guessNew');
+  var guessOldLabel = document.getElementById('guessOldLabel');
+  var guessNewLabel = document.getElementById('guessNewLabel');
+  var revealBtn = document.getElementById('revealBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var revealBlock = document.getElementById('revealBlock');
+  var barOld = document.getElementById('barOld');
+  var barNew = document.getElementById('barNew');
+  var markerOld = document.getElementById('markerOld');
+  var markerNew = document.getElementById('markerNew');
+
+  var ACTUAL_OLD_MIN = 50;
+  var ACTUAL_NEW_MIN = 2.5;
+  var SCALE_MAX = 55; // shared visual scale so both bars + markers are comparable
+
+  guessOld.addEventListener('input', function () { guessOldLabel.textContent = guessOld.value + ' min'; });
+  guessNew.addEventListener('input', function () { guessNewLabel.textContent = guessNew.value + ' min'; });
+
+  revealBtn.addEventListener('click', function () {
+    revealBlock.classList.add('shown');
+    revealBtn.style.display = 'none';
+    resetBtn.style.display = 'inline-block';
+
+    var gOld = parseInt(guessOld.value, 10);
+    var gNew = parseInt(guessNew.value, 10);
+
+    requestAnimationFrame(function () {
+      barOld.style.width = Math.min(100, (ACTUAL_OLD_MIN / SCALE_MAX) * 100) + '%';
+      barNew.style.width = Math.min(100, (ACTUAL_NEW_MIN / SCALE_MAX) * 100) + '%';
+    });
+    markerOld.style.left = Math.min(100, (gOld / SCALE_MAX) * 100) + '%';
+    markerNew.style.left = Math.min(100, (gNew / SCALE_MAX) * 100) + '%';
+  });
+
+  resetBtn.addEventListener('click', function () {
+    revealBlock.classList.remove('shown');
+    revealBtn.style.display = 'inline-block';
+    resetBtn.style.display = 'none';
+    barOld.style.width = '0%';
+    barNew.style.width = '0%';
+  });
+})();
+</script>
+
+
+<!-- Review & edit overlay — injected by assemble.mjs (invariant; do not hand-edit) -->
+<script>
+/* =====================================================================
+   review-mode.js — drop-in "Review & edit" overlay for html-explainer pages
+
+   WHAT IT IS
+   A self-contained client-side overlay that lets a reader edit or annotate
+   an explainer in-place, then export the result — the front end of the
+   Phase 6 revise loop. No server. Works deployed or from a local file.
+
+   HOW TO USE (two steps)
+   1. Paste this entire block inside a <script> just before </body> in the
+      built HTML. It injects its own <style> and builds its own UI; there is
+      nothing else to wire up.
+   2. If the page has its own keyboard handler (e.g. a slide deck), add
+      `|| e.target.isContentEditable` to its "am I typing?" guard so editing
+      text doesn't trigger navigation. (Scrolling pages usually need nothing.)
+
+   ACTIVATION
+   - Deployed: append `?edit` to the URL. Hand reviewers a *labelled* link
+     (View = the plain URL; Review & edit = the URL + `?edit`).
+   - Local file (no second URL to give out): add the attribute
+     `<body data-review-toggle>` and a prominent top-right "Review & edit"
+     button appears that turns the toolbar on.
+
+   OPTIONAL DECK HOOK
+   - On a deck where off-screen sections can't be reached by scrollIntoView,
+     define `window.reviewGoto = note => goToSlide(note.slideIdx)` so the
+     panel's "jump to annotation" works. (Store slideIdx on the note via the
+     same hook if you need it.) Falls back to scrollIntoView otherwise.
+
+   LIMITS (state these in the hand-off)
+   - Edits/notes are per-browser: no shared live document, no server save
+     (localStorage is best-effort and not always available on file://).
+   - `contenteditable` edits the rendered markup, NOT JS-rendered content
+     (quiz/demo data arrays) — route those changes through the *note* path.
+   ===================================================================== */
+(function () {
+  "use strict";
+  var qs = new URLSearchParams(location.search);
+  var viaQuery = qs.has("edit");
+  var viaToggle = document.body.hasAttribute("data-review-toggle");
+  if (!viaQuery && !viaToggle) return;
+
+  // ---- styles (use the page's design tokens, with fallbacks) ----
+  var css = [
+    "body.rv-on #topbar{top:46px}", // example: offset a known fixed header; harmless if absent
+    "body.rv-pad{padding-top:46px}", // scrolling pages: push content below the toolbar (decks skip this)
+    "#rv-bar{position:fixed;top:0;left:0;right:0;min-height:46px;z-index:9000;display:flex;align-items:center;gap:10px;padding:6px 14px;background:#23211c;color:#f6f3ec;font-family:var(--sans,system-ui,sans-serif);font-size:13px;box-shadow:0 2px 12px rgba(0,0,0,.25);flex-wrap:wrap}",
+    "#rv-bar .rv-tag{font-family:var(--mono,ui-monospace,monospace);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#e6b566;display:flex;align-items:center;gap:7px}",
+    "#rv-bar .rv-tag::before{content:'';width:7px;height:7px;border-radius:50%;background:#e6b566}",
+    ".rv-seg{display:inline-flex;border:1px solid #4a463d;border-radius:8px;overflow:hidden}",
+    ".rv-seg button{background:none;border:none;color:#cfc9bb;font-family:inherit;font-size:12px;padding:6px 11px;cursor:pointer}",
+    ".rv-seg button.on{background:#e6b566;color:#23211c;font-weight:600}",
+    ".rv-act{background:#3a362e;border:1px solid #4a463d;color:#f6f3ec;font-family:inherit;font-size:12px;padding:6px 11px;border-radius:8px;cursor:pointer}",
+    ".rv-act:hover{background:#4a463d}",
+    "#rv-bar .rv-spacer{flex:1}",
+    "#rv-bar .rv-exit{color:#cfc9bb;text-decoration:none;font-size:12px;border-bottom:1px dashed #6a6456;cursor:pointer}",
+    "#rv-launch{position:fixed;top:8px;right:14px;z-index:9002;background:#b9772a;color:#fff;border:none;border-radius:24px;padding:11px 18px;font-family:var(--sans,system-ui,sans-serif);font-size:13.5px;font-weight:600;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.28);display:inline-flex;align-items:center;gap:7px}",
+    "#rv-launch:hover{background:#a3641f}",
+    "#rv-launch svg{display:block}",
+    "body.rv-mode-edit [data-rv-edit]:hover{outline:2px dashed #1f6f8b;outline-offset:3px;cursor:text}",
+    "body.rv-mode-edit [data-rv-edit]:focus{outline:2px solid #1f6f8b;outline-offset:3px;background:rgba(31,111,139,.06)}",
+    "body.rv-mode-note .rv-target:hover{cursor:crosshair;outline:1px dashed #b9772a;outline-offset:2px}",
+    ".rv-annotated{outline:2px dashed #b9772a !important;outline-offset:3px;background:rgba(185,119,42,.09)}",
+    ".rv-flash{animation:rvflash 1.2s ease}",
+    "@keyframes rvflash{0%,100%{background:transparent}30%{background:rgba(230,181,102,.35)}}",
+    "#rv-notes{position:fixed;top:46px;right:0;bottom:0;width:330px;max-width:86vw;z-index:8999;background:var(--card,#fffdf8);border-left:1px solid var(--line-strong,#c8bfab);box-shadow:-6px 0 24px rgba(0,0,0,.08);transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}",
+    "#rv-notes.open{transform:none}",
+    "#rv-notes .rv-notes-hd{display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 0}",
+    "#rv-notes h4{font-family:var(--display,Georgia,serif);font-size:16px;margin:0;padding:16px 18px 10px;color:var(--ink,#23211c)}",
+    "#rv-collapse{font-family:var(--sans,sans-serif);font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--ink-faint,#8a8478);background:transparent;border:1px solid var(--line,#ddd5c5);border-radius:7px;padding:5px 10px;cursor:pointer}",
+    "#rv-collapse:hover{color:var(--ink,#23211c);border-color:var(--line-strong,#c8bfab)}",
+    "#rv-notes .rv-list{flex:1;overflow:auto;padding:0 14px 14px}",
+    "#rv-notes .rv-empty{color:var(--ink-faint,#8a8478);font-size:13px;padding:10px 4px;font-style:italic;line-height:1.5}",
+    ".rv-note{border:1px solid var(--line,#ddd5c5);border-radius:10px;padding:11px 12px;margin-bottom:9px;background:var(--card,#fffdf8)}",
+    ".rv-note .rv-loc{font-family:var(--mono,ui-monospace,monospace);font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--augment,#b9772a);cursor:pointer}",
+    ".rv-note .rv-ex{font-size:12px;color:var(--ink-faint,#8a8478);margin:4px 0;line-height:1.4}",
+    ".rv-note .rv-txt{font-size:13.5px;color:var(--ink,#23211c);line-height:1.45}",
+    ".rv-note .rv-del{float:right;border:none;background:none;color:var(--ink-faint,#8a8478);cursor:pointer;font-size:15px;line-height:1}",
+    "#rv-pop{position:fixed;z-index:9010;width:280px;background:var(--card,#fffdf8);border:1px solid var(--line-strong,#c8bfab);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:12px;display:none}",
+    "#rv-pop.open{display:block}",
+    "#rv-pop .rv-ex{font-size:11.5px;color:var(--ink-faint,#8a8478);margin-bottom:8px;line-height:1.4;max-height:48px;overflow:hidden}",
+    "#rv-pop textarea{width:100%;height:74px;resize:vertical;font-family:var(--sans,system-ui,sans-serif);font-size:13px;border:1px solid var(--line-strong,#c8bfab);border-radius:8px;padding:8px;box-sizing:border-box}",
+    "#rv-pop .rv-pop-act{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}",
+    "#rv-pop button{font-family:var(--sans,system-ui,sans-serif);font-size:12px;padding:6px 12px;border-radius:7px;cursor:pointer;border:1px solid var(--line-strong,#c8bfab);background:var(--card,#fffdf8)}",
+    "#rv-pop button.rv-save{background:#b9772a;color:#fff;border-color:#b9772a}",
+    ".rv-toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:#23211c;color:#f6f3ec;font-size:13px;padding:9px 16px;border-radius:20px;z-index:9010;opacity:0;transition:opacity .25s;pointer-events:none}",
+    ".rv-toast.show{opacity:1}",
+    "#rv-fallback{position:fixed;inset:0;z-index:9020;background:rgba(35,33,28,.5);display:none;align-items:center;justify-content:center;padding:24px}",
+    "#rv-fallback.open{display:flex}",
+    "#rv-fallback .rv-fb-card{background:var(--card,#fffdf8);border-radius:12px;padding:16px;max-width:560px;width:100%}",
+    "#rv-fallback textarea{width:100%;height:240px;font-family:var(--mono,ui-monospace,monospace);font-size:12px;box-sizing:border-box}"
+  ].join("\n");
+  var styleEl = document.createElement("style");
+  styleEl.textContent = css;
+  document.head.appendChild(styleEl);
+
+  // state must be initialised before activate() can render
+  var built = false, mode = "interact", pendingEl = null, notes = load();
+
+  function $(id) { return document.getElementById(id); }
+
+  // local files: show a launcher button instead of opening immediately
+  if (viaToggle && !viaQuery) {
+    var launch = document.createElement("button");
+    launch.id = "rv-launch";
+    launch.setAttribute("aria-label", "Review & edit this page");
+    launch.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Review &amp; edit</span>';
+    launch.onclick = function () { launch.style.display = "none"; activate(); };
+    document.body.appendChild(launch);
+    // Slide decks put their nav in the top-right — move launcher to bottom-left to avoid collision.
+    // Scrolling pages: position just below any fixed/sticky top nav instead.
+    requestAnimationFrame(function () {
+      var isDeck = !!document.querySelector(".slide,[data-deck],[data-slide],.slides-track,.deck");
+      if (isDeck) {
+        launch.style.top = "auto";
+        launch.style.right = "auto";
+        launch.style.bottom = "16px";
+        launch.style.left = "14px";
+      } else {
+        var navBottom = 0;
+        document.querySelectorAll("nav,header,[role=navigation],[role=banner]").forEach(function (el) {
+          var s = getComputedStyle(el);
+          if (s.position === "fixed" || s.position === "sticky") {
+            navBottom = Math.max(navBottom, el.getBoundingClientRect().bottom);
+          }
+        });
+        if (navBottom > 0) launch.style.top = (navBottom + 8) + "px";
+      }
+    });
+  } else {
+    activate();
+  }
+
+  function activate() {
+    document.body.classList.add("rv-on");
+    if (!document.querySelector(".slide,[data-deck]")) document.body.classList.add("rv-pad");
+    var bar = document.getElementById("rv-bar"); if (bar) bar.style.display = ""; // re-show on re-entry
+    if (built) return;
+    built = true;
+    markEditable();
+    buildToolbar();
+    buildPanel();
+    buildPopover();
+    buildFallback();
+    renderNotes();
+  }
+
+  // ---- editable prose (broad, but never controls or the review UI) ----
+  function markEditable() {
+    // Skip the overlay's own UI, interactive controls, and anything already
+    // covered by an editable ancestor (so we don't double-mark nested text).
+    var skip = "#rv-bar,#rv-notes,#rv-pop,#rv-fallback,#rv-launch,input,textarea,select,[data-rv-edit],[contenteditable],[data-rv-edit-exclude]";
+    function mark(el) {
+      if (el.closest(skip)) return;
+      el.setAttribute("data-rv-edit", "");
+    }
+    // 1) Known text-bearing elements (broadened well past the old p/h/li set:
+    //    table cells, summaries, definition lists, captions all hold prose too).
+    var sel = "h1,h2,h3,h4,h5,h6,p,li,blockquote,figcaption,figure,summary,caption,td,th,dt,dd,button,a,label,[data-rv-edit-include]";
+    Array.prototype.forEach.call(document.querySelectorAll(sel), mark);
+    // 2) Generic containers (div/section/etc.) that hold their OWN text directly
+    //    rather than via a block child — extremely common in AI-generated markup,
+    //    and the reason "some text wasn't editable". Only mark the ones with loose
+    //    text so we don't turn whole layout wrappers into one big editable blob.
+    Array.prototype.forEach.call(
+      document.querySelectorAll("div,section,article,header,footer,main,aside,span"),
+      function (el) {
+        var ownText = Array.prototype.some.call(el.childNodes, function (n) {
+          return n.nodeType === 3 && n.textContent.trim();
+        });
+        if (ownText) mark(el);
+      }
+    );
+  }
+
+  function buildToolbar() {
+    var bar = document.createElement("div");
+    bar.id = "rv-bar";
+    bar.innerHTML =
+      '<span class="rv-tag">Review mode</span>' +
+      '<div class="rv-seg" id="rv-seg">' +
+        '<button data-mode="interact" class="on">Preview</button>' +
+        '<button data-mode="edit">Edit text</button>' +
+        '<button data-mode="note">Add note</button>' +
+      "</div>" +
+      '<span class="rv-spacer"></span>' +
+      '<button class="rv-act" id="rv-toggle-notes">Notes (0)</button>' +
+      '<button class="rv-act" id="rv-copy">Copy notes for LLM</button>' +
+      '<button class="rv-act" id="rv-download">Download edits</button>' +
+      '<span class="rv-exit" id="rv-exit">Exit</span>';
+    document.body.appendChild(bar);
+    Array.prototype.forEach.call(bar.querySelectorAll("#rv-seg button"), function (b) {
+      b.onclick = function () { setMode(b.dataset.mode); };
+    });
+    $("rv-toggle-notes").onclick = function () { $("rv-notes").classList.toggle("open"); };
+    $("rv-copy").onclick = copyBrief;
+    $("rv-download").onclick = downloadEdits;
+    $("rv-exit").onclick = function () {
+      if (viaQuery) location.href = location.pathname; // drop ?edit
+      else { document.body.classList.remove("rv-on", "rv-mode-edit", "rv-mode-note", "rv-pad"); setMode("interact"); $("rv-bar").style.display = "none"; var l = $("rv-launch"); if (l) l.style.display = ""; }
+    };
+  }
+
+  function buildPanel() {
+    var p = document.createElement("div");
+    p.id = "rv-notes";
+    p.innerHTML = '<div class="rv-notes-hd"><h4>Annotations</h4><button id="rv-collapse" title="Collapse panel (your notes are kept)" aria-label="Collapse panel">Collapse &rsaquo;</button></div><div class="rv-list" id="rv-list"></div>';
+    document.body.appendChild(p);
+    // Collapse hides the panel without deleting notes (they persist in
+    // localStorage and reopen via the toolbar's "Notes (N)" button).
+    $("rv-collapse").onclick = function () { $("rv-notes").classList.remove("open"); };
+  }
+
+  function buildPopover() {
+    var pop = document.createElement("div");
+    pop.id = "rv-pop";
+    pop.innerHTML =
+      '<div class="rv-ex" id="rv-pop-ex"></div>' +
+      '<textarea id="rv-pop-ta" placeholder="What should change here?"></textarea>' +
+      '<div class="rv-pop-act"><button id="rv-pop-cancel">Cancel</button>' +
+      '<button class="rv-save" id="rv-pop-save">Save note</button></div>';
+    document.body.appendChild(pop);
+    $("rv-pop-cancel").onclick = closePop;
+    $("rv-pop-save").onclick = saveNote;
+  }
+
+  function buildFallback() {
+    var f = document.createElement("div");
+    f.id = "rv-fallback";
+    f.innerHTML = '<div class="rv-fb-card"><p style="margin:0 0 8px;font-family:var(--sans,sans-serif);font-size:13px">Copy the revision brief below (clipboard was blocked):</p><textarea id="rv-fb-ta" readonly></textarea><div style="text-align:right;margin-top:8px"><button class="rv-act" id="rv-fb-close" style="background:#23211c">Close</button></div></div>';
+    document.body.appendChild(f);
+    $("rv-fb-close").onclick = function () { f.classList.remove("open"); };
+  }
+
+  function setMode(m) {
+    mode = m;
+    document.body.classList.toggle("rv-mode-edit", m === "edit");
+    document.body.classList.toggle("rv-mode-note", m === "note");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-rv-edit]"), function (el) {
+      el.contentEditable = (m === "edit" ? "true" : "false");
+      el.classList.toggle("rv-target", m === "note");
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#rv-seg button"), function (b) {
+      b.classList.toggle("on", b.dataset.mode === m);
+    });
+    if (m !== "note") closePop();
+  }
+
+  // ---- note capture (capture-phase so it beats demo handlers) ----
+  document.addEventListener("click", function (e) {
+    if (mode !== "note") return;
+    if (e.target.closest("#rv-bar,#rv-notes,#rv-pop,#rv-fallback,#rv-launch")) return;
+    var el = e.target;
+    if (!el || el === document.body || el === document.documentElement) return;
+    e.preventDefault(); e.stopPropagation();
+    pendingEl = el;
+    var ex = excerpt(el);
+    $("rv-pop-ex").textContent = "“" + ex + "”";
+    $("rv-pop-ta").value = "";
+    openPop(e.clientX, e.clientY);
+    setTimeout(function () { $("rv-pop-ta").focus(); }, 30);
+  }, true);
+
+  // In Edit mode, clicking an editable button/link must place the caret to edit
+  // its text — NOT trigger its action. Capture-phase so it beats page handlers.
+  document.addEventListener("click", function (e) {
+    if (mode !== "edit") return;
+    if (e.target.closest("#rv-bar,#rv-notes,#rv-pop,#rv-fallback,#rv-launch")) return;
+    if (e.target.closest("[data-rv-edit]") && e.target.closest("button,a")) {
+      e.preventDefault(); e.stopPropagation();
+    }
+  }, true);
+
+  function saveNote() {
+    var txt = $("rv-pop-ta").value.trim();
+    if (!txt || !pendingEl) { closePop(); return; }
+    pendingEl.classList.add("rv-annotated");
+    notes.push({ loc: locate(pendingEl), excerpt: excerpt(pendingEl), note: txt, el: pendingEl });
+    closePop(); save(); renderNotes();
+    $("rv-notes").classList.add("open"); toast("Note added");
+  }
+
+  function openPop(x, y) {
+    var pop = $("rv-pop");
+    pop.classList.add("open");
+    var w = 280, h = pop.offsetHeight || 190;
+    pop.style.left = Math.max(12, Math.min(x, window.innerWidth - w - 12)) + "px";
+    pop.style.top = Math.max(54, Math.min(y, window.innerHeight - h - 12)) + "px";
+  }
+  function closePop() { $("rv-pop") && $("rv-pop").classList.remove("open"); pendingEl = null; }
+
+  function renderNotes() {
+    $("rv-toggle-notes").textContent = "Notes (" + notes.length + ")";
+    var list = $("rv-list");
+    if (!notes.length) {
+      list.innerHTML = '<div class="rv-empty">No annotations yet. Switch to “Add note”, then click any text to leave a comment for the LLM.</div>';
+      return;
+    }
+    list.innerHTML = "";
+    notes.forEach(function (n, i) {
+      var d = document.createElement("div");
+      d.className = "rv-note";
+      d.innerHTML =
+        '<button class="rv-del" title="Delete this note">×</button>' +
+        '<div class="rv-loc">' + esc(n.loc) + "</div>" +
+        '<div class="rv-ex">“' + esc(n.excerpt) + '”</div>' +
+        '<div class="rv-txt">' + esc(n.note) + "</div>";
+      d.querySelector(".rv-loc").onclick = function () { gotoNote(n); };
+      d.querySelector(".rv-del").onclick = function () { notes.splice(i, 1); save(); renderNotes(); };
+      list.appendChild(d);
+    });
+  }
+
+  // Shared revision-brief text, used by both "Copy notes" and the download.
+  function briefText() {
+    var out = "# Revision requests\n(" + notes.length + " annotation" + (notes.length > 1 ? "s" : "") + " from a reviewer)\n\n";
+    notes.forEach(function (n, i) {
+      out += (i + 1) + ". " + n.loc + "\n   Text: \"" + n.excerpt + "\"\n   Change: " + n.note + "\n\n";
+    });
+    out += "Please apply these to the source HTML, keeping the structured data arrays and CSS tokens intact, then re-screenshot to verify.";
+    return out;
+  }
+
+  function copyBrief() {
+    if (!notes.length) { toast("No notes yet"); return; }
+    copy(briefText());
+  }
+
+  function downloadEdits() {
+    var was = mode; setMode("interact");
+    var clone = document.documentElement.cloneNode(true);
+    rm(clone, "#rv-bar,#rv-notes,#rv-pop,#rv-fallback,#rv-launch,.rv-toast");
+    Array.prototype.forEach.call(clone.querySelectorAll("[data-rv-edit]"), function (n) {
+      n.removeAttribute("data-rv-edit"); n.removeAttribute("contenteditable"); n.classList.remove("rv-target");
+    });
+    Array.prototype.forEach.call(clone.querySelectorAll(".rv-annotated"), function (n) { n.classList.remove("rv-annotated"); });
+    var b = clone.querySelector("body");
+    if (b) b.classList.remove("rv-on", "rv-mode-edit", "rv-mode-note");
+    var html = "<!DOCTYPE html>\n" + clone.outerHTML;
+    // Append the reviewer's notes as an HTML comment so a single download carries
+    // BOTH the inline text edits and the comments. Invisible on the rendered page;
+    // sanitize so note text can't break out of the comment.
+    if (notes.length) {
+      var safe = briefText().replace(/<!--/g, "<!-").replace(/-->/g, "->").replace(/--/g, "—");
+      html += "\n\n<!-- ===== REVIEWER NOTES (" + notes.length + ") — appended by review-mode.js =====\n\n" +
+              safe + "\n\n===== end reviewer notes ===== -->\n";
+    }
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    a.download = (document.title || "page").replace(/[^a-z0-9]+/gi, "-").toLowerCase() + "-edited.html";
+    a.click();
+    setMode(was);
+    toast(notes.length ? "Downloaded — edits + " + notes.length + " note" + (notes.length > 1 ? "s" : "") : "Downloaded edited copy");
+  }
+
+  // ---- location label: nearest section heading, deck-agnostic ----
+  function locate(el) {
+    var sec = el.closest("section,[data-section],.slide,article");
+    var head = sec && sec.querySelector("h1,h2,h3,h4");
+    if (!head) head = nearestHeading(el);
+    return head ? head.innerText.trim().replace(/\s+/g, " ").slice(0, 60) : "Page";
+  }
+  function nearestHeading(el) {
+    var heads = Array.prototype.slice.call(document.querySelectorAll("h1,h2,h3,h4"))
+      .filter(function (h) { return !h.closest("#rv-bar,#rv-notes,#rv-pop"); });
+    var best = null;
+    for (var i = 0; i < heads.length; i++) {
+      var h = heads[i];
+      if (h === el || (h.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)) best = h;
+      else break;
+    }
+    return best;
+  }
+  function gotoNote(n) {
+    if (typeof window.reviewGoto === "function") { window.reviewGoto(n); return; }
+    if (n.el && n.el.isConnected) {
+      n.el.scrollIntoView({ behavior: "smooth", block: "center" });
+      n.el.classList.add("rv-flash");
+      setTimeout(function () { n.el.classList.remove("rv-flash"); }, 1200);
+    }
+  }
+
+  // ---- helpers ----
+  function excerpt(el) { return (el.innerText || el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 140); }
+  function esc(s) { return (s || "").replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function rm(root, sel) { Array.prototype.forEach.call(root.querySelectorAll(sel), function (n) { n.remove(); }); }
+  // Per-page key so notes from one explainer never leak into another on the same origin.
+  function notesKey() { try { return "rv-notes:" + (location.pathname || "") + (location.search || ""); } catch (e) { return "rv-notes"; } }
+  function save() { try { localStorage.setItem(notesKey(), JSON.stringify(notes.map(function (n) { return { loc: n.loc, excerpt: n.excerpt, note: n.note }; }))); } catch (e) {} }
+  function load() { try { return JSON.parse(localStorage.getItem(notesKey()) || "[]"); } catch (e) { return []; } }
+  function copy(t) {
+    var ok = false;
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t); ok = true; } } catch (e) {}
+    if (ok) { toast("Revision brief copied — paste it to the LLM"); }
+    else { $("rv-fb-ta").value = t; $("rv-fallback").classList.add("open"); $("rv-fb-ta").select(); } // clipboard blocked (e.g. file://)
+  }
+  var tT;
+  function toast(m) {
+    var el = document.querySelector(".rv-toast");
+    if (!el) { el = document.createElement("div"); el.className = "rv-toast"; document.body.appendChild(el); }
+    el.textContent = m; el.classList.add("show");
+    clearTimeout(tT); tT = setTimeout(function () { el.classList.remove("show"); }, 1900);
+  }
+})();
+
+</script>
+</body>
+</html>
