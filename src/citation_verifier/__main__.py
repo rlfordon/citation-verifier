@@ -586,6 +586,12 @@ def verify_propositions_main(argv: list[str] | None = None) -> int:
         help="Triage: run Haiku summary-hint prescreen jobs for long "
              "opinions (default off pending the A/B re-run)",
     )
+    parser.add_argument(
+        "--route", choices=["single", "hybrid"], default="single",
+        help="assess routing: single = one model (default); hybrid = "
+             "Sonnet single-claim fast-track + Opus escalation "
+             "(cost-audit F2; requires --executor api or sdk)",
+    )
     args = parser.parse_args(argv)
 
     from pathlib import Path
@@ -709,11 +715,42 @@ def _dispatch_proposition_verbs(args, workdir, pp, _progress,
     prompt_version = args.prompt_version or pp.ASSESS_V2_PROMPT_VERSION
 
     if args.verb in ("assess", "full"):
-        astats = pp.run_assess(workdir, executor=_make_executor(),
-                               prompt_version=prompt_version)
-        print(f"[OK] assess: {astats.eligible} eligible, "
-              f"{astats.done} done, {astats.pending} pending, "
-              f"{astats.skipped_deterministic} deterministic")
+        if args.route == "hybrid":
+            if not args.replay and args.executor not in ("api", "sdk"):
+                print("Error: --route hybrid requires --executor api or sdk "
+                      "(jobs mode is interactive; it can't do the two-pass "
+                      "escalation in-process)", file=sys.stderr)
+                return 1
+            if args.replay:
+                from .executor import RecordedExecutor
+                fast_ex = full_ex = RecordedExecutor(args.replay)
+            elif args.executor == "sdk":
+                from .executor import AgentSDKExecutor
+                fast_ex = AgentSDKExecutor(model="claude-sonnet-5",
+                                           cwd=str(workdir))
+                full_ex = AgentSDKExecutor(model=args.model, cwd=str(workdir))
+            else:  # api
+                from .executor import MessagesAPIExecutor
+                fast_ex = MessagesAPIExecutor(model="claude-sonnet-5",
+                                              cwd=str(workdir),
+                                              batch=args.batch)
+                full_ex = MessagesAPIExecutor(model=args.model,
+                                              cwd=str(workdir),
+                                              batch=args.batch)
+            astats = pp.run_assess_hybrid(
+                workdir, fast_executor=fast_ex, full_executor=full_ex,
+                prompt_version=prompt_version)
+            print(f"[OK] assess (hybrid): {astats.eligible} eligible, "
+                  f"{astats.done} done, fast_kept={astats.fast_kept}, "
+                  f"escalated={astats.escalated}, "
+                  f"escalated_cost=${astats.escalated_cost_usd:.4f}, "
+                  f"pending={astats.pending}")
+        else:
+            astats = pp.run_assess(workdir, executor=_make_executor(),
+                                   prompt_version=prompt_version)
+            print(f"[OK] assess: {astats.eligible} eligible, "
+                  f"{astats.done} done, {astats.pending} pending, "
+                  f"{astats.skipped_deterministic} deterministic")
         if astats.pending:
             print(f"  PENDING: dispatch agents over jobs/assess.json, "
                   f"append verdicts to jobs/assess_results.jsonl, then "
