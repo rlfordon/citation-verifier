@@ -962,11 +962,14 @@ _ASSESS_V2_SCHEMA = {
 
 @dataclass
 class AssessStats:
-    """Statistics from run_assess."""
+    """Statistics from run_assess / run_assess_hybrid."""
     eligible: int = 0
     done: int = 0
     pending: int = 0
     skipped_deterministic: int = 0
+    fast_kept: int = 0            # hybrid: Sonnet 'supported' verdicts kept
+    escalated: int = 0           # hybrid: fast-track claims sent to Opus
+    escalated_cost_usd: float = 0.0  # cost of discarded Sonnet verdicts
 
 
 def _assessable(claim: dict) -> bool:
@@ -1071,6 +1074,82 @@ def run_assess(workdir: Path, executor: Any = None,
     stats.pending = stats.eligible - stats.done
     _update_run_json(workdir, "assess", prompt_version=prompt_version,
                      done=stats.done, pending=stats.pending)
+    return stats
+
+
+def run_assess_hybrid(workdir: Path, *, fast_executor: Any,
+                      full_executor: Any,
+                      prompt_version: str = ASSESS_V2_PROMPT_VERSION,
+                      ) -> AssessStats:
+    """Verb 6, hybrid routing (cost-audit F2). Fast-track claims
+    (triage_track == 'fast') go to fast_executor (Sonnet) as single-claim
+    v2 jobs; any verdict not support=='supported' -- or a job that fails
+    -- escalates to full_executor (Opus) alongside the full-track claims,
+    packed per opinion. Only final verdicts persist (Sonnet-supported +
+    all Opus); discarded Sonnet verdicts' cost is captured in
+    escalated_cost_usd. Requires a v2 prompt (the 'support' axis)."""
+    from .executor import append_verdict_jsonl, load_verdicts_jsonl
+
+    if not prompt_version.startswith("assess-v2"):
+        raise ValueError(
+            f"run_assess_hybrid needs a v2 prompt (support axis); "
+            f"got {prompt_version!r}")
+
+    workdir = Path(workdir)
+    results_path = workdir / "jobs" / "assess_results.jsonl"
+    have: set[str] = set()
+    if results_path.exists():
+        have = {v.claim_id for v in load_verdicts_jsonl(results_path)
+                if v.prompt_version == prompt_version}
+
+    with open(workdir / "claims.csv", newline="", encoding="utf-8") as f:
+        claims = list(csv.DictReader(f))
+
+    stats = AssessStats()
+    fast_todo: list[dict] = []
+    full_todo: list[dict] = []
+    for c in claims:
+        if not _assessable(c):
+            stats.skipped_deterministic += 1
+            continue
+        stats.eligible += 1
+        if c["claim_id"] in have:
+            stats.done += 1
+        elif c.get("triage_track") == "fast":
+            fast_todo.append(c)
+        else:
+            full_todo.append(c)  # 'full', '' or missing -> Opus (safe default)
+
+    # Pass 1: Sonnet, single-claim v2 over fast-track.
+    escalate: list[dict] = []
+    if fast_todo:
+        returned = {v.claim_id: v for v in fast_executor.run(
+            _build_v2_jobs(fast_todo, workdir, prompt_version, packed=False))}
+        for c in fast_todo:
+            v = returned.get(c["claim_id"])
+            if v is not None and v.fields.get("support") == "supported":
+                append_verdict_jsonl(results_path, v)
+                stats.done += 1
+                stats.fast_kept += 1
+            else:
+                if v is not None:  # discarded verdict still cost tokens
+                    stats.escalated_cost_usd += v.cost_usd
+                escalate.append(c)
+                stats.escalated += 1
+
+    # Pass 2: Opus, packed per opinion, over full-track + escalated.
+    pass2 = full_todo + escalate
+    if pass2:
+        for v in full_executor.run(
+                _build_v2_jobs(pass2, workdir, prompt_version, packed=True)):
+            append_verdict_jsonl(results_path, v)
+            stats.done += 1
+
+    stats.pending = stats.eligible - stats.done
+    _update_run_json(workdir, "assess", prompt_version=prompt_version,
+                     route="hybrid", done=stats.done, pending=stats.pending,
+                     fast_kept=stats.fast_kept, escalated=stats.escalated,
+                     escalated_cost_usd=round(stats.escalated_cost_usd, 6))
     return stats
 
 
