@@ -62,6 +62,15 @@
       "executor": "api",
       "prompt_version": "assess-v1",
       "include_hints": false
+    },
+    "hybrid-v2-api": {
+      "description": "F2 hybrid routing: Sonnet single-claim fast-track + Opus escalation via the API. cost-audit F2 validation arm -- require 0 lenient-direction errors on the A/B set, reds 3/3, A/B >=55/61, withers yellows >=14.",
+      "route": "hybrid",
+      "fast_model": "claude-sonnet-5",
+      "full_model": "claude-opus-4-8",
+      "executor": "api",
+      "prompt_version": "assess-v2",
+      "include_hints": false
     }
   }
 }

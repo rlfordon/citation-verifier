@@ -2,12 +2,14 @@
 
 All notable schema-level changes to citation-verifier. Per design v2 §2.6 / §5: additions to closed-set enums are minor-version changes, removals are major.
 
-## Unreleased (MessagesAPIExecutor + A/B harness gap tolerance)
+## Unreleased (MessagesAPIExecutor + A/B harness gap tolerance + hybrid model routing)
 
 Plan: `docs/plans/2026-07-01-messages-api-executor-plan.md` (executing
-cost-audit F1, `docs/plans/2026-07-01-pipeline-cost-audit.md`). Additive;
-defaults unchanged (jobs mode in-session, sdk headless) until the API
-transport passes its live validation arm.
+cost-audit F1, `docs/plans/2026-07-01-pipeline-cost-audit.md`) and
+`docs/plans/2026-07-01-f2-hybrid-model-routing-plan.md` (cost-audit F2).
+Additive; defaults unchanged (jobs mode in-session, sdk headless; assess
+routing stays `single`) until each transport/arm passes its live
+validation.
 
 ### New (`executor.py`)
 
@@ -44,6 +46,14 @@ transport passes its live validation arm.
   the first missing verdict (TODO Priority-1, the 2026-06-13 sonnet-v2
   crash). Config `"executor": "api"` supported; new pinned-model arms
   `opus-v2-api` and `sonnet-v1-api` in `tests/ab_test_configs.json`.
+
+### Added
+
+- Hybrid model routing (`run_assess_hybrid`, cost-audit F2): fast-track
+  claims assessed by Sonnet single-claim v2, escalating anything not
+  `supported` (or that fails) to Opus. Opt-in via `--route hybrid`
+  (requires `--executor api|sdk`) and the `hybrid-v2-api` A/B config.
+  `AssessStats` gains `fast_kept`, `escalated`, `escalated_cost_usd`.
 
 ## v0.5.0 — 2026-06-28 (Public quote primitive + OCR-confusion normalization)
 

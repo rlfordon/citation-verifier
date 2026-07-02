@@ -101,31 +101,62 @@ def run_ab_config(config_name, config, corpora=DEFAULT_CORPORA,
             cassette = wd / "jobs" / "assess_results.jsonl"
             if cassette.exists():
                 cassette.unlink()  # fresh verdicts for this config
-            executor = (executor_factory or make_executor)(
-                config, wd, "assess")
-            if config.get("include_hints"):
-                # SS6.7 A/B arm: Haiku prescreen hints recorded into the
-                # copy's claims.csv before assess renders the prompts.
-                from citation_verifier.proposition_pipeline import run_triage
-                pre_config = dict(config)
-                pre_config["model"] = config.get("prescreen_model",
-                                                 "haiku")
-                pre_ex = (executor_factory or make_executor)(
-                    pre_config, wd, "prescreen")
-                tstats = run_triage(wd, prescreen=True, executor=pre_ex)
-                if tstats.prescreen_pending:
-                    print(f"  WARNING {name}: "
-                          f"{tstats.prescreen_pending} prescreen hints "
-                          f"pending -- assess runs without them")
-            stats = run_assess(wd, executor=executor,
-                               prompt_version=prompt_version)
-            failures = getattr(executor, "failures", [])
-            if failures:
-                print(f"  WARNING {name}: {len(failures)} job "
-                      f"failures: {failures[:3]}")
-            if stats.pending:
-                print(f"  WARNING {name}: {stats.pending} verdicts "
-                      f"still pending -- scoring the rest")
+            mk = executor_factory or make_executor
+
+            if config.get("route") == "hybrid":
+                from citation_verifier.proposition_pipeline import (
+                    run_assess_hybrid, run_triage)
+                # Frozen corpora lack triage_track; without this the legacy-
+                # safety rule routes every claim to Opus and the arm is
+                # vacuous (Sonnet never fires).
+                run_triage(wd, prescreen=False)
+                import csv as _csv
+                with open(wd / "claims.csv", newline="",
+                          encoding="utf-8") as f:
+                    tracks = [r.get("triage_track", "")
+                              for r in _csv.DictReader(f)]
+                fast_n, full_n = tracks.count("fast"), tracks.count("full")
+                print(f"  {name}: triage mix fast={fast_n} full={full_n}")
+                if fast_n == 0:
+                    raise SystemExit(
+                        f"{name}: 0 fast-track claims -- hybrid arm would be "
+                        f"vacuous (Sonnet never runs). Aborting.")
+                fast_ex = mk({**config, "model": config["fast_model"]},
+                             wd, "assess")
+                full_ex = mk({**config, "model": config["full_model"]},
+                             wd, "assess")
+                stats = run_assess_hybrid(
+                    wd, fast_executor=fast_ex, full_executor=full_ex,
+                    prompt_version=prompt_version)
+                print(f"  {name}: fast_kept={stats.fast_kept} "
+                      f"escalated={stats.escalated} "
+                      f"escalated_cost=${stats.escalated_cost_usd:.4f}")
+            else:
+                executor = mk(config, wd, "assess")
+                if config.get("include_hints"):
+                    # SS6.7 A/B arm: Haiku prescreen hints recorded into the
+                    # copy's claims.csv before assess renders the prompts.
+                    from citation_verifier.proposition_pipeline import \
+                        run_triage
+                    pre_config = dict(config)
+                    pre_config["model"] = config.get("prescreen_model",
+                                                     "haiku")
+                    pre_ex = mk(pre_config, wd, "prescreen")
+                    tstats = run_triage(wd, prescreen=True, executor=pre_ex)
+                    if tstats.prescreen_pending:
+                        print(f"  WARNING {name}: "
+                              f"{tstats.prescreen_pending} prescreen hints "
+                              f"pending -- assess runs without them")
+                stats = run_assess(wd, executor=executor,
+                                   prompt_version=prompt_version)
+                failures = getattr(executor, "failures", [])
+                if failures:
+                    print(f"  WARNING {name}: {len(failures)} job "
+                          f"failures: {failures[:3]}")
+                if stats.pending:
+                    print(f"  WARNING {name}: {stats.pending} verdicts "
+                          f"still pending -- scoring the rest")
+
             # Score through a skip-mode RecordedExecutor so transient job
             # failures don't kill the whole multi-corpus run (TODO
             # Priority-1: the strict default raised RecordedVerdictMiss
