@@ -976,6 +976,34 @@ def _assessable(claim: dict) -> bool:
         claim.get("cl_status") != "WRONG_CASE")
 
 
+def _build_v2_jobs(claims: list[dict], workdir: Path, prompt_version: str,
+                   *, packed: bool) -> list["Job"]:
+    """Build assess-v2 Jobs. packed=True: one job per opinion_file (§6.8
+    per-opinion packing, the default assess path). packed=False: one
+    single-claim job per claim (the hybrid fast-track pass -- avoids the
+    packed prompt that regressed the sonnet-v2 arm). Both render through
+    render_assess_v2_prompt (a group of one is a single-claim prompt), so
+    verdicts stay homogeneous assess-v2."""
+    from .executor import Job
+    if packed:
+        by_opinion: dict[str, list[dict]] = {}
+        for c in claims:
+            by_opinion.setdefault(c["opinion_file"], []).append(c)
+        groups = [(Path(op).stem[:60], op, grp)
+                  for op, grp in by_opinion.items()]
+    else:
+        groups = [(c["claim_id"], c["opinion_file"], [c]) for c in claims]
+    return [Job(
+        job_id="assess-" + label,
+        claim_ids=[c["claim_id"] for c in group],
+        prompt=render_assess_v2_prompt(
+            prompt_version, str(workdir / opinion), group),
+        prompt_version=prompt_version,
+        files=[opinion],
+        schema=_ASSESS_V2_SCHEMA,
+    ) for label, opinion, group in groups]
+
+
 def run_assess(workdir: Path, executor: Any = None,
                prompt_version: str = DEFAULT_PROMPT_VERSION) -> AssessStats:
     """Verb 6 (design §3, LLM): grouped assessment jobs via the executor.
@@ -1030,22 +1058,9 @@ def run_assess(workdir: Path, executor: Any = None,
         ) for c in todo]
     else:
         # v2+: one packed job per opinion (Step 8 decision log:
-        # per-opinion only -- documented deviation from SS6.8's
-        # multi-opinion caps, which economized interactive subagent
-        # dispatch; SDK jobs are cheap to spawn and per-opinion keeps
-        # the shared-read win with a smaller failure blast radius).
-        by_opinion: dict[str, list[dict]] = {}
-        for c in todo:
-            by_opinion.setdefault(c["opinion_file"], []).append(c)
-        jobs = [Job(
-            job_id="assess-" + Path(opinion).stem[:60],
-            claim_ids=[c["claim_id"] for c in group],
-            prompt=render_assess_v2_prompt(
-                prompt_version, str(workdir / opinion), group),
-            prompt_version=prompt_version,
-            files=[opinion],
-            schema=_ASSESS_V2_SCHEMA,
-        ) for opinion, group in by_opinion.items()]
+        # per-opinion only -- documented deviation from §6.8's
+        # multi-opinion caps).
+        jobs = _build_v2_jobs(todo, workdir, prompt_version, packed=True)
 
     if jobs:
         if executor is None:
