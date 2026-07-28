@@ -177,7 +177,7 @@ result = verifier.verify(text, parsed=parsed)
 
 The citation verifier answers *"is this a real case?"* The **proposition verifier** answers the harder question: *"does the cited case actually support the proposition it's cited for?"* It's built for vetting briefs, motions, and opinions for misrepresented or hallucinated authority.
 
-It runs as a pipeline of small, idempotent **verbs** over a working directory (one per document, under `matters/<name>/`). Each verb writes its output to disk and no-ops if that output already exists, so you can resume by re-running. The LLM-assisted verbs (`extract`, `assess`) run through an **executor protocol** with three transports: in-session Agent subagents ("jobs" mode, the default), a headless `claude-agent-sdk` executor (`--executor sdk`, needs `claude login`), and a recorded-cassette replay for offline/deterministic runs (`--replay`).
+It runs as a pipeline of small, idempotent **verbs** over a working directory (one per document, under `matters/<name>/`). Each verb writes its output to disk and no-ops if that output already exists, so you can resume by re-running. Only two verbs use an LLM — `extract` and `assess`. Everything else is deterministic code, **including quote verification**: `check-quotes` compares each quoted passage against the downloaded opinion text with normalized fuzzy string matching (`quote_matcher.verify_quote`, built on `difflib.SequenceMatcher`), so the same inputs always produce the same quote verdicts — no model judgment involved. The LLM-assisted verbs run through an **executor protocol** with three transports: in-session Agent subagents ("jobs" mode, the default), a headless `claude-agent-sdk` executor (`--executor sdk`, needs `claude login`), and a recorded-cassette replay for offline/deterministic runs (`--replay`).
 
 ### The verbs
 
@@ -186,8 +186,8 @@ It runs as a pipeline of small, idempotent **verbs** over a working directory (o
 | `extract` | (LLM) Document → `claims.csv` + table-of-authorities / body citation lists |
 | `verify` | Runs every citation through the core verifier (batched) and downloads matched opinion text |
 | `merge` | Joins claims to verification results and links each claim to its opinion file |
-| `check-quotes` | Checks quoted language against the opinion text; flags fabricated/altered quotes |
-| `crosscheck` | Deterministic flags: TOA-vs-body cite variants, cited-vs-matched court, pincite sanity |
+| `check-quotes` | (Deterministic) Checks quoted language against the opinion text by fuzzy string matching; flags fabricated/altered quotes and sets the quote floor |
+| `crosscheck` | (Deterministic) Flags: TOA-vs-body cite variants, cited-vs-matched court, pincite sanity |
 | `triage` | Decides assessment depth per claim (full vs. fast) |
 | `assess` | (LLM) Reads the opinion and judges whether it supports the proposition |
 | `apply-assessments` | Folds LLM verdicts back into `claims.csv`, enforcing the quote floor |
@@ -258,6 +258,7 @@ src/citation_verifier/
   court_map.py       -- Court abbreviation -> CourtListener ID mapping (federal courts)
   state_reporter_map.py -- Regional reporter -> state court mapping
   name_matcher.py    -- Multi-factor case name similarity scoring
+  quote_matcher.py   -- Deterministic quote-fidelity checking (fuzzy string matching, no LLM)
   text_cleaner.py    -- Contamination phrase removal from extracted names
   parser.py          -- Citation parsing (eyecite + regex fallbacks + eyecite factory)
   client.py          -- CourtListener API wrapper with rate limiting
