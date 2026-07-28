@@ -1,0 +1,1381 @@
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.245 Filed 04/14/26 Page 1 of 32
+
+
+
+
+                  UNITED STATES DISTRICT COURT
+                  EASTERN DISTRICT OF MICHIGAN
+                       SOUTHERN DIVISION
+
+NATHAN JAMES MASSARELLO,                 Case No.: 2:24-cv-12480-RJW-CI
+on behalf of himself and others
+similarly situated,                      Honorable Robert J. White
+
+                  Plaintiff,             Magistrate Judge Curtis Ivy, Jr.
+      v.
+
+POWER HOME REMODELING
+GROUP, LLC,
+
+                  Defendant.
+
+
+PLAINTIFF’S MOTION TO COMPEL ANSWERS TO INTERROGATORY
+      NOS. 7-13 AND REQUEST FOR PRODUCTION NOS. 7-12
+
+
+
+
+                                     1
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.246 Filed 04/14/26 Page 2 of 32
+
+
+
+
+      Through his interrogatories and requests for production, Nathan Massarello
+
+(“Plaintiff”) seeks to understand the scope of Power Home Remodeling Group,
+
+LLC’s (“Defendant”) calling practices and gather information and documents that
+
+are highly relevant to the requirements of Rule 23(a) and Rule 23(b), as well as to
+
+damages. Defendant objects to, and refuses to respond to, these requests. Because
+
+the subject discovery requests—Plaintiff’s interrogatory nos. 7-13 and requests for
+
+production nos. 7-12—seek highly relevant information within Defendant’s custody
+
+or control, this Court should overrule Defendant’s unsubstantiated objections and
+
+compel responses and related productions, just as many courts around the country
+
+have done in connection with similar putative class actions under the Telephone
+
+Consumer Protection Act.
+
+      Pursuant to Local Rule 7.1(a)(2)(A), the parties have conferred in good faith
+
+but were unable to reach agreement. The parties notified the Court of their discovery
+
+dispute on April 1, 2026 and submitted one-page summaries of their positions on
+
+April 3, 2026. This Court held a hearing on April 9, 2026, during which it authorized
+
+Plaintiff to file the instant motion by April 17, 2026.
+
+RESPECTFULLY SUBMITTED AND DATED this April 14, 2026.
+
+                                 s/ Michael L. Greenwald
+                                 Michael L. Greenwald
+                                 GREENWALD DAVIDSON RADBIL PLLC
+                                 5550 Glades Road, Suite 500
+                                 Boca Raton, FL 33431
+
+                                           2
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.247 Filed 04/14/26 Page 3 of 32
+
+
+
+
+                             Telephone: (561) 826-5477
+                             Email: mgreenwald@gdrlawfirm.com
+
+                             Anthony Paronich
+                             PARONICH LAW, P.C.
+                             350 Lincoln Street, Suite 2400
+                             Hingham, MA 02043
+                             Telephone: (617) 485-0018
+                             Facsimile: (508) 318-8100
+                             Email: anthony@paronichlaw.com
+
+                             George T. Blackmore
+                             BLACKMORE LAW PLC
+                             1100 Owendale Drive, Suite M
+                             Troy, MI 48083
+                             Telephone: (888) 835-2993
+                             Facsimile: (508) 318-8100
+                             Email: george@blackmore.law
+
+                             Attorneys for Plaintiff and the Proposed Class
+
+
+
+
+                                     3
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.248 Filed 04/14/26 Page 4 of 32
+
+
+
+
+                  UNITED STATES DISTRICT COURT
+                  EASTERN DISTRICT OF MICHIGAN
+                       SOUTHERN DIVISION
+
+NATHAN JAMES MASSARELLO,                 Case No.: 2:24-cv-12480-RJW-CI
+on behalf of himself and others
+similarly situated,                      Honorable Robert J. White
+
+                  Plaintiff,             Magistrate Judge Curtis Ivy, Jr.
+      v.
+
+POWER HOME REMODELING
+GROUP, LLC,
+
+                  Defendant.
+
+
+PLAINTIFF’S MEMORANDUM OF LAW IN SUPPORT OF HIS MOTION
+   TO COMPEL ANSWERS TO INTERROGATORY NOS. 7-13 AND
+             REQUEST FOR PRODUCTION NOS. 7-12
+
+
+
+
+                                     i
+ Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.249 Filed 04/14/26 Page 5 of 32
+
+
+
+
+                                          TABLE OF CONTENTS
+
+Introduction ................................................................................................................1
+
+Statement of Relevant Facts.......................................................................................2
+
+Nature and Stage of the Proceeding ...........................................................................3
+Defendant’s Deficient Written Discovery Responses ...............................................6
+
+Legal Standard ...........................................................................................................7
+
+Argument....................................................................................................................8
+
+I. The information Plaintiff seeks through interrogatory nos. 7-13 and request for
+production nos. 7-12 is highly relevant to the numerosity, commonality, typicality,
+and predominance requirements of Rule 23, as well as to class-wide damages. ......8
+      A. In TCPA class actions, courts routinely require the production of “class
+      data” like that sought through the subject discovery requests. ...........................8
+
+      B. Defendant’s objections lack merit and should be overruled. .....................15
+
+         1. The subject discovery is not overly broad or premature. .......................16
+         2. Defendant offers zero evidence that responding to the subject discovery
+         would be unduly burdensome. .......................................................................18
+
+         3. Defendant’s contention that whether it utilizes a prerecorded voice is a
+         legal conclusion shielding it from its discovery obligations is unserious. ....21
+II. Defendant cannot be permitted to refuse to provide class-related discovery
+while simultaneously contesting class certification. ................................................22
+
+Conclusion ...............................................................................................................23
+
+
+
+
+                                                             ii
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.250 Filed 04/14/26 Page 6 of 32
+
+
+
+
+        CONTROLLING OR MOST APPROPRIATE AUTHORITY
+
+Tafoya v. BMG Loansatwork, Inc., No. 4:25-cv-2949, 2026 WL 971629 (S.D. Tex.
+Apr. 8, 2026).
+
+Fralish v. Digital Media Sols., Inc., No. 21-45, 2021 WL 5370104 (N.D. Ind. Nov.
+17, 2021).
+
+Meredith v. United Collection Bureau, Inc., 319 F.R.D. 240 (N.D. Ohio 2017).
+
+Elliot v. Humana Inc., No. 3:22-cv-00329-RGJ, 2025 WL 1065755 (W.D. Ky. Apr.
+9, 2025).
+
+
+
+
+                                       iii
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.251 Filed 04/14/26 Page 7 of 32
+
+
+
+
+                                    Introduction
+
+      This is a proposed class action under the Telephone Consumer Protection Act
+
+(“TCPA”) related to unwanted calls Power Home Remodeling Group, LLC
+
+(“Defendant”) placed to Nathan Massarello (“Plaintiff”) and other non-customers
+
+like himself. Defendant placed these calls using an artificial or prerecorded voice
+
+without Plaintiff’s or proposed class members’ consent, and without having done
+
+any business with them.
+
+      Through his written discovery requests, Plaintiff seeks to understand the
+
+scope of Defendant’s calling practices, but Defendant objects to, and refuses to
+
+respond to, these requests. Despite months of conferral efforts, key answers and
+
+related productions remain outstanding. The subject discovery requests—Plaintiff’s
+
+interrogatory nos. 7-13 and requests for production nos. 7-12—are highly relevant
+
+to the numerosity, commonality, and typicality requirements of Rule 23(a), to the
+
+predominance requirement of Rule 23(b), and to damages, which are calculated on
+
+a per-call basis. In short, these requests seek calling records regarding the cellular
+
+telephone numbers to which Defendant placed artificial or prerecorded voice calls
+
+during the class period, how many such calls it made to those cellular telephone
+
+numbers, and those that Defendant’s own records indicate were wrong numbers.
+
+Defendant cannot meaningfully contest the relevance of the sought information, so
+
+instead it claims that producing such information would be burdensome. However,
+
+
+
+                                          1
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.252 Filed 04/14/26 Page 8 of 32
+
+
+
+
+Defendant cannot refuse to analyze its own data on burden grounds while
+
+simultaneously refusing to produce that same data for Plaintiff to analyze. Rule 26
+
+does not permit such a result.
+
+       Because the information Plaintiff seeks is relevant to class certification,
+
+necessary for his class damages analysis, and within Defendant’s custody or control,
+
+this Court should overrule Defendant’s unsubstantiated objections and compel
+
+responses and related productions, just as many courts around the country have done
+
+in connection with unyielding TCPA defendants facing similar class claims and
+
+nearly identical written discovery requests to those Plaintiff served here.
+
+       To be clear, Plaintiff seeks Defendant’s own call records, which are uniquely
+
+within its possession and central to its business operations. There is no other party
+
+from which to obtain this data and, with a non-bifurcated discovery schedule, there
+
+is no other time to get it.
+
+                              Statement of Relevant Facts
+
+       The gravamen of Plaintiff’s amended complaint is that Defendant placed calls
+
+to Plaintiff’s cellular telephone number in connection with which it delivered
+
+artificial or prerecorded voice messages without his consent, in an attempt to reach
+
+someone other than Plaintiff and unknown to him. See generally ECF No. 5.
+
+       Defendant engages in door-to-door marketing in an effort to solicit potential
+
+customers who may want home remodeling and renovation bids. In June 2024,
+
+
+
+                                          2
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.253 Filed 04/14/26 Page 9 of 32
+
+
+
+
+Defendant placed multiple calls to Plaintiff’s cellular telephone. Id., PageID.7, ¶¶
+
+17-20. In connection with those calls, Defendant delivered prerecorded voice
+
+messages to confirm an appointment for a remodeling project. Id. However, Plaintiff
+
+had no account or relationship with Defendant, did not provide his telephone number
+
+to Defendant, did not request a remodeling bid or proposal, and did not consent to
+
+Defendant’s calls. Id., PageID.7-8, ¶¶ 24-26.1
+
+                        Nature and Stage of the Proceeding
+
+      Plaintiff alleges Defendant violated the TCPA at 47 U.S.C. §
+
+227(b)(1)(A)(iii), which makes it “unlawful for any person . . . to make any call . . .
+
+[by] using . . . an artificial or prerecorded voice . . . to any telephone number assigned
+
+to a . . . cellular telephone service[.]” Soppet v. Enhanced Recovery Co., LLC, 679
+
+F.3d 637, 639 (7th Cir. 2012).2 Plaintiff seeks to represent the following class:
+
+      All persons throughout the United States (1) to whom Power Home
+      Remodeling Group, LLC placed, or caused to be placed, a call, (2)
+      directed to a number assigned to a cellular telephone service, (3) where
+      the call recipient did not provide their telephone number to Power
+      Home Remodeling Group, LLC or did not have an account with Power
+      Home Remodeling Group, LLC, (4) in connection with which Power
+
+
+
+1
+      It comes as no surprise that homeowners may give fake contact information
+to a door-to-door solicitor in an effort to make the unwanted salesman leave.
+Defendant has given no indication that it makes any effort to independently verify
+telephone numbers provided to it.
+2
+      Internal quotations and citations are omitted, and emphasis is added, unless
+otherwise noted.
+
+                                            3
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.254 Filed 04/14/26 Page 10 of 32
+
+
+
+
+       Home Remodeling Group, LLC used an artificial or prerecorded voice,
+       (5) from September 26, 2020 through the date of class certification.
+ECF No. 5, PageID.8, ¶ 33.
+
+       Plaintiff’s proposed class is defined nearly identically to the certified class in
+
+Elliot v. Humana Inc., No. 3:22-cv-00329-RGJ, 2025 WL 1065755, at *14 (W.D.
+
+Ky. Apr. 9, 2025) (certifying the following TCPA class: “All persons or entities
+
+throughout the United States (1) to whom Humana placed, or caused to be placed, a
+
+call (2) directed to a number assigned to a cellular telephone service, but not assigned
+
+to a current account holder of Humana or person who consented to receive calls on
+
+behalf of an account holder (3) in connection with which Humana used an artificial
+
+or prerecorded voice, (4) four years from the filing of this action through the date of
+
+class certification.”).
+
+       Of note, the Sixth Circuit recently denied the defendant’s motion under Rule
+
+23(f) for interlocutory review of the district court’s certification order. In Re:
+
+Humana, Inc., 163 F.4th 376, 381 (6th Cir. Dec. 30, 2025) (“First, Plaintiffs argue
+
+that a lack of consent can be easily ascertained from Humana’s records indicating
+
+that the potential class member told Humana it had reached the wrong number. . . .
+
+But Humana’s argument that its own record-keeping is deficient or misleading is
+
+unavailing.”).
+
+       Far from outlier decisions, as Judge Easterbrook wrote for the Seventh Circuit,
+
+“[c]lass certification is normal in litigation under [the TCPA], because the main
+
+
+                                           4
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.255 Filed 04/14/26 Page 11 of 32
+
+
+
+
+questions . . . are common to all recipients.” Ira Holtzman, C.P.A., & Assocs. v.
+
+Turza, 728 F.3d 682, 684 (7th Cir. 2013); accord Krakauer v. Dish Network, L.L.C.,
+
+925 F.3d 643, 656 (4th Cir. 2019) (“Given the remedial purpose of the TCPA, it is
+
+no surprise that its cause of action would be conducive to class-wide disposition.”).
+
+      And this remains true for “wrong number” TCPA class actions like this one
+
+and Elliot. See, e.g., Samson v. United Healthcare Servs. Inc., No. 2:19-CV-00175,
+
+2023 WL 6793973 (W.D. Wash. Oct. 13, 2023) (certifying TCPA class action);
+
+Head v. Citibank, N.A., 340 F.R.D. 145 (D. Ariz. 2022) (same); Wesley v. Snap Fin.
+
+LLC, 339 F.R.D. 277 (D. Utah 2021) (same); Knapper v. Cox Commc’ns, Inc., 329
+
+F.R.D. 238 (D. Ariz. 2019) (same); Reyes v. BCA Fin. Servs., Inc., No. 16-24077-
+
+CIV-Goodman, 2018 WL 3145807 (S.D. Fla. June 26, 2018) (same), decertified per
+
+agreement of the parties, 2020 WL 1846165 (S.D. Fla. Mar. 18, 2020); Lavigne v.
+
+First Cmty. Bankshares, Inc., No. 1:15-cv-00934-WJ/LF, 2018 WL 2694457
+
+(D.N.M. June 5, 2018) (same); West v. Cal. Servs. Bureau, Inc., 323 F.R.D. 295
+
+(N.D. Cal. 2017) (same); Johnson v. Navient Sols., Inc., 315 F.R.D. 501 (S.D. Ind.
+
+2016) (same);3 accord Brown v. DirecTV, LLC, 562 F. Supp. 3d 590 (C.D. Cal.
+
+2021) (denying a motion to decertify a “wrong number” TCPA class); McMillion v.
+
+
+
+3
+      Undersigned counsel was appointed as counsel for the respective classes in
+Head, Wesley, Knapper, Reyes, and Johnson. Also of note, the defendants’ petitions
+to appeal pursuant to Rule 23(f) in Head, Wesley, and Johnson were denied by the
+Ninth, Tenth, and Seventh Circuits, respectively.
+
+                                         5
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.256 Filed 04/14/26 Page 12 of 32
+
+
+
+
+Rash Curtis & Assocs., No. 16-CV-03396-YGR, 2017 WL 3895764 (N.D. Cal. Sept.
+
+6, 2017) (certifying two “non-debtor” TCPA classes over objection).
+
+              Defendant’s Deficient Written Discovery Responses
+
+      Plaintiff moves to compel substantive responses to interrogatory nos. 7-13 and
+
+request for production nos. 7-12. A true and correct copy of these requests and
+
+Defendant’s responses thereto is attached as Exhibit A. Of note, Defendant has
+
+produced no documents in response to these requests, nor has it substantively
+
+answered any of these interrogatories. While Defendant informally notified Plaintiff
+
+that its records show more than 6,000 instances where a person in Michigan
+
+informed Defendant it was calling the wrong number, Defendant has not provided
+
+this information through an amended interrogatory response, nor has it provided the
+
+underlying telephone numbers, related call data, or associated account details.
+
+Moreover, Defendant unilaterally limited its search to Michigan, despite Plaintiff
+
+proposing a nationwide class under federal law.
+
+      In short, Plaintiff’s at-issue discovery requests seek information regarding the
+
+telephone numbers to which Defendant placed calls with an artificial or prerecorded
+
+voice, the calls it placed to those telephone numbers, the persons Defendant intended
+
+to reach when placing calls, those telephone numbers to which it made calls with an
+
+artificial or prerecorded voice that are assigned to a cellular telephone service, and
+
+
+
+
+                                          6
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.257 Filed 04/14/26 Page 13 of 32
+
+
+
+
+those calls for which Defendant was informed it was calling the wrong person or
+
+telephone number. Ex A.
+
+                                   Legal Standard
+
+      Rule 26(b)(1) provides, in pertinent part:
+
+      Parties may obtain discovery regarding any nonprivileged matter that
+      is relevant to any party’s claim or defense and proportional to the needs
+      of the case, considering the importance of the issues at stake in the
+      action, the amount in controversy, the parties’ relative access to
+      relevant information, the parties’ resources, the importance of the
+      discovery in resolving the issues, and whether the burden or expense of
+      the proposed discovery outweighs its likely benefit. Information within
+      this scope of discovery need not be admissible in evidence to be
+      discoverable.
+
+Fed. R. Civ. P. 26(b)(1).
+
+      “The scope of discovery under the Federal Rules of Civil Procedure is
+
+traditionally quite broad.” Lewis v. ACB Bus. Serv., Inc., 135 F.3d 389, 402 (6th Cir.
+
+1998); accord Meredith v. United Collection Bureau, Inc., 319 F.R.D. 240, 242-43
+
+(N.D. Ohio 2017) (compelling the production of data in a TCPA matter because
+
+“[t]he information that Plaintiff seeks is relevant to establishing the size and nature
+
+of the class that she wants to represent.”).
+
+      Significantly, then, for the party opposing discovery, courts “have repeatedly
+
+admonished the objecting litigant that this burden cannot be met by a reflexive
+
+invocation of the same baseless, often abused litany that the requested discovery is
+
+vague, ambiguous, overly broad, unduly burdensome or that it is neither relevant nor
+
+
+
+                                           7
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.258 Filed 04/14/26 Page 14 of 32
+
+
+
+
+reasonably calculated to lead to the discovery of admissible evidence.” Hobson v.
+
+Trans Union, LLC, No. 1:13-CV-54, 2014 WL 12775013, at *4 (N.D. Ind. June 6,
+
+2014) (collecting cases).
+
+                                     Argument
+
+I.    The information Plaintiff seeks through interrogatory nos. 7-13 and
+      request for production nos. 7-12 is highly relevant to the numerosity,
+      commonality, typicality, and predominance requirements of Rule 23, as
+      well as to class-wide damages.
+
+         A. In TCPA class actions, courts routinely require the production of
+            “class data” like that sought through the subject discovery
+            requests.
+      The production of call logs and dialer data—the very information requested
+
+through interrogatory nos. 7-13 and requests for production nos. 7-12—is standard
+
+practice in TCPA class litigation because of its relevance to the numerosity,
+
+commonality, typicality, and predominance requirements of Rule 23. See, e.g.,
+
+Thomas v. Fin. Corp. of Am., No. 19-152, 2019 WL 5157022, at *1 (N.D. Tex. Oct.
+
+10, 2019) (“Outbound dial lists are relevant to establish the issues of numerosity and
+
+commonality under Federal Rule of Civil Procedure 23(a) and are therefore
+
+discoverable.”); O’Shea v. Am. Solar Sol., Inc., No. 14-894, 2016 WL 701215, at *3
+
+(S.D. Cal. Feb. 18, 2016) (“Upon reviewing requests 9, 28, 29, and 30, the Court
+
+agrees that the documents sought are relevant to his action. Specifically, these
+
+requests generally concern the total number of call recipients and the total number
+
+of phone calls made to them.”); see also Gossett v. CMRE Fin. Servs., 142 F. Supp.
+
+
+                                          8
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.259 Filed 04/14/26 Page 15 of 32
+
+
+
+
+3d 1083, 1087 (S.D. Cal. 2015) (granting motion to compel production of outbound
+
+call lists, as such lists were “relevant to the class claims and meritorious claims and
+
+defenses in this case”); Ossola v. Am. Express Co., No. 13-4836, 2015 WL 5158712,
+
+at *7 (N.D. Ill. Sept. 3, 2015) (“Call data is relevant, and thus produced as standard
+
+practice . . . in cases where the defendant is the alleged dialer.”).4
+
+      Courts across the country routinely compel TCPA class action defendants to
+
+provide analogous information about the size of proposed classes, and to produce
+
+lists of telephone numbers associated with potential members of the classes.
+
+      Indeed, just last week the Southern District of Texas compelled a TCPA
+
+defendant to answer nearly identical interrogatories and produce documents
+
+responsive to related document requests, holding: “In TCPA cases, like this one,
+
+courts around the country have held that call lists and call data are relevant to
+
+establishing the Rule 23(a) elements.” Tafoya v. BMG Loansatwork, Inc., No. 4:25-
+
+cv-2949, 2026 WL 971629, at *3 (S.D. Tex. Apr. 8, 2026).
+
+      As the Northern District of Indiana explained:
+
+
+
+4
+      See also, e.g., Doherty v. Comenity Capital Bank & Comenity Bank, No. 16-
+1321, 2017 WL 1885677, at *4 (S.D. Cal. May 9, 2017) (“The Court finds that
+outbound dial lists are relevant to establish the issues of numerosity and
+commonality under Federal Rule of Civil Procedure 23(a) and are therefore
+discoverable.”); Gaines v. Law Office of Patenaude & Felix, A.P.C., No. 13-1556,
+2014 WL 3894348, at *2 (S.D. Cal. June 12, 2014) (“the Court finds that the
+outbound dial list is relevant to the issues of numerosity and commonality under
+Federal Rule of Civil Procedure 23(a), and is therefore discoverable”).
+
+                                            9
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.260 Filed 04/14/26 Page 16 of 32
+
+
+
+
+      [C]ourts in class-action TCPA cases have consistently held that
+      information regarding plaintiffs and putative class members who were
+      called by a defendant or by others on a defendant’s behalf, such as
+      outbound call lists and the number of calls made to those recipients are
+      relevant to the numerosity and commonality requirements listed in Rule
+      23. . . . Although the requested information here is not precisely a call
+      list, it does seek to quantify the number of calls and is therefore
+      analogous to the outbound call lists that have been found relevant to the
+      numerosity and commonality requirements. Thus, the requested text
+      message-related information is relevant to class certification in a way
+      that is analogous to the relevance of call logs in these other TCPA class
+      actions. Moreover, text messages are analogous to phone calls in other
+      TCPA cases such that the text data requested through ROGs 7–16 and
+      RFPs 7–14, 17, 19, 34–35 is relevant to the Rule 23 numerosity and
+      commonality requirements for class certification applicable in this case.
+
+Fralish v. Digital Media Sols., Inc., No. 21-45, 2021 WL 5370104, at *9-10 (N.D.
+
+Ind. Nov. 17, 2021) (compelling the production of class data in a putative TCPA
+
+class action); accord Fralish v. Deliver Tech., LLC, No. 20-353, 2021 WL 3285528,
+
+at *9 (N.D. Ind. Aug. 2, 2021) (“For the foregoing reasons, Plaintiff is entitled to the
+
+class related data he seeks through RFPs 7-14 & 33, and ROGs 9-15.”).
+
+      The Southern District of Indiana granted a similar motion to compel in a
+
+TCPA class action despite that
+
+      [t]he Court recognizes that the putative class is also limited to persons
+      who were not customers or accountholders of Defendant and that the
+      document requests at issue are not so limited. However, as Plaintiff
+      explains in her brief, the information Plaintiff seeks is relevant to the
+      claims or defenses in this case because it will permit Plaintiff to conduct
+      investigation into the numbers in question and ascertain which of those
+      numbers did not belong to Defendant’s customers or accountholders at
+      the relevant time. Thus, the Court finds the information to be
+      discoverable.
+
+
+
+                                          10
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.261 Filed 04/14/26 Page 17 of 32
+
+
+
+
+Lewis v. Register.com, Inc., No. 25-275, 2025 WL 2662338, at *6 (S.D. Ind. Sept.
+
+16, 2025); see also Abboud v. Circle K. Stores Inc., No. CV-23-01683-PHX-DWL,
+
+2024 WL 3594571, at *1 (D. Ariz. July 31, 2024) (ordering the production of lists
+
+of telephone numbers for “all persons who received two text messages from Circle
+
+K during the relevant time period” even though the plaintiff’s class definition was
+
+limited to persons “who did not provide their telephone number to Circle K.”).
+
+      Likewise, here, Plaintiff seeks call data pertaining to all artificial or
+
+prerecorded voice calls Defendant placed (or directed) during the proposed class
+
+period. From these records, Plaintiff will use expert analysis to determine which of
+
+Defendant’s calls were placed to cellular telephone numbers, and which were placed
+
+to individuals not likely to have been customers or accountholders of Defendant’s.
+
+For example, Plaintiff can compare the telephone numbers Defendant dialed with
+
+those appearing during the same time frame in the Federal Communications
+
+Commission’s Reassigned Numbers Database, indicating that the telephone
+
+numbers had been permanently disconnected and made available for reassignment
+
+at the same time Defendant was trying to reach its customers at those same numbers.
+
+In addition, reverse look up vendors can be used to compare known users of a given
+
+cellular telephone number with the name and address Defendant associates with the
+
+telephone number it called. These analyses are routine in TCPA class actions like
+
+
+
+
+                                        11
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.262 Filed 04/14/26 Page 18 of 32
+
+
+
+
+this one, and were endorsed by the district court in Elliot and by the Sixth Circuit in
+
+In re Humana, Inc. See Elliot, 2025 WL 1065755, at *13.
+
+      In Bonoan v. Adobe, Inc., the Northern District of California granted the
+
+plaintiff’s motion to compel responses to discovery requests materially similar to the
+
+requests at issue here:
+
+      9.    Identify the number of unique telephone numbers to which
+      Defendant made, or caused to be made, calls, by using an automatic
+      telephone dialing system, a predictive dialer, or an artificial or
+      prerecorded voice.
+
+      10. Identify the number of unique telephone numbers to which
+      Defendant made, or caused to be made, calls, by using the hardware or
+      software Defendant used to place, or cause to be placed, calls to
+      Plaintiff, or to (281) 546-9685.
+
+      11.     For the telephone numbers Defendant identifies through its
+      answers to Interrogatory Nos. 9-10, for how many of them do
+      Defendant’s records show that a called party was not the person
+      Defendant intended to reach by placing a call to one of the telephone
+      numbers, or that a person associated with one of the telephone numbers
+      indicated that Defendant contacted the wrong person or telephone
+      number?
+
+      12. For the telephone numbers Defendant identifies through its
+      answers to Interrogatory Nos. 9-11, to how many of them did Defendant
+      place, or cause to be placed, a call by using an automatic telephone
+      dialing system, a predictive dialer, or an artificial or prerecorded voice,
+      after Defendant’s records showed that a called party was not the person
+      Defendant intended to reach by placing a call to one of the telephone
+      numbers, or that a called party indicated that Defendant contacted the
+      wrong person or telephone number.
+
+      13. For the telephone numbers Defendant identifies through its
+      answers to Interrogatory Nos. 9-11, to how many of them did Defendant
+      place, or cause to be placed, a call by using the hardware or software
+
+                                          12
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.263 Filed 04/14/26 Page 19 of 32
+
+
+
+
+         Defendant used to place, or cause to be placed, calls to Plaintiff, or to
+         (281) 546-9685, after Defendant’s records showed that a called party
+         was not the person Defendant intended to reach by placing a call to one
+         of the telephone numbers, or that a called party indicated that Defendant
+         contacted the wrong person or telephone number.
+
+         14. For the telephone numbers Defendant identifies through its
+         answers to Interrogatories Nos. 9-13, how many of them were, or do
+         Defendant’s records indicate were, assigned to a cellular telephone
+         service during the relevant time period?
+
+Compare No. 19-168, ECF No. 47-1 at 11-15 (N.D. Cal. Oct. 4, 2019) (plaintiff’s
+
+interrogatory nos. 9-11), and id. at ECF No. 55 at 2 (“The Court ORDERS that
+
+Defendant provide substantive answers to all Interrogatories other than 5, 10, 15 and
+
+16 by October 31, 2019.”), and id. at ECF No. 68 at 1 (“The Court ORDERS that
+
+Defendant must provide responses to Interrogatories Nos. 10, 11, 13 and 14.”), with
+
+Ex. A; see also Mbazomo v. ETourandTravel, Inc., No. 16-2229, 2017 WL 2346981,
+
+at *5 (E.D. Cal. May 30, 2017) (“Even if discovery had been phased, the Court
+
+agrees with the weight of authority on this matter that call logs and dialing lists are
+
+relevant to the commonality prong of the class certification inquiry. The requested
+
+list would also be relevant to Plaintiff’s need to show numerosity.”).
+
+         Also analogous, in Bellenger v. Accounts Receivable Mgmt., Inc., the
+
+Southern District of Florida granted the plaintiff’s motion to compel responses
+
+aimed at identifying the potential size of the plaintiff’s proposed TCPA class, as well
+
+as a list of telephone numbers associated with potential members of the proposed
+
+class:
+
+
+                                            13
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.264 Filed 04/14/26 Page 20 of 32
+
+
+
+
+     In Requests for Production Nos. 15 and 16, the Plaintiff sought
+     documents “identifying or listing the telephone numbers to which [the
+     Defendant] placed any DIALED CALL to a cellular telephone at any
+     time on or after January 23, 2015,” or documents “that record or list
+     every DIALED CALL” made by the Defendant during that same time
+     period, including all documents that “identify, reflect and/or evidence
+     the number of times each such telephone number was called.” The
+     Defendant objected to these requests as overbroad, because the requests
+     were not limited to calls placed to “wrong parties,” and also stated that
+     the requested information includes personal health information; these
+     objections are overruled, for the reasons discussed above.
+
+                                   *     *      *
+
+     Requests for Production Nos. 17 and 18 sought documents listing every
+     person who received a call since January 23, 2015, and who informed
+     the Defendant that: 1) the person did not wish to be called, or 2) that
+     the Defendant had called a wrong number, or 3) that the person did not
+     have a contract with the Defendant, and also a list of every call made to
+     any person after they had provided one of the three responses above.
+     The Defendant objected that the request was overbroad because it is not
+     limited to cellular phones and also includes people outside the proposed
+     class because those who did not wish to be called or who did not have
+     a contract with the Defendant are not “wrong parties.” For the reasons
+     stated above, the Defendant’s objections as to the cellular phone
+     designation and the “wrong parties” are overruled.
+
+     The Defendant also argues that Requests Nos. 17 and 18 are overbroad
+     because they seek information that has no bearing on whether the
+     Defendant had prior express consent to make the calls, but the
+     Defendant cites no precedent for such a determination. The Court
+     overrules the Defendant’s objection because if the Defendant intends to
+     pursue its defense that it had the prior express consent of those called,
+     then it must produce the evidence on which it will rely. “[A]t this stage
+     of the proceeding, [the Defendant] must produce whatever evidence of
+     prior express consent it will use to rebut [the Plaintiff’s] attempt to
+     establish predominance under Federal Rule of Civil Procedure 23(b)(3)
+     so the issue can fully be litigated during the class certification phase of
+     this case.” See, e.g., Medina v. Enhanced Recovery Company, LLC, No.
+
+
+
+                                         14
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.265 Filed 04/14/26 Page 21 of 32
+
+
+
+
+      15-14342-CIV-MARTINEZ/MAYNARD, 2017 WL 5196093, *8
+      (S.D. Fla. Nov. 9, 2017).
+
+      In summary, the Defendant’s objections addressed above each are
+      overruled, and the Plaintiff is entitled to the information she seeks.
+No. 19-60205, 2019 WL 4284070, at *5-6 (S.D. Fla. Sept. 10, 2019); see also
+
+Warren v. Credit Pros Int’l Corp., No. 20-763, 2021 WL 3552254, at *8 (M.D. Fla.
+
+Apr. 26, 2021) (“Plaintiff is also entitled to receive—prior to class certification—
+
+the documents and information related to the call logs, transmission summaries,
+
+outbound call lists, and the information contained therein bearing on Defendant’s
+
+communications with the putative class members, because Defendant has not moved
+
+to bifurcate class and merits discovery and such information is relevant both to the
+
+merits of Plaintiff’s claims and to the numerosity and commonality requirements in
+
+Rule 23, Fed. R. Civ. P.”).
+
+      For the same reasons, this Court should compel Defendant to respond
+
+completely to interrogatory nos. 7-13 and request for production nos. 7-12.5
+
+      B. Defendant’s objections lack merit and should be overruled.
+
+      Defendant objects to the subject discovery requests on a number of grounds,
+
+including that that they are overly broad, unduly burdensome, and premature. These
+
+objections are unsubstantiated and without merit.
+
+
+5
+     In addition to its relevance to the Rule 23 factors, the number of class
+members and the violative calls each received are directly relevant to damages,
+which are calculated on a per-violative-call basis. 47 U.S.C. § 227(b)(3)(B).
+
+                                        15
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.266 Filed 04/14/26 Page 22 of 32
+
+
+
+
+             1. The subject discovery is not overly broad or premature.
+
+      As to breadth, Defendant contends—without support—that each subject
+
+interrogatory and request for production is overly broad. See Ex. A. To be clear,
+
+through his subject requests, Plaintiff seeks Defendant’s own call records, pertaining
+
+to calls that Defendant placed itself.
+
+      Rule 34 of the Federal Rules of Civil Procedure requires that a party
+
+responding to a request for production must either state that inspection of documents
+
+and related activities will be permitted as requested, or state an objection, including
+
+the specifics of the objection and whether any responsive documents are being
+
+withheld. Fed. R. Civ. P. 34(a), (b)(2)(B). Generic, boilerplate objections to
+
+discovery are not sufficient. Siser N. Am., Inc. v. Herika G. Inc., 325 F.R.D. 200,
+
+209-210 (E.D. Mich. 2018) (“Boilerplate objections are legally meaningless
+
+and amount to a waiver of an objection.”) (citing Strategic Mktg. & Research Team,
+
+Inc. v. Auto Data Sols., Inc., No. 2:15-CV-12695, 2017 WL 1196361, at *2 (E.D.
+
+Mich. Mar. 31, 2017) (“Boilerplate or generalized objections are tantamount to no
+
+objection at all and will not be considered by the Court.”)); accord Nelson v. I.Q.
+
+Data Int’l., Inc., No. 22-12710, 2025 WL 1271924, at *2 (E.D. Mich. Jan. 28, 2025)
+
+(same); A. Fraber & Partners, Inc. v. Garber, 234 F.R.D. 186, 188 (C.D. Cal. 2006)
+
+(general or boilerplate objections such as “overly burdensome and harassing” are
+
+
+
+
+                                          16
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.267 Filed 04/14/26 Page 23 of 32
+
+
+
+
+improper). An “evasive or incomplete . . . answer, or response must be treated as a
+
+failure to . . . answer, or respond.” Fed. R. Civ. P. 37(a)(3).
+
+       In any event, Plaintiff seeks lists of telephone numbers and the number of
+
+them, along with lists of related telephone calls to the subject telephone numbers and
+
+the number of them. The information sought is not overly broad as it relates directly
+
+to the numerosity, typicality, commonality, and predominance elements of Rule 23.
+
+See, e.g., Cahill v. GC Servs. Ltd. P’ship, No. 17-1308, 2018 WL 1791910, at *4
+
+(S.D. Cal. Apr. 16, 2018) (“RFPs 10-13 and 18 are relevant at least to the issues of
+
+numerosity and commonality. The lists are reasonably calculated to identify the
+
+number of recipients of calls made during the class period, which is crucial to
+
+determine whether the class is so numerous to make joinder impracticable. The call
+
+lists are also relevant to the commonality requirement under Rule 23(a), for which
+
+plaintiff must show the class ‘suffered the same injury . . . such that the . . . class
+
+claims will share common questions of law or fact with those of the named
+
+plaintiffs.’”); Webb v. Healthcare Revenue Recovery Grp. LLC, No. 13-737, 2014
+
+WL 325132, at *2-3 (N.D. Cal. Jan. 29, 2014) (compelling production of outbound
+
+call lists).
+
+       As to timing, Plaintiff necessarily requires this information prior to a
+
+determination on class certification, as he must use this discovery to support his
+
+certification motion. See Tafoya, 2026 WL 971629, at *4 (“BMG tries to resist this
+
+
+
+                                           17
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.268 Filed 04/14/26 Page 24 of 32
+
+
+
+
+conclusion by arguing that discovery should be limited before class certification,
+
+essentially echoing its written objection that ‘[d]iscovery to ascertain information
+
+about unnamed class members before class certification is generally improper.’ ECF
+
+No. 24 at 3–4; ECF No. 20 at 18 (BMG’s written objections). That is incorrect.”).
+
+To be sure, “the fact that a disputed discovery request may reveal contact
+
+information for putative class members prior to a ruling on any motion for class
+
+certification is not fatal to the discovery request.” Id.
+
+         Correspondingly, Plaintiff’s discovery requests are not premature, and
+
+numerous courts have compelled similar discovery before any class has been
+
+certified. See, e.g., Lewis, 2025 WL 2662338, at *6; Fralish, 2021 WL 5370104, at
+
+*9-10.
+
+              2. Defendant offers zero evidence that responding to the subject
+                 discovery would be unduly burdensome.
+      As to burden, the party “claiming that a discovery request is unduly
+
+burdensome must allege specific facts which indicate the nature and extent of the
+
+burden, usually by affidavit or other reliable evidence.” Laryngeal Mask Co. v. Ambu
+
+A/S, No. 07-1988, 2009 WL 10672487, at *2 (S.D. Cal. Jan. 27, 2009); see also
+
+DIRECTV, Inc. v. Trone, 209 F.R.D. 455, 458 (C.D. Cal. 2002) (“The party who
+
+resists discovery has the burden to show that discovery should not be allowed, and
+
+has the burden of clarifying, explaining, and supporting its objections.”).
+
+“Conclusory or speculative statements of harm, inconvenience, or expense are
+
+
+                                           18
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.269 Filed 04/14/26 Page 25 of 32
+
+
+
+
+plainly insufficient.” Nationstar Mortg., LLC v. Flamingo Trails No. 7 Landscape
+
+Maint. Ass’n, 316 F.R.D. 327, 334 (D. Nev. 2016).
+
+      Here, Defendant makes no effort to support its repeated burden-based
+
+objections. See Ex. A. To be sure, Defendant has not substantiated why the
+
+information Plaintiff seeks is sufficiently burdensome such that Defendant should
+
+not be required to produce it, especially given the call records’ relevance to class
+
+certification and Defendant’s chosen litigation strategy to contest the elements of
+
+Rule 23. See ECF No. 15, PageID.139 (“This case may not be maintained as a class
+
+action because Plaintiff has not and cannot establish the existence of each of the
+
+requirements under Federal Rule of Civil Procedure 23. PHRG opposes class
+
+certification and disputes the propriety of class action treatment for reasons that
+
+include, but are not limited to, the lack of commonality, predominance, superiority,
+
+adequacy, ascertainability, and typicality among Plaintiff and the putative class
+
+members.”).
+
+      Nor has Defendant offered any explanation as to what steps it took to
+
+investigate how it could obtain the requested information, what that process would
+
+look like, or why that process is so extremely burdensome that Defendant should be
+
+excused entirely from responding to the requests. Given as much, Defendant’s
+
+generalized statements of burden are insufficient. See, e.g., Tafoya, 2026 WL
+
+971629, at *5 (“Yet, BMG fails to explain— much less prove—how or why
+
+
+
+                                        19
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.270 Filed 04/14/26 Page 26 of 32
+
+
+
+
+compiling that evidence would be overly burdensome or disproportionate to the
+
+needs of the case. The Court finds these unsubstantiated boilerplate objections
+
+inadequate to resist discovery and therefore overrules them.”); accord Bayles v. The
+
+Hertz Corp., No. 22-1092, 2023 WL 7448841, at *3 (S.D. Ind. Nov. 9, 2023)
+
+(compelling the production of call recordings and related transcripts in a TCPA class
+
+action, noting, “[a]s an initial matter, when considering the issue of proportionality,
+
+the Court gives minimal consideration to the time needed to download the calls from
+
+Defendant’s system. Defendant chose a vendor who could not batch download call
+
+recordings and cannot now complain that its system is inconvenient to use.”).
+
+      At bottom, interrogatory no. 7 and request for production no. 7 seek the
+
+number of unique telephone numbers to which Defendant placed a call, in
+
+connection with which an artificial or prerecorded voice was used, during the
+
+proposed class period, as well as documents sufficient to identify those telephone
+
+numbers. Interrogatory nos. 8-13 and request for production nos. 8-12 then seek
+
+subsets of similar data to allow Plaintiff to identify those telephone numbers
+
+assigned to a cellular service, those artificial or prerecorded voice calls Defendant
+
+placed to the telephone numbers, and the identities of the intended recipients.
+
+      Defendant has refused to produce both the broader set of data sought through
+
+interrogatory no. 7 and request for production no. 7, and the narrower subsets of data
+
+sought through the remaining requests. But Defendant cannot have it both ways.
+
+
+
+                                          20
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.271 Filed 04/14/26 Page 27 of 32
+
+
+
+
+       If, because it believes the burden too great, Defendant will not undertake the
+
+analysis on its own to identify the cellular telephone numbers belonging to non-
+
+customers to which it placed artificial or prerecorded voice calls, it must instead
+
+produce all telephone numbers to which it attempted to deliver an artificial or
+
+prerecorded voice message, and the names and contact information of the persons it
+
+intended to reach with its calls.6 Plaintiff can then utilize an expert witness to identify
+
+which of those telephone numbers were assigned to a cellular telephone service and
+
+associated with persons other than those Defendant attempted to reach. In other
+
+words, Defendant can produce its fuller sets of call data and have Plaintiff perform
+
+the analysis if Defendant does not want to do so itself. See, e,g., Elliot, 2025 WL
+
+1065755, at *13.
+
+              3. Defendant’s contention that whether it utilizes a prerecorded
+                 voice is a legal conclusion shielding it from its discovery
+                 obligations is unserious.
+       Finally, Defendant claims that determining whether a call was made with an
+
+artificial or prerecorded voice constitutes a legal conclusion and, as a result, it should
+
+not have to identify such calls it placed. Not so. See Bonoan v. Adobe, Inc., No. 19-
+
+cv-01068-RS (SK), 2019 WL 5690631, at *1 (N.D. Cal. Oct. 29, 2019) (granting
+
+motion to compel in TCPA class action and overruling the defendant’s objection
+
+
+6
+       “The disclosure of phone numbers and names does not constitute a serious
+invasion of privacy and is commonplace in class actions.” Thrasher v. CMRE Fin.
+Servs., Inc., No. 14-1540, 2015 WL 1138469, at *3 (S.D. Cal. Mar. 13, 2015).
+
+                                            21
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.272 Filed 04/14/26 Page 28 of 32
+
+
+
+
+because “[t]he term ‘artificial or prerecorded voice’ does not call for a legal
+
+conclusion” and “[d]etermining whether a voice is artificial or prerecorded does not
+
+require legal analysis.”).
+
+      In any event, Defendant certainly is aware that it places calls with an artificial
+
+or prerecorded voice—as opposed to having a human deliver a live message—and
+
+can identify those calls and calling campaigns that utilized such technology.
+
+   II. Defendant cannot be permitted to refuse to provide class-related
+       discovery while simultaneously contesting class certification.
+      Defendant vigorously contests that Plaintiff can meet each of the elements of
+
+Rule 23, which it has every right to do. What Defendant cannot be permitted to do,
+
+however, is oppose Plaintiff’s efforts to certify a class while both (a) refusing to
+
+identify all telephone numbers of non-customers it may have called at a wrong
+
+number, and how many such calls it made to them, and (b) refusing to provide its
+
+broader call data so that Plaintiff can conduct such an analysis on his own. See
+
+Central Alarm Signal, Inc. v. Business Fin. Servs., Inc., No. 14-14166, 2016 WL
+
+3595627, at *2 (E.D. Mich. July 5, 2016) (granting motion to compel in putative
+
+TCPA class action, in part, because “the Court cannot permit [Defendant] on one
+
+hand to contest class certification and on the other hand deny plaintiff the discovery
+
+relevant to its position that a class should be certified.”); accord Whiteamire Clinic,
+
+P.A. v. Quill Corp., No. 12-5490, 2013 WL 5348377, at *3 (N.D. Ill. Sept. 24, 2013)
+
+(“As we made clear to Quill in multiple court hearings, the Court cannot permit Quill
+
+
+                                          22
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.273 Filed 04/14/26 Page 29 of 32
+
+
+
+
+on one hand to contest class certification and on the other hand deny plaintiff the
+
+discovery relevant to its position that a class should be certified.”).
+
+      Likewise here, because Defendant contests each element of Rule 23, it must
+
+provide all requested calling data so that Plaintiff can meet his evidentiary burden.
+
+                                      Conclusion
+
+      Because of the subject discovery requests’ high relevance to class certification
+
+and damages, and given the resulting routine production of similar material in TCPA
+
+matters like this one, Plaintiff respectfully requests that this Court compel Defendant
+
+to provide complete answers to Plaintiff’s interrogatory nos. 7-13 and documents
+
+responsive to his requests for production nos. 7-12.
+
+      Defendant’s largely repetitive objections are unsubstantiated, lack detail, and
+
+are formulaic. This Court should overrule them in their entirety. Tafoya, 2026 WL
+
+971629, at *2 (“Copy-and-pasted boilerplate objections are not sufficient.”).
+
+RESPECTFULLY SUBMITTED AND DATED this April 14, 2026.
+
+                                  s/ Michael L. Greenwald
+                                  Michael L. Greenwald
+                                  GREENWALD DAVIDSON RADBIL PLLC
+                                  5550 Glades Road, Suite 500
+                                  Boca Raton, FL 33431
+                                  Telephone: (561) 826-5477
+                                  Email: mgreenwald@gdrlawfirm.com
+
+                                  Anthony Paronich
+                                  PARONICH LAW, P.C.
+                                  350 Lincoln Street, Suite 2400
+
+
+                                           23
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.274 Filed 04/14/26 Page 30 of 32
+
+
+
+
+                             Hingham, MA 02043
+                             Telephone: (617) 485-0018
+                             Facsimile: (508) 318-8100
+                             Email: anthony@paronichlaw.com
+
+                             George T. Blackmore
+                             BLACKMORE LAW PLC
+                             1100 Owendale Drive, Suite M
+                             Troy, MI 48083
+                             Telephone: (888) 835-2993
+                             Facsimile: (508) 318-8100
+                             Email: george@blackmore.law
+
+                             Attorneys for Plaintiff and the Proposed Class
+
+
+
+
+                                     24
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.275 Filed 04/14/26 Page 31 of 32
+
+
+
+
+                    UNITED STATES DISTRICT COURT
+                    EASTERN DISTRICT OF MICHIGAN
+                         SOUTHERN DIVISION
+
+NATHAN JAMES MASSARELLO,                   Case No.: 2:24-cv-12480-RJW-CI
+on behalf of himself and others
+similarly situated,                        Honorable Robert J. White
+
+                    Plaintiff,             Magistrate Judge Curtis Ivy, Jr.
+       v.
+
+POWER HOME REMODELING
+GROUP, LLC,
+
+                    Defendant.
+
+
+
+                 BRIEF FORMAT CERTIFICATION FORM
+
+
+       I, Michael Greenwald, certify that the foregoing brief complies with Eastern
+District of Michigan Local Rules 5.1(a), 5.1.1, and 7.1, and Judge White’s Case
+Management Requirements, including the following (click each box to indicate
+compliance):
+   ☒ the brief contains a statement regarding concurrence, see LR 7.1(a);
+   ☒ the brief, including footnotes, uses 14-point font, see LR 5.1(a)(3);
+   ☒ the brief contains minimal footnotes and, in all events, no more than 10, see
+     Case Management Requirements § III.A;
+   ☒ the brief and all exhibits are filed in searchable PDF format, see Case
+     Management Requirements § III.A;
+   ☒ except for footnotes and necessary block quotes, the brief is double spaced
+     (not “Exactly 28 pt” spaced) with one-inch margins, see LR 5.1(a)(2);
+   ☒ deposition transcripts have been produced in their entirety (not in minuscript),
+     see Case Management Requirements § III.A;
+
+
+
+                                         25
+Case 2:24-cv-12480-RJW-CI ECF No. 25, PageID.276 Filed 04/14/26 Page 32 of 32
+
+
+
+
+   ☒ if the brief and exhibits total 50 pages or more, I will mail to chambers a
+     courtesy copy with ECF headers, see Case Management Requirements § III.B.
+
+
+I also acknowledge that my brief will be stricken from the docket if the Court later
+finds that these requirements are not met.
+
+
+/s/ Michael Greenwald
+Michael Greenwald
+Attorney for Plaintiff
+
+
+
+
+                                         26
+
