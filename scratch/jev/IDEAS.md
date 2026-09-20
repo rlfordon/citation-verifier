@@ -73,6 +73,21 @@ the locator's `exists` answer ("does any passage state this?") is 0.23 or lower
 for **all 13** claims Opus called unsupported. One-sided: 11 of 61 supported
 claims also score under 0.5. In-sample data, so a lead, not a result.
 
+**As a second look at Opus's Greens (quick offline check, 2026-09-19, $0).** Of
+the 61 claims the frozen assess-v2 run called "supported", 9 carry a human label
+that is not green. Six of those already turn Yellow through the quote check, so
+the real misses are withers-32, -33, -49. The original gate score (`gate_v0`,
+top-5 passages) is 0.90, 0.47, 0.40: "re-read when under 0.5" catches 2 of 3, and
+would also re-read 6 of the 52 correctly-Green claims (about 12% more Opus
+work). Against the July API run it catches 3 of 4 real misses (adds withers-12 at
+0.25). Tiny numbers, in-sample, and 0.47 against a 0.50 line is the same
+razor-thin margin that fooled us twice -- a lead only. Testing it needs no new
+code path: the shadow log already records the score on every run; what is
+missing is a report section listing "Opus said supported, Jev scored low" for a
+human to check on fresh briefs. This is a reason to keep Jev that does not
+depend on cost -- on the API path a brief costs about $2.38 ($1.19 batched), so
+every cost-saving idea here is now worth well under a dollar a brief.
+
 ## J. Full-opinion fallback rule (new)
 
 If the LLM reads located passages instead of the whole opinion, findings that
