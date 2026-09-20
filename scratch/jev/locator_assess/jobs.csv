@@ -1,0 +1,80 @@
+corpus,claim_ids,opinion_file,v2_input_chars,v3_input_chars,july_api_cost_usd,july_api_elapsed_s,exists,v2_support,july_api_support
+withers,withers-09 withers-12,opinions/American_Automobile_Ass_n_v_AAA_Legal_Clinic_of_Jefferson_Crooke_P_C.html,29300,12573,0.1138,25.9,0.700 0.510,supported partial,supported supported
+withers,withers-38,opinions/Anderson_v_Liberty_Lobby_Inc.html,44894,13502,0.0932,5.9,0.990,supported,supported
+withers,withers-49,opinions/Barbara_Cutrera_v_Board_of_Supervisors_of_Louisiana_State_University_Louisiana_State_University_Foundation_Marian_Cailli.html,31798,11465,0.0775,8.0,0.050,supported,supported
+withers,withers-21,opinions/Bobby_D_Lacy_v_Sitel_Corporation.html,23859,14070,0.0693,10.3,0.830,supported,supported
+withers,withers-11 withers-14,opinions/Carney_v_Internal_Revenue_Service.html,39791,19169,0.1228,21.4,0.390 0.330,supported partial,supported partial
+withers,withers-07,opinions/Celotex_Corp_v_Catrett_Administratrix_of_the_Estate_of_Catrett.html,30586,11782,0.069,7.5,0.960,supported,supported
+withers,withers-41,opinions/City_of_Madison_v_Bryan.html,72101,11485,0.1473,7.8,0.100,unsupported,unsupported
+withers,withers-10 withers-13,opinions/Donovan_v_Carls_Drug_Co.html,16376,11263,0.0745,19.5,0.980 0.180,supported partial,supported partial
+withers,withers-46,opinions/Franconia_Associates_v_United_States.html,51976,14665,0.1283,14.0,0.760,supported,supported
+withers,withers-37,opinions/Fred_A_Cruz_and_Mrs_Frances_T_Freeman_Cruz_Movant-Appellant_v_W_B_Bill_Hauck_Sheriff_of_Bexar_County_Texas_Defendants.html,52463,12244,0.1253,12.5,0.930,supported,supported
+withers,withers-20,opinions/In_Re_United_States_of_America.html,17782,10908,0.0541,12.3,0.830,partial,supported
+withers,withers-47,opinions/Jane_Doe_v_City_of_Memphis.html,80576,14065,0.1709,7.1,0.020,unsupported,unsupported
+withers,withers-33,opinions/Louisiana_Power_Light_Co_v_Kellstrom.html,111023,10772,0.2683,21.3,0.860,supported,supported
+withers,withers-04,opinions/MIDWEST_EMPLOYERS_CASUALTY_CO_Plaintiff-Appellant-Appellee_v_Jo_Ann_WILLIAMS_Defendant-Appellee-Appellant.html,23089,13586,0.0798,16.4,0.560,supported,supported
+withers,withers-39,opinions/Matsushita_Electric_Industrial_Co_Ltd_v_Zenith_Radio_Corporation.html,70476,11043,0.1449,7.8,0.960,supported,supported
+withers,withers-32,opinions/McClain_v_Lufkin_Industries_Inc.html,58824,18433,0.129,8.3,0.920,supported,supported
+withers,withers-36,opinions/Missouri_v_Jenkins_Ex_Rel_Agyei.html,52339,11228,0.1314,16.3,0.280,supported,supported
+withers,withers-01,opinions/Nix_v_Whiteside.html,56877,15346,0.1481,20.4,0.240,partial,partial
+withers,withers-48,opinions/North_Cypress_Medical_Center_Operating_Co_v_Cigna_Healthcare.html,153485,12545,0.3364,6.3,0.020,unsupported,unsupported
+withers,withers-30,opinions/Rice_v_HamiltonDavis_Mental_Health_Inc.html,37206,13967,0.0933,14.7,0.270,partial,partial
+withers,withers-26,opinions/Rick_Scott_v_Amer_Natl_Trust_Invst_Co.html,57741,13233,0.1465,15.8,0.040,partial,partial
+withers,withers-05,opinions/Silvercreek_Management_Inc_v_Banc_of_America_Securities_LLC.html,17263,9115,0.0598,16.2,0.180,partial,partial
+withers,withers-44,opinions/Stringer_Ex_Rel_Stringer_v_Trapp.html,20944,10028,0.0591,8.3,0.780,partial,partial
+withers,withers-50,opinions/The_Mississippi_State_Port_Authority_at_Gulfport_v_Yilport_Holding_A_S_Yilport_Mississippi_Container_Terminal_Management.html,72768,9301,0.1525,8.2,0.450,supported,supported
+withers,withers-06,opinions/Wilkens_v_Johnson.html,42786,14417,0.0971,7.8,0.020,unsupported,unsupported
+withers,withers-45,opinions/Young_v_Southern_Farm_Bureau_Life_Ins.html,24559,9372,0.0636,16.7,0.980,supported,supported
+payne,payne-47,opinions/Chambers_v_State.html,23909,10483,0.0717,13.2,0.630,partial,partial
+payne,payne-32,opinions/Clark_v_State.html,21037,8807,0.0503,7.1,0.990,supported,supported
+payne,payne-14,opinions/Durden_v_State.html,29602,12675,0.065,6.2,0.020,unsupported,unsupported
+payne,payne-79,opinions/Goldsby_v_State.html,68454,9567,0.1616,11.0,0.230,unsupported,unsupported
+payne,payne-52,opinions/Hamm_v_State.html,37803,11699,0.0889,8.3,0.080,unsupported,unsupported
+payne,payne-73,opinions/Hargrave_v_State.html,25137,9781,0.0549,3.7,0.990,supported,supported
+payne,payne-23,opinions/In_the_Interest_of_D_L.html,24791,12914,0.0624,10.5,0.040,unsupported,unverifiable
+payne,payne-75,opinions/Jackson_v_Virginia.html,69692,12119,0.1415,4.8,0.980,supported,supported
+payne,payne-38,opinions/Johnson_v_Jackson.html,37374,11247,0.0857,6.6,0.980,supported,supported
+payne,payne-34,opinions/Jones_v_State.html,46704,16099,0.0907,3.5,0.990,supported,supported
+payne,payne-15,opinions/Lang_v_State.html,26264,12044,0.0627,6.4,0.020,unsupported,unsupported
+payne,payne-33,opinions/Mahan_v_State.html,25029,11037,0.0556,4.4,0.990,supported,supported
+payne,payne-11 payne-12,opinions/Manzano_v_State.html,21275,14267,0.0545,6.4,0.020 0.030,unsupported unsupported,unsupported unsupported
+payne,payne-69,opinions/Montgomery_v_State.html,28852,8562,0.0687,12.1,0.960,supported,supported
+payne,payne-50,opinions/Nelson_v_State.html,15756,10771,0.0393,5.1,0.020,unsupported,unsupported
+payne,payne-42 payne-43,opinions/Prayor_v_State.html,17095,10291,0.0602,12.1,0.980 0.990,supported supported,supported supported
+payne,payne-48,opinions/Reddick_v_State.html,61110,9151,0.1206,6.8,0.980,supported,supported
+payne,payne-03,opinions/Reed_v_State.html,45895,11426,0.1083,7.6,0.050,partial,unsupported
+payne,payne-16,opinions/State_v_Kelly.html,33764,11501,0.1044,20.8,0.090,partial,partial
+payne,payne-02,opinions/State_v_Rozier.html,13222,10135,0.0474,11.6,0.020,unsupported,unsupported
+payne,payne-00,opinions/Strickland_v_Washington.html,80160,12870,0.1518,5.8,0.980,supported,supported
+payne,payne-58,opinions/Tarvestad_v_State.html,9822,8771,0.0468,13.6,0.910,partial,supported
+payne,payne-77,opinions/Vega_v_State.html,25468,9863,0.0594,5.2,0.990,supported,supported
+payne,payne-59,opinions/Virgil_v_State.html,17895,11390,0.0595,14.2,0.310,partial,partial
+payne,payne-54,opinions/Wainwright_v_State.html,53408,9858,0.1143,6.3,0.970,supported,supported
+wainwright,wainwright-32,opinions/Anthony_v_State.html,39846,11428,0.0851,6.9,0.990,supported,supported
+wainwright,wainwright-15,opinions/Baker_v_State.html,21017,9806,0.0532,7.5,0.460,supported,supported
+wainwright,wainwright-26,opinions/Berrian_v_State.html,18556,11060,0.0518,8.6,0.990,supported,supported
+wainwright,wainwright-24,opinions/Brunson_v_State.html,15582,11140,0.0399,6.0,0.850,supported,supported
+wainwright,wainwright-10 wainwright-12 wainwright-14,opinions/Charleston_v_State.html,31976,12204,0.0966,15.8,0.980 0.990 0.090,supported supported supported,supported supported supported
+wainwright,wainwright-04,opinions/Cox_v_State.html,29290,12896,0.0638,5.0,0.890,supported,supported
+wainwright,wainwright-29,opinions/Dixon_v_State.html,33824,10808,0.0726,5.6,0.980,supported,supported
+wainwright,wainwright-03 wainwright-06,opinions/Geiger_v_State.html,32173,12730,0.098,16.7,0.990 0.810,supported partial,supported partial
+wainwright,wainwright-17,opinions/Hammond_v_State.html,26793,10596,0.0652,11.6,0.970,partial,supported
+wainwright,wainwright-21,opinions/Hicks_v_State.html,23780,10348,0.0513,3.5,0.990,supported,supported
+wainwright,wainwright-00,opinions/Jackson_v_Virginia.html,69681,12235,0.1511,11.9,0.260,supported,supported
+wainwright,wainwright-19,opinions/Jones_v_State.html,16120,9770,0.045,7.8,0.950,supported,supported
+wainwright,wainwright-25,opinions/Kilpatrick_v_State.html,28137,10834,0.0637,3.5,0.990,supported,supported
+wainwright,wainwright-16,opinions/Lawrence_v_State.html,16081,10139,0.0457,7.0,0.990,supported,supported
+wainwright,wainwright-20,opinions/Mathis_v_State.html,12578,10526,0.0321,4.8,0.960,supported,supported
+wainwright,wainwright-22,opinions/Mills_v_State.html,23221,10134,0.0587,7.4,0.960,supported,supported
+wainwright,wainwright-28,opinions/Palmer_v_State.html,38623,8189,0.0766,3.8,0.400,supported,supported
+wainwright,wainwright-01 wainwright-02 wainwright-05,opinions/Phoenix_v_State.html,18438,10285,0.0518,8.0,0.990 0.990 0.980,supported supported supported,supported supported supported
+wainwright,wainwright-23,opinions/Powers_v_State.html,20680,10292,0.0479,6.0,0.960,supported,supported
+wainwright,wainwright-18,opinions/Raven_v_State.html,9808,8797,0.0415,11.5,0.750,supported,supported
+wainwright,wainwright-33,opinions/Simmons_v_State.html,40369,10419,0.0838,6.2,0.900,supported,supported
+wainwright,wainwright-07,opinions/Strickland_v_Washington.html,80126,14218,0.152,6.3,0.980,supported,supported
+wainwright,wainwright-30,opinions/Thomas_v_State.html,19166,9766,0.0547,9.7,0.080,supported,supported
+wainwright,wainwright-13,opinions/Turpin_v_Curtis.html,19653,10574,0.0491,4.5,0.980,supported,supported
+wainwright,wainwright-09 wainwright-11,opinions/United_States_v_Cronic.html,86711,17045,0.2019,11.4,0.040 0.730,supported supported,supported supported
+wainwright,wainwright-27,opinions/Watson_v_State.html,17512,11985,0.0505,8.8,0.950,supported,supported
+wainwright,wainwright-08,opinions/Wesley_v_State.html,20030,8093,0.0469,3.9,0.980,supported,supported
+wainwright,wainwright-31,opinions/in_the_Matter_of_Ricky_W_Morris_Jr.html,13400,8177,0.0361,6.6,0.050,supported,supported

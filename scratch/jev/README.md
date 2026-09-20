@@ -1,7 +1,8 @@
 # Jev experiments — three small tests
 
 **Start here:** `IDEAS.md` (status of every idea) · `RESULTS.md` (tests 1-4) ·
-`LOOP.md` (phrasing loop + shadow logging) · `jev-question-loops.html` (explainer).
+`LOOP.md` (phrasing loop + shadow logging) · `LOCATOR_ASSESS.md` (test 5: locator
+feeding the LLM assessment — costed, not run) · `jev-question-loops.html` (explainer).
 
 Background and the idea list: `../jev_citation_checking_research.md`.
 Goal: **try it, measure Jev's cost/time, estimate what it could save** — not a

@@ -774,10 +774,6 @@ _LEADING_COMMENT_RE = re.compile(r"\A(?:\s*<!--.*?-->)*\s*", re.DOTALL)
 DEFAULT_PROMPT_VERSION = "assess-v1"
 ASSESS_V2_PROMPT_VERSION = "assess-v2"
 EXTRACT_PROMPT_VERSION = "extract-v1"
-# EXPERIMENT (docs/plans/2026-09-19-jev-locator-assess-test.md): v2's packed
-# jobs, but the agent reads locator excerpts instead of the whole opinion.
-ASSESS_V3_PROMPT_VERSION = "assess-v3"
-_EXCERPT_PROMPT_VERSIONS = frozenset({ASSESS_V3_PROMPT_VERSION})
 
 
 def load_prompt_template(version: str) -> str:
@@ -1166,27 +1162,13 @@ def run_assess(workdir: Path, executor: Any = None,
         by_opinion: dict[str, list[dict]] = {}
         for c in todo:
             by_opinion.setdefault(c["opinion_file"], []).append(c)
-
-        def _job_file(opinion: str) -> str:
-            # Excerpt versions read jobs/excerpts/<stem>.txt, written
-            # beforehand by locator_excerpts.write_locator_excerpts.
-            if prompt_version not in _EXCERPT_PROMPT_VERSIONS:
-                return opinion
-            from .locator_excerpts import excerpt_relpath
-            rel = excerpt_relpath(opinion)
-            if not (workdir / rel).is_file():
-                raise FileNotFoundError(
-                    f"{prompt_version} needs {rel}: run "
-                    f"locator_excerpts.write_locator_excerpts first")
-            return rel
-
         jobs = [Job(
             job_id="assess-" + Path(opinion).stem[:60],
             claim_ids=[c["claim_id"] for c in group],
             prompt=render_assess_v2_prompt(
-                prompt_version, str(workdir / _job_file(opinion)), group),
+                prompt_version, str(workdir / opinion), group),
             prompt_version=prompt_version,
-            files=[_job_file(opinion)],
+            files=[opinion],
             schema=_ASSESS_V2_SCHEMA,
         ) for opinion, group in by_opinion.items()]
 

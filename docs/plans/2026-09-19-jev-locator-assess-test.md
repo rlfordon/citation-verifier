@@ -1,6 +1,11 @@
 # Test plan: Jev passage locator feeding the LLM assessment
 
-**Status:** not started. Written 2026-09-19 as a handoff for a fresh session.
+**Status:** CLOSED 2026-09-19 -- built up to the paid step, costed offline, and
+**not run** (Rebecca's call: best case saves ~$0.86 a brief, ~$0.40 after any
+fallback rule; one run could not have shown it safe). Write-up:
+`scratch/jev/LOCATOR_ASSESS.md`. Original plan below, unchanged.
+
+Written 2026-09-19 as a handoff for a fresh session.
 **Decision already made by Rebecca:** run this test. It spends real Opus money
 (estimate ~$5 on the direct-API path) and adds a prompt version — both approved.
 

@@ -22,14 +22,14 @@ Standing rules for anything built on it:
 |---|---|---|---|
 | A | Decomposed support rubric | **Done** — measured, then reworded by the phrasing loop | none |
 | B | Auto-Green gate | **Measured; running in shadow** | turn on when the trigger below is met |
-| C | Passage locator | **Measured** (96% top-5); not yet used downstream | **NEXT:** `docs/plans/2026-09-19-jev-locator-assess-test.md` |
+| C | Passage locator | **Measured** (96% top-5). Feeding it to the LLM assessment was **designed, costed, and parked without a paid run** -- best case saves 36% (~$0.86 a brief), ~$0.40 after any fallback | none -- see `LOCATOR_ASSESS.md` for the reopen conditions |
 | D | Quote-alteration adjudicator | Not started — **blocked** on the quote-matcher fix | decide the matcher fix (`../TODO.md`, top item) |
 | E | Second reader on Opus's proven passage | Not started — **blocked** on the `opinion_block` proof check, which needs the matcher fix | same |
 | F | Wrong-document / topic tripwire | Not built; partly answered by data (see I) | fold into I |
 | G | Extraction checker | Not started | needs labelled extraction data first |
 | H | Poor-man's citator | Not started | park; new feature with its own labelling problem |
-| I | Low-score triage | **New** — evidence in hand, not built | cheap follow-on to B |
-| J | Full-opinion fallback rule | **New** — part of the locator test | measured by C's test |
+| I | Low-score triage | **New** — evidence in hand (more on 2026-09-19: see below), not built | cheap follow-on to B |
+| J | Full-opinion fallback rule | **Parked with C** — costed offline: every rule gives back most of the saving, two go negative | none |
 | K | Templated Green cards | **New** — needed before B can switch on | design with B |
 | L | Per-clause decomposition in code | **New** — not tried | candidate for the next rubric version |
 | M | Self-consistency across state framings | **New** — found by the loop, in use in `gate_v1` | watch in shadow data |
@@ -68,6 +68,11 @@ at both ends and unreliable in the middle. A low score could route a claim to th
 `full` triage track, order the report's review queue, or serve as F's tripwire
 for a wrong opinion file. It saves nothing; it aims effort. Never a verdict.
 
+More evidence, 2026-09-19 (`LOCATOR_ASSESS.md`): on the three frozen claim sets
+the locator's `exists` answer ("does any passage state this?") is 0.23 or lower
+for **all 13** claims Opus called unsupported. One-sided: 11 of 61 supported
+claims also score under 0.5. In-sample data, so a lead, not a result.
+
 ## J. Full-opinion fallback rule (new)
 
 If the LLM reads located passages instead of the whole opinion, findings that
@@ -75,6 +80,13 @@ depend on a topic being *absent* are at risk (a missed passage looks like "not
 supported"). Candidate rules, to be measured by C's test: fall back to the whole
 opinion when the LLM answers `unverifiable`; or also on `unsupported`; or when
 the locator's "does any passage state this?" answer is low.
+
+**Parked 2026-09-19 without a paid run** (`LOCATOR_ASSESS.md`). Input is only
+about half of an API-path assessment's cost, so excerpts save at most 36%
+($0.86 per 30-claim brief). Priced offline: re-read when `exists` < 0.5 costs
+10% MORE than today; routing those claims straight to the full opinion saves
+19%; re-read on `unverifiable` saves about 17%. The Batches API saves 50% with
+no accuracy risk. Reopen for much longer opinions or bulk screening (R).
 
 ## K. Templated Green cards (new)
 

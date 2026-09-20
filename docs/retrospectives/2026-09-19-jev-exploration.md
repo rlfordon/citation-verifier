@@ -87,6 +87,10 @@ since it is so cheap.
   gitignored: **add it on the other computers too**, and set it to 0 for any
   non-public document.
 - Next experiment: the locator feeding the LLM assessment, in a fresh session.
+  **Update, same day:** built up to the paid step, then parked without running
+  it -- the best case saves ~$0.86 a brief and any fallback rule gives most of
+  that back. Lesson: price an experiment's best case before building it.
+  -> `scratch/jev/LOCATOR_ASSESS.md`
 
 ## Open items
 
