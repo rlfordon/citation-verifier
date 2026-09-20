@@ -194,6 +194,10 @@ Jev, and arguably the most valuable single takeaway here.
 
 ## 5. Ideas, ranked
 
+> **Snapshot from before any experiments.** Current status of every idea, plus
+> ten more that came out of the work, is in `jev/IDEAS.md`. What was actually
+> done: `../docs/retrospectives/2026-09-19-jev-exploration.md`.
+
 | Rank | Idea | One-line rationale |
 |---|---|---|
 | 1 | A. Shadow rubric | Near-free experiment that tells us whether anything else is viable |
@@ -280,6 +284,8 @@ the literalness weakness may bite; would need its own labeled eval set.
 ---
 
 ## 6. Suggested first step
+
+> Done the same day. Next step now: `../docs/plans/2026-09-19-jev-locator-assess-test.md`.
 
 Read the TypeSafe ToS, confirm the context limits from the official docs, then build
 `JevExecutor` + the A rubric in shadow mode and score it on the three frozen corpora.

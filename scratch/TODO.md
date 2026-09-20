@@ -10,6 +10,18 @@
 > reproducers, Charlotin fake-mining, threshold calibration) are in that
 > roadmap's "Follow-ups discovered during execution" section.
 
+## Jev (TypeSafe AI) — status pointer, 2026-09-19
+
+- Ideas backlog with current status: [`scratch/jev/IDEAS.md`](jev/IDEAS.md)
+- What was done and learned: [`docs/retrospectives/2026-09-19-jev-exploration.md`](../docs/retrospectives/2026-09-19-jev-exploration.md)
+- **Next:** locator -> LLM assessment test, plan in
+  [`docs/plans/2026-09-19-jev-locator-assess-test.md`](../docs/plans/2026-09-19-jev-locator-assess-test.md) (run in a fresh session)
+- Shadow logging is live (`JEV_SHADOW=1` in `.env`, per machine). Check the pool
+  with `venv/Scripts/python.exe tools/jev_shadow_report.py`. Gate switch-on rule
+  is in IDEAS.md section B.
+- On each other computer: `pip install -e ".[jev]"` and add `TYPESAFE_API_KEY` +
+  `JEV_SHADOW=1` to `.env`.
+
 ## OPEN 2026-09-19 — quote matcher fuzzy path is capped at 0.80 (decision needed)
 
 Found while trying to add a verbatim check on agent-written `opinion_block`

@@ -1,5 +1,8 @@
 # Jev experiments — three small tests
 
+**Start here:** `IDEAS.md` (status of every idea) · `RESULTS.md` (tests 1-4) ·
+`LOOP.md` (phrasing loop + shadow logging) · `jev-question-loops.html` (explainer).
+
 Background and the idea list: `../jev_citation_checking_research.md`.
 Goal: **try it, measure Jev's cost/time, estimate what it could save** — not a
 model bake-off. Data: the three frozen corpora in
