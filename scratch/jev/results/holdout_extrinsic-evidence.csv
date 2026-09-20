@@ -1,0 +1,5 @@
+claim_id,opus_support,opus_color,eligible,score,jev_s,relation,relation_conf,p_supports,p_partly,p_says_nothing,p_contradicts,same_issue,states_it,opposite,overstated,whose_view,whose_conf,p_court,support_score,support_conf
+extrinsic-evidence-01,partial,Yellow,1,0.71,0.595,supports,0.6,0.71,0.29,0.0,0.0,0.98,0.95,0.02,0.59,court,0.71,0.78,2.43,0.43
+extrinsic-evidence-02,supported,Green,1,0.93,0.363,supports,0.96,0.97,0.03,0.0,0.0,0.93,0.94,0.03,0.25,court,0.99,1.0,2.87,0.87
+extrinsic-evidence-03,unsupported,Red,1,0.41,0.374,partly,0.42,0.41,0.57,0.0,0.02,0.94,0.85,0.1,0.69,court,0.89,0.91,2.18,0.62
+extrinsic-evidence-04,unsupported,Red,1,0.01,0.287,says_nothing,0.97,0.01,0.01,0.98,0.0,0.11,0.07,0.05,0.86,not_discussed,0.94,0.04,0.1,0.9

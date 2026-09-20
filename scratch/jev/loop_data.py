@@ -40,42 +40,60 @@ def build() -> list[dict]:
         if c.opinion_path and c.expected in _LABEL:
             rows.append(_row(c, _LABEL[c.expected], "human", c.corpus, False))
 
-    # Held-out prior run: Opus labels. Same brief as the payne corpus, so it
-    # joins the "payne" group (never split across folds) and near-duplicate
-    # propositions are dropped in favour of the human-labelled row.
+    for r in rows:
+        r["split"] = "search"
+
+    # Prior runs: Opus labels. matters/payne is the same brief as the payne
+    # corpus, so it joins the "payne" group (never split across folds) and
+    # near-duplicate propositions are dropped in favour of the human row.
+    # LOCKBOX briefs are ones the search never sees -- not the loop, not the
+    # person writing candidates. Only the final pick is scored on them.
     human_payne = [r["proposition"] for r in rows if r["group"] == "payne"]
-    workdir = REPO / "matters" / "payne"
     dropped = 0
-    for row in csv.DictReader((workdir / "claims.csv").open(encoding="utf-8")):
-        f, support = row.get("opinion_file", ""), (row.get("support") or "").strip()
-        if not f or not (workdir / f).is_file():
-            continue
-        if support not in ("supported", "partial", "unsupported"):
-            continue
-        prop = row.get("cited_for") or row["proposition"]
-        if any(difflib.SequenceMatcher(None, prop, h).ratio() > 0.8
-               for h in human_payne):
-            dropped += 1
-            continue
-        claim = Claim("matters-payne", row["claim_id"], row, "", workdir / f)
-        flags = (row.get("crosscheck_flags") or "").strip() not in ("", "[]")
-        rows.append(_row(claim, support, "opus", "payne", flags))
+    for name, group, split in (
+            ("payne", "payne", "search"),
+            ("kettering-mtd", "kettering-mtd", "lock"),
+            ("sonnet-q3-protest", "sonnet-q3-protest", "lock"),
+            ("ohio-mailbox", "ohio-mailbox", "lock"),
+            ("extrinsic-evidence", "extrinsic-evidence", "lock")):
+        workdir = REPO / "matters" / name
+        for row in csv.DictReader((workdir / "claims.csv").open(encoding="utf-8")):
+            f = row.get("opinion_file", "")
+            support = (row.get("support") or "").strip()
+            if not f or not (workdir / f).is_file():
+                continue
+            if support not in ("supported", "partial", "unsupported"):
+                continue
+            prop = row.get("cited_for") or row["proposition"]
+            if name == "payne" and any(
+                    difflib.SequenceMatcher(None, prop, h).ratio() > 0.8
+                    for h in human_payne):
+                dropped += 1
+                continue
+            claim = Claim(f"matters-{name}", row["claim_id"], row, "", workdir / f)
+            flags = (row.get("crosscheck_flags") or "").strip() not in ("", "[]")
+            r = _row(claim, support, "opus", group, flags)
+            r["id"] = f"opus:{name}:{row['claim_id']}"
+            r["split"] = split
+            rows.append(r)
     save_cache()
     print(f"dropped {dropped} matters/payne claims as near-duplicates of "
           f"human-labelled payne claims")
     return rows
 
 
-def load_dataset() -> list[dict]:
-    return json.loads(DATASET.read_text(encoding="utf-8"))
+def load_dataset(split: str = "search") -> list[dict]:
+    """The loop only ever loads 'search'. 'lock' is for the final pick."""
+    data = json.loads(DATASET.read_text(encoding="utf-8"))
+    return [r for r in data if r["split"] == split]
 
 
 if __name__ == "__main__":
     data = build()
     DATASET.write_text(json.dumps(data, indent=1), encoding="utf-8")
     print(f"{len(data)} claims -> {DATASET.name}")
-    for g in sorted({r["group"] for r in data}):
-        sub = [r for r in data if r["group"] == g]
-        print(f"  {g:11s} n={len(sub):3d} labels={dict(Counter(r['label'] for r in sub))} "
+    for g in sorted({(r["split"], r["group"]) for r in data}, reverse=True):
+        sub = [r for r in data if (r["split"], r["group"]) == g]
+        print(f"  {g[0]:6s} {g[1]:19s} n={len(sub):3d} labels={dict(Counter(r['label'] for r in sub))} "
               f"eligible={sum(r['eligible'] for r in sub)} "
               f"(eligible negatives={sum(r['eligible'] and not r['is_pos'] for r in sub)})")

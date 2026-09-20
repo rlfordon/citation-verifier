@@ -1,0 +1,6 @@
+claim_id,opus_support,opus_color,eligible,score,jev_s,relation,relation_conf,p_supports,p_partly,p_says_nothing,p_contradicts,same_issue,states_it,opposite,overstated,whose_view,whose_conf,p_court,support_score,support_conf
+ohio-mailbox-01,supported,Green,1,0.72,1.031,supports,0.63,0.72,0.27,0.0,0.01,0.95,0.94,0.12,0.63,court,0.99,0.99,2.48,0.5
+ohio-mailbox-02,supported,Green,1,0.4,0.345,partly,0.41,0.4,0.56,0.03,0.0,0.77,0.63,0.08,0.65,court,0.42,0.57,1.96,0.56
+ohio-mailbox-03,supported,Green,1,0.84,0.306,supports,0.79,0.84,0.16,0.0,0.0,0.98,0.99,0.03,0.56,court,0.97,0.98,2.94,0.94
+ohio-mailbox-04,partial,Yellow,1,0.19,0.386,says_nothing,0.4,0.19,0.16,0.55,0.1,0.51,0.32,0.19,0.72,not_discussed,0.53,0.32,1.01,0.48
+ohio-mailbox-05,supported,Green,1,0.8,0.371,supports,0.77,0.83,0.15,0.0,0.02,0.9,0.8,0.16,0.62,court,0.83,0.88,2.56,0.56
