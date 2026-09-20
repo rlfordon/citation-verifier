@@ -10,6 +10,41 @@
 > reproducers, Charlotin fake-mining, threshold calibration) are in that
 > roadmap's "Follow-ups discovered during execution" section.
 
+## OPEN 2026-09-19 — quote matcher fuzzy path is capped at 0.80 (decision needed)
+
+Found while trying to add a verbatim check on agent-written `opinion_block`
+(background: `scratch/jev_citation_checking_research.md` §3).
+
+**Fixed (commit `e89783b`):** the opinion text never got smart-quote
+straightening (the quote did), so quotes with apostrophes missed the exact path.
+
+**Still open — `quote_matcher._best_match_with_passage`:** the sliding window
+compares the quote (length w) against a chunk of length 1.5w, so
+`SequenceMatcher.ratio()` tops out at 2w/2.5w = **0.80**. Consequences:
+- `VERBATIM` (>0.85) is reachable ONLY by exact substring; `if best > 0.95: break`
+  is dead code. A one-character difference in a 70-char quote scores 0.79.
+- **False "fabricated":** `wainwright-16` is verbatim except for a star-pagination
+  marker (`*534`) mid-sentence; it is recorded FABRICATED at 0.46. A same-length
+  window + step-1 refinement scores it 0.97.
+- The `[0.75, 0.85)` "transcription-noise band" in `_quote_floor` was calibrated
+  on this artifact: the true green that motivated it (`withers-21`, 0.79/0.80)
+  scores 0.97/0.98 on a corrected scale.
+
+**Why it is not a drop-in fix:** on a corrected scale, real misquotes move up too
+(`withers-04` 0.64 -> 0.76, `withers-38` 0.73 -> 0.83 — both would slip over the
+0.75 floor cutoff), and a single meaning-changing word swap in a long quote
+("shall" -> "may") scores ~0.96, which the 0.85 cut would call VERBATIM. In the
+three frozen corpora the corrected scale separates cleanly (true verbatims
+>= 0.88, real alterations <= 0.83), but a ratio threshold alone cannot tell
+"verbatim plus pagination junk" from "one word changed".
+
+**Proposed:** bucket on WHAT differs after alignment, not on the ratio: only
+junk differs (star pagination, footnote markers, punctuation, hyphenation,
+bracketed alterations) -> VERBATIM; any word substituted/added/dropped -> CLOSE;
+poor alignment -> FABRICATED. Then drop the noise band (every CLOSE floors) and
+re-record the corpora `quote_check` columns + regression baselines. The
+`opinion_block` verbatim check gets built on top of this.
+
 ## Hand-off — contribute DE-279 to lq-ai (case citation validation)
 
 > **Filed 2026-06-19 as [lq-ai#173](https://github.com/LegalQuants/lq-ai/issues/173).** Awaiting maintainer response on the 3 open questions; the plan below is ready to execute once a shape is greenlit.
