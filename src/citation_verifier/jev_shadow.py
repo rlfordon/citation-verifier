@@ -187,18 +187,41 @@ def _locator_questions(prop: str, n: int) -> dict:
     }
 
 
-def _excerpt(passages: list[str], ranked: list[int], k: int = TOP_K) -> str:
-    """Top-k passages plus one neighbour each side, in document order."""
+def keep_indices(n: int, ranked: list[int], k: int = TOP_K) -> set[int]:
+    """Top-k passage indices plus one neighbour each side."""
     keep: set[int] = set()
     for i in ranked[:k]:
-        keep.update(j for j in (i - 1, i, i + 1) if 0 <= j < len(passages))
+        keep.update(j for j in (i - 1, i, i + 1) if 0 <= j < n)
+    return keep
+
+
+def join_passages(passages: list[str], keep: set[int], sep: str = " ") -> str:
+    """The kept passages in document order, `[...]` marking each gap."""
     out, prev = [], None
     for i in sorted(keep):
         if prev is not None and i != prev + 1:
             out.append("[...]")
         out.append(passages[i])
         prev = i
-    return " ".join(out)
+    return sep.join(out)
+
+
+def _excerpt(passages: list[str], ranked: list[int], k: int = TOP_K) -> str:
+    """Top-k passages plus one neighbour each side, in document order."""
+    return join_passages(passages, keep_indices(len(passages), ranked, k))
+
+
+def locate(prop: str, passages: list[str], ask: AskFn) -> dict:
+    """One locator request: rank the passages for `prop` and ask whether any
+    passage states it. -> {ranked, probs, exists, input_tokens}."""
+    loc = ask("\n".join(f"{_pid(i)}| {p}" for i, p in enumerate(passages)),
+              _locator_questions(prop, len(passages)))
+    probs = loc["answers"]["where"]["probabilities"]
+    ranked = sorted(range(len(passages)),
+                    key=lambda i: probs.get(_pid(i), 0.0), reverse=True)
+    return {"ranked": ranked, "probs": probs,
+            "exists": loc["answers"]["exists"]["noul"],
+            "input_tokens": loc["input_tokens"]}
 
 
 # --------------------------------------------------------------------------
@@ -249,14 +272,10 @@ def _default_ask() -> AskFn:
 def _assess_one(claim: dict, raw: str, ask: AskFn) -> dict:
     prop = claim.get("cited_for") or claim.get("proposition", "")
     passages = split_passages(raw)
-    tokens = 0
 
-    loc = ask("\n".join(f"{_pid(i)}| {p}" for i, p in enumerate(passages)),
-              _locator_questions(prop, len(passages)))
-    tokens += loc["input_tokens"]
-    probs = loc["answers"]["where"]["probabilities"]
-    ranked = sorted(range(len(passages)),
-                    key=lambda i: probs.get(_pid(i), 0.0), reverse=True)
+    loc = locate(prop, passages, ask)
+    tokens = loc["input_tokens"]
+    ranked = loc["ranked"]
     excerpt = _excerpt(passages, ranked)
 
     full = ask({"proposition": prop,
@@ -269,7 +288,7 @@ def _assess_one(claim: dict, raw: str, ask: AskFn) -> dict:
     return {
         "n_passages": len(passages),
         "top_passages": ranked[:TOP_K],
-        "exists": loc["answers"]["exists"]["noul"],
+        "exists": loc["exists"],
         "answers": a,
         "answers_lean": b,
         # v0 = the original gate; v1 = the 2026-09-19 loop's champion.

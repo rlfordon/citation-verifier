@@ -96,6 +96,12 @@ def run_ab_config(config_name, config, corpora=DEFAULT_CORPORA,
             cassette = wd / "jobs" / "assess_results.jsonl"
             if cassette.exists():
                 cassette.unlink()  # fresh verdicts for this config
+            if prompt_version == "assess-v3":
+                # Excerpt files are committed in the corpora and ride
+                # along in the copy; this only fills gaps (live Jev call).
+                from citation_verifier.locator_excerpts import \
+                    write_locator_excerpts
+                write_locator_excerpts(wd)
             executor = (executor_factory or make_executor)(
                 config, wd, "assess")
             stats = run_assess(wd, executor=executor,

@@ -16,6 +16,12 @@
       "executor": "api",
       "prompt_version": "assess-v2"
     },
+    "opus-v3-api": {
+      "description": "EXPERIMENT (docs/plans/2026-09-19-jev-locator-assess-test.md): assess-v3 = assess-v2 criteria, but the agent reads the Jev locator's excerpts (jobs/excerpts/, committed in the corpora) instead of the whole opinion. Compare claim-by-claim with the recorded assess-v2 verdicts; any more-lenient verdict is the headline",
+      "model": "claude-opus-4-8",
+      "executor": "api",
+      "prompt_version": "assess-v3"
+    },
     "sonnet-v1-api": {
       "description": "assess-v1 single-claim on a PINNED current Sonnet via the API -- cost-audit F2 prerequisite re-run (the 2026-06-13 sonnet-v1 arm ran the unpinned CLI alias)",
       "model": "claude-sonnet-5",
