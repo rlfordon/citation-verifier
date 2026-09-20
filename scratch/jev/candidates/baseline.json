@@ -1,0 +1,66 @@
+{
+ "name": "baseline: min(supports,states,issue)",
+ "questions": {
+  "relation": {
+   "type": "choice",
+   "instructions": "How does the court opinion in `opinion` relate to the legal statement in `proposition`?",
+   "criteria": {
+    "supports": "The opinion states the proposition, or directly implies it is true, as the court's own view",
+    "partly": "The opinion addresses the same point, but the proposition claims more than the opinion says or omits a condition the opinion requires",
+    "contradicts": "The opinion states the opposite of the proposition or implies it is false",
+    "says_nothing": "The opinion does not address what the proposition asserts, either way"
+   }
+  },
+  "same_issue": {
+   "type": "noul",
+   "instructions": "Does `opinion` discuss the same legal issue that `proposition` is about?"
+  },
+  "states_it": {
+   "type": "noul",
+   "instructions": "Does `opinion` contain a passage that states `proposition` or directly implies it is true?"
+  },
+  "opposite": {
+   "type": "noul",
+   "instructions": "Does `opinion` state or hold the opposite of `proposition`?"
+  },
+  "overstated": {
+   "type": "noul",
+   "instructions": "Does `proposition` claim more than `opinion` actually says -- broader, more absolute, or with fewer conditions?"
+  },
+  "whose_view": {
+   "type": "choice",
+   "instructions": "Where `opinion` discusses the idea in `proposition`, whose view is it?",
+   "criteria": {
+    "court": "The court's own holding or reasoning",
+    "party": "An argument by a party that the court rejects or does not adopt",
+    "other_judge": "A dissent or concurrence, not the majority",
+    "not_discussed": "The opinion does not discuss the idea"
+   }
+  },
+  "support_level": {
+   "type": "score",
+   "instructions": "How well does `opinion` support `proposition`?",
+   "criteria": [
+    "The opinion does not address the proposition",
+    "The opinion touches the topic but does not establish the proposition",
+    "The opinion partly supports it; the proposition overstates",
+    "The opinion directly and fully supports the proposition"
+   ]
+  }
+ },
+ "signals": [
+  {
+   "q": "relation",
+   "field": "p:supports"
+  },
+  {
+   "q": "states_it",
+   "field": "noul"
+  },
+  {
+   "q": "same_issue",
+   "field": "noul"
+  }
+ ],
+ "combine": "min"
+}
