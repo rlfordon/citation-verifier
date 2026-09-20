@@ -127,3 +127,16 @@ own test: re-run assess-v2 on located passages and score against the baselines.
    baselines. This is a new prompt version, so it means a re-record.
 3. If both hold: build `JevExecutor` and the gate as a step between `triage`
    and `assess`, off by default.
+
+## Follow-ups (same day)
+
+- **Gate on four more unseen briefs** (kettering-mtd, sonnet-q3-protest,
+  ohio-mailbox, extrinsic-evidence; thresholds fixed in advance, original
+  rubric): at 0.90, **22 of 97 claims cleared (23%), 0 bad**; at 0.50, 41 cleared,
+  2 bad (both "partial"). Across all five prior runs the strict gate cleared 36
+  claims with no bad clear; every bad clear the loose threshold ever made was a
+  "partial" claim.
+- **Phrasing loop:** see `LOOP.md`. Wording matters; asking whether *every part
+  as written* is supported beats asking whether the opinion "supports" it. On
+  unseen briefs the tuned rubric cleared 30 of 65 eligible claims vs 22, no bad
+  clears, but with a razor-thin margin at the frozen threshold.

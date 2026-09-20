@@ -1,0 +1,8 @@
+{
+ "how": "mean",
+ "signals": [
+  "03.as_written_lean",
+  "01.as_written"
+ ],
+ "lb": 45.0
+}

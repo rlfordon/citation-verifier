@@ -1,0 +1,38 @@
+{
+ "note": "Round 3. Same wording as the round-1 winners, leaner STATE: brief_sentence dropped (it usually duplicates the proposition; TypeSafe documents that extra state costs accuracy).",
+ "state": {
+  "proposition": "proposition",
+  "opinion": "excerpt"
+ },
+ "questions": {
+  "adds_specifics_lean": {
+   "type": "noul",
+   "instructions": "Does `proposition` add a specific standard, element, category, or example that does not appear in `opinion`?",
+   "_green": "no"
+  },
+  "coverage_lean": {
+   "type": "choice",
+   "instructions": "How much of `proposition` does `opinion` state or directly imply?",
+   "criteria": {
+    "all_parts": "Every clause and qualifier of the proposition is stated or directly implied by the opinion",
+    "main_part_only": "The opinion supports the main point, but one clause, qualifier, or detail of the proposition is not in the opinion",
+    "little_or_none": "The opinion does not state the main point of the proposition"
+   },
+   "_green": "all_parts"
+  },
+  "own_words_lean": {
+   "type": "noul",
+   "instructions": "Could every legal rule in `proposition` be found in the words of `opinion` without relying on any other source?",
+   "_green": "yes"
+  },
+  "as_written_lean": {
+   "type": "choice",
+   "instructions": "Is `proposition`, exactly as written, fully supported by `opinion`?",
+   "criteria": {
+    "fully": "The opinion supports the proposition exactly as written, with nothing added or strengthened",
+    "not_fully": "The proposition adds, strengthens, or changes something compared with what the opinion says, or the opinion does not address it"
+   },
+   "_green": "fully"
+  }
+ }
+}

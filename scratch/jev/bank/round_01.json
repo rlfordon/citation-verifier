@@ -1,0 +1,104 @@
+{
+ "note": "Round 1. Diagnosis from round-0 failures: every blocking negative is a COMPOUND proposition where the opinion supports the main thrust but not one clause, qualifier, or added detail. Probes target part-by-part coverage, added specifics, scope extension, and strengthened characterization. One structured-criteria variant of `relation` (TypeSafe primitives/advanced).",
+ "questions": {
+  "every_part": {
+   "type": "noul",
+   "instructions": "Does `opinion` state or directly imply EVERY part of `proposition`, including each clause, qualifier, and condition?",
+   "criteria": {
+    "true": "Each clause, qualifier, and condition in the proposition is stated or directly implied by the opinion",
+    "false": "At least one clause, qualifier, or condition in the proposition is not found in the opinion"
+   },
+   "_green": "yes"
+  },
+  "unsupported_part": {
+   "type": "noul",
+   "instructions": "Does `proposition` contain any clause, qualifier, or detail that `opinion` does not state?",
+   "criteria": {
+    "true": "The proposition includes at least one clause, qualifier, or detail that the opinion does not state",
+    "false": "Everything in the proposition is stated in the opinion"
+   },
+   "_green": "no"
+  },
+  "coverage": {
+   "type": "choice",
+   "instructions": "How much of `proposition` does `opinion` state or directly imply?",
+   "criteria": {
+    "all_parts": "Every clause and qualifier of the proposition is stated or directly implied by the opinion",
+    "main_part_only": "The opinion supports the main point, but one clause, qualifier, or detail of the proposition is not in the opinion",
+    "little_or_none": "The opinion does not state the main point of the proposition"
+   },
+   "_green": "all_parts"
+  },
+  "coverage_level": {
+   "type": "score",
+   "instructions": "How much of `proposition` is stated or directly implied by `opinion`?",
+   "criteria": [
+    "None of the proposition is in the opinion",
+    "Only a small part of the proposition is in the opinion",
+    "Most of the proposition is in the opinion, but one clause, qualifier, or detail is missing",
+    "Every clause, qualifier, and detail of the proposition is in the opinion"
+   ],
+   "_green": "high"
+  },
+  "first_part": {
+   "type": "noul",
+   "instructions": "Does `opinion` state or directly imply the FIRST half of `proposition`?",
+   "_green": "yes"
+  },
+  "last_part": {
+   "type": "noul",
+   "instructions": "Does `opinion` state or directly imply the LAST half of `proposition`?",
+   "_green": "yes"
+  },
+  "adds_specifics": {
+   "type": "noul",
+   "instructions": "Does `proposition` add a specific standard, element, category, or example that does not appear in `opinion`?",
+   "_green": "no"
+  },
+  "extends_scope": {
+   "type": "noul",
+   "instructions": "Does `proposition` apply the rule to a situation or context that `opinion` does not discuss?",
+   "_green": "no"
+  },
+  "stronger_words": {
+   "type": "noul",
+   "instructions": "Does `proposition` describe the rule in stronger or more absolute terms than the words `opinion` itself uses?",
+   "_green": "no"
+  },
+  "as_written": {
+   "type": "choice",
+   "instructions": "Is `proposition`, exactly as written, fully supported by `opinion`?",
+   "criteria": {
+    "fully": "The opinion supports the proposition exactly as written, with nothing added or strengthened",
+    "not_fully": "The proposition adds, strengthens, or changes something compared with what the opinion says, or the opinion does not address it"
+   },
+   "_green": "fully"
+  },
+  "relation_structured": {
+   "type": "choice",
+   "instructions": "How does the court opinion in `opinion` relate to the legal statement in `proposition`?",
+   "criteria": {
+    "supports": {
+     "what": "The opinion states every part of the proposition, or directly implies it, as the court's own view",
+     "not_for": "Propositions where the opinion supports the main point but one clause, qualifier, or detail is missing"
+    },
+    "partly": {
+     "what": "The opinion supports the main point, but the proposition adds a clause, qualifier, detail, or stronger wording that the opinion does not contain",
+     "not_for": "Propositions the opinion supports in every part"
+    },
+    "contradicts": {
+     "what": "The opinion states the opposite of the proposition or implies it is false"
+    },
+    "says_nothing": {
+     "what": "The opinion does not address what the proposition asserts"
+    }
+   },
+   "_green": "supports"
+  },
+  "own_words": {
+   "type": "noul",
+   "instructions": "Could every legal rule in `proposition` be found in the words of `opinion` without relying on any other source?",
+   "_green": "yes"
+  }
+ }
+}

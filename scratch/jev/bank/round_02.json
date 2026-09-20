@@ -1,0 +1,59 @@
+{
+ "note": "Round 2. Remaining blockers: a part the opinion CONTRADICTS; a fact-bound ruling generalised into a rule; an opinion narrower than the proposition. Remaining missed positives: abstract paraphrases. One structured-criteria variant of the round-1 winner.",
+ "questions": {
+  "contradicted_part": {
+   "type": "noul",
+   "_green": "no",
+   "instructions": "Does `opinion` contradict or disagree with any part of `proposition`?"
+  },
+  "narrower_rule": {
+   "type": "noul",
+   "_green": "no",
+   "instructions": "Is the rule stated in `opinion` narrower or more limited than the rule stated in `proposition`?"
+  },
+  "fact_bound": {
+   "type": "noul",
+   "_green": "no",
+   "instructions": "Does `proposition` state a general legal rule that `opinion` does not state as a general rule, because the opinion only decided the question on the particular facts before it?"
+  },
+  "same_principle": {
+   "type": "noul",
+   "_green": "yes",
+   "instructions": "Does `opinion` express the same legal principle as `proposition`, even if it uses different words?",
+   "criteria": {
+    "true": "The opinion expresses the whole principle in the proposition, in the same or different words",
+    "false": "The opinion expresses only part of the principle, a different principle, or none"
+   }
+  },
+  "adds_specifics_structured": {
+   "type": "noul",
+   "_green": "no",
+   "instructions": "Does `proposition` add a specific standard, element, category, or example that does not appear in `opinion`?",
+   "criteria": {
+    "true": "The proposition names a test, a list of elements, a category of cases, a consequence, or a characterization that the opinion never mentions",
+    "false": "Every standard, element, category, consequence, and characterization in the proposition appears in the opinion"
+   }
+  },
+  "what_is_added": {
+   "type": "choice",
+   "_green": "nothing_added",
+   "instructions": "Compared with `opinion`, what does `proposition` add?",
+   "criteria": {
+    "nothing_added": "Nothing: every assertion in the proposition is in the opinion",
+    "adds_detail": "A clause, qualifier, detail, or stronger wording that is not in the opinion",
+    "different_point": "The proposition makes a different point from the opinion"
+   }
+  },
+  "word_tracking": {
+   "type": "score",
+   "_green": "high",
+   "instructions": "How closely does `opinion` track what `proposition` asserts?",
+   "criteria": [
+    "The opinion is about something else",
+    "The opinion is on the same topic but does not make the assertion",
+    "The opinion makes the main assertion but not every part of it",
+    "The opinion makes every assertion in the proposition"
+   ]
+  }
+ }
+}

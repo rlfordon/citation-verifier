@@ -20,7 +20,8 @@ DATASET = HERE / "loop_dataset.json"
 _LABEL = {"green": "supported", "yellow": "partial", "red": "unsupported"}
 
 
-def _row(claim: Claim, label: str, source: str, group: str, flags: bool) -> dict:
+def _row(claim: Claim, label: str, source: str, group: str, flags: bool,
+         why: str = "", hedged: bool = False) -> dict:
     raw = claim.opinion_path.read_text(encoding="utf-8", errors="ignore")
     r = claim.row
     return {
@@ -31,14 +32,25 @@ def _row(claim: Claim, label: str, source: str, group: str, flags: bool) -> dict
         "brief_sentence": r.get("brief_sentence", ""),
         "cited_case": r.get("cited_case", ""),
         "excerpt": focused_excerpt(claim, raw),
+        # why the label is what it is (human note / Opus finding): lets the
+        # proposer diagnose failures without re-reading opinions
+        "why": " ".join(why.split())[:600], "hedged": hedged,
     }
 
 
 def build() -> list[dict]:
     rows = []
+    gt = {}
+    for corpus in ("withers", "payne", "wainwright"):
+        path = REPO / "tests/data/assessment_corpora" / corpus / "ground_truth.csv"
+        for g in csv.DictReader(path.open(encoding="utf-8")):
+            gt[g["claim_id"]] = g
     for c in load_claims():
         if c.opinion_path and c.expected in _LABEL:
-            rows.append(_row(c, _LABEL[c.expected], "human", c.corpus, False))
+            g = gt.get(c.claim_id, {})
+            rows.append(_row(c, _LABEL[c.expected], "human", c.corpus, False,
+                             why=g.get("notes", ""),
+                             hedged=g.get("hedged", "") == "yes"))
 
     for r in rows:
         r["split"] = "search"
@@ -72,7 +84,8 @@ def build() -> list[dict]:
                 continue
             claim = Claim(f"matters-{name}", row["claim_id"], row, "", workdir / f)
             flags = (row.get("crosscheck_flags") or "").strip() not in ("", "[]")
-            r = _row(claim, support, "opus", group, flags)
+            r = _row(claim, support, "opus", group, flags,
+                     why=row.get("finding_analysis", ""))
             r["id"] = f"opus:{name}:{row['claim_id']}"
             r["split"] = split
             rows.append(r)
