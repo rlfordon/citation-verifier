@@ -536,14 +536,17 @@ def verify_propositions_main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "verb",
         choices=["extract", "verify", "merge", "check-quotes",
-                 "crosscheck", "triage", "assess", "apply-assessments",
-                 "report", "full"],
+                 "crosscheck", "triage", "jev-shadow", "assess",
+                 "apply-assessments", "report", "full"],
         help="extract = document -> claims.csv + TOA/body citation lists "
              "(LLM, needs --document); verify = wave1+wave2+downloads; "
              "merge = join claims to results + opinion linkage; "
              "check-quotes = quote verdicts + floors; crosscheck = "
              "TOA/court/pincite flags; triage = assessment depth per "
-             "claim; assess = LLM "
+             "claim; jev-shadow = log TypeSafe Jev's answers to "
+             "jobs/jev_shadow.jsonl (changes nothing else; sends "
+             "propositions + opinion excerpts to a third-party API; also "
+             "runs inside full when JEV_SHADOW=1); assess = LLM "
              "assessment jobs (jobs mode by default); "
              "apply-assessments = verdicts JSONL -> claims.csv with "
              "floors; report = claims.csv -> report.html (SS6.9 lanes); "
@@ -710,6 +713,21 @@ def _dispatch_proposition_verbs(args, workdir, pp, _progress,
         tstats = pp.run_triage(workdir)
         print(f"[OK] triage: {tstats.full} full, {tstats.fast} fast, "
               f"{tstats.skipped} deterministic")
+
+    # Shadow logging (opt-in): explicit verb, or full with JEV_SHADOW=1.
+    # It writes one JSONL and must never fail or alter a run.
+    from . import jev_shadow
+    if args.verb == "jev-shadow" or (args.verb == "full"
+                                     and jev_shadow.enabled()):
+        try:
+            js = jev_shadow.run_jev_shadow(workdir)
+            print(f"[OK] jev-shadow: {js.logged} logged, {js.already} "
+                  f"already logged, {js.skipped} without opinion text, "
+                  f"{js.errors} errors (${js.input_tokens * 0.042e-6:.4f})")
+        except Exception as e:
+            print(f"[?] jev-shadow skipped: {e}")
+            if args.verb == "jev-shadow":
+                return 1
 
     # Product default is assess-v2 (two-axis + report blocks). The library
     # constant DEFAULT_PROMPT_VERSION stays assess-v1 for the frozen-cassette

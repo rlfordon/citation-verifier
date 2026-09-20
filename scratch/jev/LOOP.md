@@ -106,3 +106,26 @@ tight to ship.
 - Every future `/proposition-verifier` run is free labelled data: log Jev's
   answers in shadow mode alongside Opus's verdicts and re-check the gate as the
   pool grows.
+
+## Shadow logging — built (same day)
+
+`src/citation_verifier/jev_shadow.py` + the `jev-shadow` verb; runs inside `full`
+when `JEV_SHADOW=1`. Backfilled on all six prior runs (202 claims, ~11 cents).
+Pooled view from `tools/jev_shadow_report.py` — 132 gate-eligible claims, 59 not
+supported. None of this is fresh data (two runs were tuning data, four were the
+lockbox), so read it as description, not validation.
+
+| gate | threshold | cleared | bad | nearest not-supported claim |
+|---|---|---|---|---|
+| v1 (as-written) | 0.33 | 48 | 0 | 0.295 |
+| v1 (as-written) | 0.50 | 38 | 0 | 0.295 |
+| v0 (original) | 0.90 | 35 | 0 | bad clears begin at 0.70 (6) |
+| v0 (original) | 0.50 | 77 | 13 | — |
+
+At a threshold with real headroom the two gates clear about the same number of
+claims (38 vs 35). What the rewording bought is **margin**: v1's worst
+not-supported claim sits at 0.295, far below a 0.50 threshold, where v0 needs
+0.90 to stay clean. The same claim scored 0.250 in the loop and 0.295 here:
+Jev's answer to a question shifts slightly with the other questions in the same
+request, so thresholds need headroom and `RUBRIC_VERSION` must change whenever
+the question set does.

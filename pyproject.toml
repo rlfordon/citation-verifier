@@ -38,6 +38,9 @@ mcp = [
     "pdfplumber>=0.11",
     "python-docx>=1.1",
 ]
+jev = [
+    "typesafe-sdk>=0.7",
+]
 
 [project.scripts]
 citation-verifier = "citation_verifier.__main__:main"
