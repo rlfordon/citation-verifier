@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tuning Jev questions with a loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#f5f6f8; --surface:#ffffff; --band:#14213d; --band-ink:#e8ecf5; --band-mute:#a9b4cc;
+  --ink:#14213d; --mute:#55607a; --rule:#d9dde6;
+  --ok:#1f7a4d; --ok-soft:#dcefe4; --part:#b0690a; --part-soft:#f7e8cf; --bad:#b3261e; --bad-soft:#f6dcd9;
+  --accent:#3646b8; --accent-soft:#e4e7fa;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:72px;
+  --display:"Fraunces",Georgia,serif; --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--sans)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--s5)}
+h1,h2{font-family:var(--display);font-weight:600;line-height:1.15;margin:0;letter-spacing:-0.01em}
+h1{font-size:clamp(34px,5vw,54px);max-width:18ch}
+h2{font-size:clamp(26px,3.2vw,34px);max-width:24ch;margin-bottom:var(--s5)}
+p{margin:0 0 var(--s4);max-width:66ch}
+.eyebrow{font:600 13px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin:0 0 var(--s3)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+code{background:var(--accent-soft);padding:1px 5px;border-radius:4px}
+section{padding:var(--s8) 0}
+section + section{border-top:1px solid var(--rule)}
+.cols{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:var(--s7);align-items:start}
+.cols > div > h2{margin-bottom:var(--s5)}
+
+nav.top{position:sticky;top:0;z-index:5;background:rgba(245,246,248,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
+nav.top .wrap{display:flex;gap:var(--s5);align-items:center;height:52px;overflow-x:auto;white-space:nowrap}
+nav.top b{font:600 15px var(--display)}
+nav.top a{color:var(--mute);text-decoration:none;font-size:14px;font-weight:500}
+nav.top a:hover,nav.top a:focus-visible{color:var(--accent)}
+
+header.hero{padding:var(--s8) 0 var(--s7)}
+.hero p.lede{font-size:20px;line-height:1.5;color:var(--mute);margin:var(--s5) 0 var(--s5);max-width:58ch}
+.meta{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);font-size:14px;color:var(--mute)}
+.meta span b{color:var(--ink);font-weight:600}
+
+/* request card */
+.req{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden;font-size:14.5px}
+.req > div{padding:var(--s4) var(--s5)}
+.req > div + div{border-top:1px solid var(--rule)}
+.req .tag{font:600 12px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:var(--s2)}
+.req .mono{line-height:1.55;display:block}
+.bar{display:grid;grid-template-columns:96px 1fr 44px;gap:var(--s3);align-items:center;margin-top:var(--s2);font-size:14px}
+.bar i{display:block;height:10px;border-radius:5px;background:var(--accent)}
+.bar .track{background:var(--accent-soft);border-radius:5px}
+.bar span:last-child{text-align:right;font-family:var(--mono)}
+
+/* centerpiece */
+.band{background:var(--band);color:var(--band-ink);border-top:0}
+.band .eyebrow{color:#9fb0ff}
+.band p{color:var(--band-mute)}
+.band h2{color:#fff}
+.plot{background:#0e1830;border:1px solid #2a3759;border-radius:var(--radius);padding:var(--s5);margin-top:var(--s6)}
+.controls{display:flex;flex-wrap:wrap;gap:var(--s4) var(--s6);align-items:center;margin-bottom:var(--s4)}
+.seg{display:inline-flex;border:1px solid #3a4a73;border-radius:999px;overflow:hidden}
+.seg button{background:transparent;color:var(--band-mute);border:0;padding:9px 16px;font:500 14px var(--sans);cursor:pointer;min-height:40px}
+.seg button[aria-pressed="true"]{background:#9fb0ff;color:#0e1830;font-weight:600}
+.seg button:focus-visible,input[type=range]:focus-visible,.btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.slider{display:flex;align-items:center;gap:var(--s3);flex:1;min-width:260px}
+.slider label{font-size:14px;color:var(--band-ink);white-space:nowrap}
+.slider output{font:500 16px var(--mono);color:#fff;min-width:44px}
+input[type=range]{flex:1;accent-color:#9fb0ff;height:28px}
+svg{display:block;width:100%;height:auto}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.swipe{display:none;font-size:13px;color:var(--band-mute);margin:0 0 var(--s2)}
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s4)}
+.readout > div{background:#17244a;border-radius:8px;padding:var(--s4)}
+.readout h3{font:600 13px/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--band-mute);margin:0 0 var(--s2)}
+.readout .big{font:600 30px/1.1 var(--display);color:#fff}
+.readout .big small{font:400 15px var(--sans);color:var(--band-mute)}
+.readout .badline{font-size:15px;margin-top:var(--s1)}
+.is-bad{color:#ff9d94;font-weight:600}.is-ok{color:#7fd6a8;font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);font-size:13.5px;color:var(--band-mute);margin-top:var(--s3)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.note{font-size:14px;color:var(--band-mute);margin-top:var(--s4);max-width:80ch}
+
+/* stepper */
+.stepper{display:grid;grid-template-columns:250px minmax(0,1fr);gap:var(--s6);margin-top:var(--s6)}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{counter-increment:s}
+.steps button{display:flex;gap:var(--s3);align-items:center;width:100%;text-align:left;background:transparent;border:0;border-left:3px solid var(--rule);padding:11px var(--s4);font:500 15px/1.3 var(--sans);color:var(--mute);cursor:pointer;min-height:44px}
+.steps button::before{content:counter(s);font:500 13px var(--mono);color:inherit;width:18px}
+.steps button[aria-current="step"]{border-left-color:var(--accent);color:var(--ink);font-weight:600;background:var(--accent-soft)}
+.steps button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:var(--s6)}
+.panel h3{font:600 22px/1.25 var(--display);margin:0 0 var(--s3)}
+.cost{display:inline-block;font:600 12px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border-radius:999px;margin-bottom:var(--s4)}
+.cost.look{background:var(--part-soft);color:#7a4700}.cost.free{background:var(--ok-soft);color:#14593a}
+.example{border-left:3px solid var(--accent);background:var(--paper);padding:var(--s4);margin-top:var(--s4);font-size:15px;border-radius:0 8px 8px 0}
+.example b{display:block;font:600 12px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:var(--s2)}
+.nav{display:flex;gap:var(--s3);margin-top:var(--s5)}
+.btn{font:600 15px var(--sans);border-radius:8px;padding:11px 20px;cursor:pointer;min-height:44px;border:1.5px solid var(--accent)}
+.btn.primary{background:var(--accent);color:#fff}.btn.ghost{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible{outline-color:var(--accent)}
+
+/* guardrails */
+.guards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--s7);margin-top:var(--s6)}
+.guards div{padding:var(--s4) 0;border-top:1px solid var(--rule)}
+.guards b{display:block;font-weight:600}
+.guards span{color:var(--mute);font-size:15.5px}
+.rule3{margin-top:var(--s6);background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:var(--s5) var(--s6);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s6);align-items:center}
+.rule3 .slider label,.rule3 .slider output{color:var(--ink)}
+.rule3 input[type=range]{accent-color:var(--accent)}
+.rule3 input[type=range]:focus-visible{outline-color:var(--accent)}
+.rule3 .result{font:600 26px/1.2 var(--display)}
+.rule3 .result small{display:block;font:400 15px/1.45 var(--sans);color:var(--mute);margin-top:var(--s2)}
+
+/* findings */
+.pairs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s5);margin-top:var(--s6)}
+.pair{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:var(--s5)}
+.pair h3{font:600 15px/1.3 var(--sans);margin:0 0 var(--s4)}
+.hbar{display:grid;grid-template-columns:74px 1fr 34px;gap:var(--s2);align-items:center;font-size:14px;margin-bottom:var(--s2)}
+.hbar i{display:block;height:14px;border-radius:3px}
+.hbar .was{background:#aab2c8}.hbar .now{background:var(--accent)}
+.hbar span:last-child{font-family:var(--mono);text-align:right}
+.pair p{font-size:14.5px;color:var(--mute);margin:var(--s3) 0 0}
+.check{list-style:none;padding:0;margin:var(--s6) 0 0;counter-reset:c;columns:2;column-gap:var(--s7)}
+.check li{counter-increment:c;break-inside:avoid;padding:var(--s3) 0 var(--s3) 40px;position:relative;border-top:1px solid var(--rule)}
+.check li::before{content:counter(c);position:absolute;left:0;top:13px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font:600 13px/26px var(--mono);text-align:center}
+footer{padding:var(--s7) 0 var(--s8);font-size:14.5px;color:var(--mute);border-top:1px solid var(--rule)}
+footer a{color:var(--accent)}
+footer ul{padding-left:18px;margin:var(--s3) 0 0;max-width:80ch}
+
+@media (max-width:820px){
+  body{font-size:16px}
+  section{padding:var(--s7) 0}
+  .cols,.stepper,.rule3{grid-template-columns:1fr;gap:var(--s5)}
+  .guards,.pairs,.readout{grid-template-columns:1fr}
+  .check{columns:1}
+  .scroller svg{min-width:760px}
+  .swipe{display:block}
+  .plot{padding:var(--s4)}
+  .slider{flex-wrap:wrap;min-width:0}
+  .slider label{white-space:normal;flex-basis:100%}
+  input[type=range]{min-width:0}
+  .rule3{padding:var(--s5)}
+  .seg{width:100%}.seg button{flex:1;padding:9px 8px}
+  .steps{display:flex;overflow-x:auto;border-bottom:1px solid var(--rule)}
+  .steps button{border-left:0;border-bottom:3px solid transparent;white-space:nowrap}
+  .steps button[aria-current="step"]{border-bottom-color:var(--accent)}
+  .panel{padding:var(--s5)}
+}
+</style>
+</head>
+<body data-review-toggle>
+<nav class="top" aria-label="Sections"><div class="wrap">
+  <b>Jev question loops</b>
+  <a href="#jev">What Jev is</a><a href="#margin">What wording changes</a><a href="#loop">The loop</a><a href="#guards">Guardrails</a><a href="#found">Results</a><a href="#try">Try it</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">Field notes · 19 September 2026</p>
+  <h1>Tuning Jev questions with a loop</h1>
+  <p class="lede">Jev answers typed questions in a fifth of a second for a fraction of a cent, so you can test a new wording on every labelled example you own in 20 seconds. That makes wording searchable. It also makes it easy to fool yourself. These are notes from one afternoon of doing it on legal citation checking.</p>
+  <div class="meta"><span><b>Task</b> does the cited case support the proposition?</span><span><b>Data</b> 227 labelled claims from 7 briefs</span><span><b>Total spend</b> about $0.35</span></div>
+</div></header>
+
+<section id="jev"><div class="wrap cols">
+  <div>
+    <p class="eyebrow">§1 · The model</p>
+    <h2>Jev reads your question literally</h2>
+    <p>Jev (TypeSafe AI, <code>jev-1.13.0</code>) does not write text. You send a block of content called the <em>state</em> and one or more typed questions. It returns a probability for each answer. Three question types exist: <code>Choice</code> picks one labelled option, <code>Score</code> rates against ordered levels, and <code>Noul</code> answers yes or no.</p>
+    <p>All questions in a request are answered in parallel, so ten questions cost about the same as one. TypeSafe documents the weak spots plainly: it answers the words you wrote rather than the intent behind them, it loses accuracy as irrelevant state grows, and it should not be asked to count or compare dates.</p>
+    <p>Literal reading is why wording matters. It is also why a wording that works can be found by testing.</p>
+  </div>
+  <div class="req" role="img" aria-label="Example request: a state holding a proposition and an opinion excerpt, one Choice question, and the returned probabilities: fully 0.92, not fully 0.08">
+    <div><div class="tag">State</div><span class="mono">{ "proposition": "A defendant who was the aggressor is not entitled to a jury instruction on justification.",<br>&nbsp;&nbsp;"opinion": "…located passages from the cited case…" }</span></div>
+    <div><div class="tag">Question · Choice</div><span class="mono">Is `proposition`, exactly as written, fully supported by `opinion`?</span></div>
+    <div><div class="tag">Answer · 0.2 s · $0.0001</div>
+      <div class="bar"><span>fully</span><span class="track"><i style="width:92%"></i></span><span>0.92</span></div>
+      <div class="bar"><span>not_fully</span><span class="track"><i style="width:8%"></i></span><span>0.08</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="margin" class="band"><div class="wrap">
+  <p class="eyebrow">§2 · What wording changes</p>
+  <h2>The same claims, scored by two wordings</h2>
+  <p>Each dot is one claim. Its position is Jev's confidence that the cited case supports it. A gate clears every claim to the right of the threshold and sends the rest to a full language model. Drag the threshold and watch how many not-supported claims each wording lets through.</p>
+  <div class="plot">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Which claims to show">
+        <button type="button" data-set="all" aria-pressed="true">All 132 claims</button>
+        <button type="button" data-set="0" aria-pressed="false">Briefs used for tuning</button>
+        <button type="button" data-set="1" aria-pressed="false">Unseen briefs</button>
+      </div>
+      <div class="slider"><label for="thr">Threshold</label><input id="thr" type="range" min="0.02" max="0.98" step="0.005" value="0.5"><output id="thrOut" for="thr">0.50</output></div>
+    </div>
+    <p class="swipe">Swipe the chart sideways to see the full range.</p>
+    <div class="scroller" tabindex="0" role="group" aria-label="Score chart, scrollable"><svg id="strip" viewBox="-16 -16 1032 292" role="img" aria-labelledby="stripTitle"><title id="stripTitle">Strip plot of gate scores for two question wordings</title></svg></div>
+    <div class="legend"><span><i style="background:#7fd6a8"></i>Supported</span><span><i style="background:#f0b35a"></i>Partial: the brief overstates the case</span><span><i style="background:#ff8a80"></i>Unsupported</span><span><i style="background:transparent;border:1.5px dashed #c6cfe6;border-radius:0;width:2px;height:12px"></i>Highest-scoring not-supported claim</span></div>
+    <div class="readout">
+      <div><h3>Original wording</h3><div class="big" id="c0"></div><div class="badline" id="b0"></div></div>
+      <div><h3>Reworded by the loop</h3><div class="big" id="c1"></div><div class="badline" id="b1"></div></div>
+    </div>
+    <p class="note">Original: the lowest of “does the opinion support the proposition,” “does it state it,” and “same legal issue.” Reworded: “is the proposition, exactly as written, fully supported,” asked under two state layouts and averaged. Data: gate-eligible claims from six real runs; labels are the verdicts a full model reported. Two of the six runs overlap with the tuning data.</p>
+  </div>
+</div></section>
+
+<section id="loop"><div class="wrap">
+  <p class="eyebrow">§3 · The loop</p>
+  <h2>One round, six steps</h2>
+  <p>The structure follows TypeSafe's own feature-discovery cookbook. Asking Jev something new costs a request per example. Recombining answers you already hold costs nothing. Spend the first carefully and the second freely.</p>
+  <div class="stepper">
+    <ol class="steps" id="stepList"></ol>
+    <div class="panel" aria-live="polite">
+      <span class="cost" id="stepCost"></span>
+      <h3 id="stepTitle"></h3>
+      <p id="stepBody"></p>
+      <div class="example"><b>From our run</b><span id="stepEx"></span></div>
+      <div class="nav"><button class="btn ghost" id="prev" type="button">Back</button><button class="btn primary" id="next" type="button">Next step</button></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="guards"><div class="wrap">
+  <p class="eyebrow">§4 · Guardrails</p>
+  <h2>Six rules that keep the score honest</h2>
+  <p>A loop that can try thirty wordings in ten minutes will find one that fits 100 examples by luck. Our first hand-picked threshold looked safe on its own data and let seven bad claims through on the next brief.</p>
+  <div class="guards">
+    <div><b>Hold back whole briefs, and open them once.</b><span>Four briefs were never shown to the loop or to the person writing questions. The final pick was scored on them a single time.</span></div>
+    <div><b>Split by document, not by row.</b><span>Claims from one brief share vocabulary. Set the threshold on the other briefs and test on the one left out.</span></div>
+    <div><b>Declare which answer means “good” before looking.</b><span>Each question file states its polarity. Nothing is flipped to fit the data.</span></div>
+    <div><b>Questions state principles, never examples.</b><span>An automatic check rejects case names, any seven-word run copied from a claim, and questions over 900 characters.</span></div>
+    <div><b>Judge on a pessimistic number.</b><span>Candidates are compared on the 20th percentile of claims cleared under resampling, so one lucky example cannot decide the round.</span></div>
+    <div><b>Drop labels the labeller doubted.</b><span>Eight ground-truth rows were marked “debatable” by their author. They were excluded from scoring and reported separately.</span></div>
+  </div>
+  <div class="rule3">
+    <div>
+      <b>Zero errors observed is a ceiling, not a zero.</b>
+      <p style="margin:var(--s2) 0 var(--s4);color:var(--mute);font-size:15.5px">With no bad clears among <em>n</em> not-supported claims, the true rate can still be about 3 ÷ <em>n</em> at 95% confidence.</p>
+      <div class="slider"><label for="nneg">Not-supported claims tested</label><input id="nneg" type="range" min="10" max="400" step="1" value="59"><output id="nnegOut" for="nneg">59</output></div>
+    </div>
+    <div class="result" id="r3"></div>
+  </div>
+</div></section>
+
+<section id="found"><div class="wrap">
+  <p class="eyebrow">§5 · Results</p>
+  <h2>A real gain, smaller than the tuning data promised</h2>
+  <p>Every claim that blocked the original wording had one shape: a compound proposition where the case supports the main point and not one clause. A label note read “supports the felony half, says nothing about misdemeanors.” Asking about the proposition <em>as written</em> was the fix.</p>
+  <div class="pairs">
+    <div class="pair"><h3>Claims cleared, tuning briefs (of 60 supported)</h3>
+      <div class="hbar"><span>Original</span><i class="was" style="width:63%"></i><span>38</span></div>
+      <div class="hbar"><span>Reworded</span><i class="now" style="width:82%"></i><span>49</span></div>
+      <p>No not-supported claim cleared by either.</p></div>
+    <div class="pair"><h3>Claims cleared, unseen briefs (of 65 eligible)</h3>
+      <div class="hbar"><span>Original</span><i class="was" style="width:34%"></i><span>22</span></div>
+      <div class="hbar"><span>Reworded</span><i class="now" style="width:46%"></i><span>30</span></div>
+      <p>Still no bad clears, but the nearest one scored 0.250 against a threshold of 0.255.</p></div>
+    <div class="pair"><h3>Best single question vs the hard class (AUC)</h3>
+      <div class="hbar"><span>Tuning</span><i class="now" style="width:94%"></i><span>.939</span></div>
+      <div class="hbar"><span>Unseen</span><i class="was" style="width:82%"></i><span>.825</span></div>
+      <p>Most single-question gains did not carry over. The unseen briefs were simply easier for the original wording (.874 to .930).</p></div>
+  </div>
+  <p style="margin-top:var(--s6)">What the rewording bought is margin. With a threshold that leaves real headroom, the two wordings clear about the same number of claims. The original needs 0.90 to stay clean. The reworded question's worst not-supported claim sits near 0.30, so a threshold of 0.50 has room to be wrong. After three rounds the limit was no longer wording. It was the number of labelled not-supported examples.</p>
+</div></section>
+
+<section id="try"><div class="wrap">
+  <p class="eyebrow">§6 · Try it</p>
+  <h2>A checklist for your own task</h2>
+  <ol class="check">
+    <li>Collect labelled examples grouped by source document. Aim for at least 50 of the class you must not get wrong.</li>
+    <li>Set aside whole documents as a lockbox before writing anything.</li>
+    <li>Send Jev only the text the question needs. Locating passages first separated the classes better and cut the state by 73%.</li>
+    <li>Start with several plain, single-purpose questions in one request, and cache every response.</li>
+    <li>Each round, read the worst failures with their reasons and write questions that name the general pattern.</li>
+    <li>Search the combination rule over answers you already have. Keep it small: two to four signals.</li>
+    <li>Replace the champion only on a pessimistic, cross-document win. Stop after two rounds without one.</li>
+    <li>Open the lockbox once. Report the bound, not the zero. Then log every production run to grow the labelled pool.</li>
+  </ol>
+</div></section>
+
+<footer><div class="wrap">
+  <b style="color:var(--ink)">Sources and limits.</b> Figures come from one project on 19 September 2026: 142 tuning claims and 85 lockbox claims across seven public court filings. Lockbox labels are verdicts reported by a full language model, not human review, and 21 lockbox negatives cannot certify a low error rate. TypeSafe's speed and accuracy claims are its own.
+  <ul>
+    <li>TypeSafe docs: <a href="https://docs.typesafe.ai/cookbooks/autoresearch_feature_discovery">feature-discovery loop cookbook</a>, <a href="https://docs.typesafe.ai/model-jaggedness/jev-1.13">Jev 1.13 known weaknesses</a>, <a href="https://docs.typesafe.ai/primitives/advanced">structured criteria</a>, <a href="https://docs.typesafe.ai/models">models and limits</a></li>
+    <li>Loop design borrows from GEPA, reflective prompt evolution (<a href="https://arxiv.org/abs/2507.19457">arXiv 2507.19457</a>), and Learn-Then-Test risk control (<a href="https://arxiv.org/abs/2110.01052">arXiv 2110.01052</a>)</li>
+    <li>Project files: <span class="mono">scratch/jev/LOOP.md</span>, <span class="mono">RESULTS.md</span>, <span class="mono">loop_bank.py</span>, <span class="mono">bank/round_*.json</span></li>
+  </ul>
+</div></footer>
+
+<script>
+(function(){
+  // [original score, reworded score, label 0 supported / 1 partial / 2 unsupported, 0 tuning / 1 unseen]
+  var D=[[0.98,0.925,0,0],[0.01,0.0,2,0],[0.58,0.045,1,0],[0.0,0.0,2,0],[0.02,0.0,2,0],[0.01,0.0,2,0],[0.78,0.245,0,0],[0.71,0.115,1,0],[0.53,0.14,1,0],[0.78,0.35,0,0],[0.96,0.58,0,0],[0.79,0.205,0,0],[0.01,0.0,2,0],[0.01,0.0,2,0],[0.6,0.11,1,0],[0.46,0.04,0,0],[0.92,0.885,0,0],[0.96,0.94,0,0],[0.72,0.155,1,0],[0.95,0.715,0,0],[0.97,0.845,0,0],[0.83,0.16,1,0],[0.98,0.745,0,0],[0.95,0.59,0,0],[0.77,0.195,1,0],[0.84,0.76,0,0],[0.96,0.905,0,0],[0.21,0.11,2,0],[0.3,0.06,2,0],[0.12,0.0,1,0],[0.12,0.0,1,0],[0.97,0.91,0,0],[0.96,0.92,0,0],[0.63,0.055,1,0],[0.73,0.09,1,0],[0.58,0.055,1,0],[0.34,0.02,1,0],[0.05,0.0,2,0],[0.3,0.005,1,0],[0.11,0.01,2,0],[0.0,0.0,2,0],[0.96,0.89,0,0],[0.97,0.76,0,0],[0.65,0.66,0,0],[0.17,0.02,2,0],[0.95,0.91,0,0],[0.03,0.075,2,0],[0.21,0.015,2,0],[0.96,0.92,0,0],[0.37,0.03,1,0],[0.4,0.01,1,0],[0.05,0.015,2,0],[0.75,0.84,0,0],[0.31,0.015,1,0],[0.19,0.035,1,0],[0.28,0.035,1,0],[0.85,0.66,0,0],[0.44,0.045,0,0],[0.49,0.035,0,0],[0.58,0.24,0,0],[0.08,0.0,2,0],[0.29,0.165,1,0],[0.69,0.04,0,0],[0.0,0.0,2,0],[0.0,0.0,2,0],[0.33,0.195,0,0],[0.73,0.315,0,0],[0.98,0.83,0,1],[0.97,0.98,0,1],[0.1,0.04,1,1],[0.29,0.045,1,1],[0.01,0.0,2,1],[0.42,0.195,0,1],[0.98,0.94,0,1],[0.86,0.59,0,1],[0.96,0.885,0,1],[0.95,0.34,0,1],[0.97,0.07,0,1],[0.45,0.01,1,1],[0.64,0.24,0,1],[0.7,0.32,0,1],[0.05,0.005,2,1],[0.12,0.025,1,1],[0.03,0.01,2,1],[0.81,0.51,0,1],[0.97,0.92,0,1],[0.04,0.01,2,1],[0.12,0.04,0,1],[0.06,0.01,1,1],[0.86,0.2,0,1],[0.87,0.485,0,1],[0.97,0.75,0,1],[0.93,0.75,0,1],[0.46,0.13,0,1],[0.98,0.935,0,1],[0.97,0.73,0,1],[0.93,0.895,0,1],[0.97,0.265,0,1],[0.5,0.21,1,1],[0.43,0.04,1,1],[0.8,0.295,1,1],[0.58,0.245,0,1],[0.86,0.48,0,1],[0.98,0.915,0,1],[0.76,0.675,0,1],[0.69,0.055,0,1],[0.42,0.07,2,1],[0.91,0.38,0,1],[0.69,0.15,0,1],[0.78,0.24,0,1],[0.94,0.545,0,1],[0.94,0.41,0,1],[0.63,0.07,0,1],[0.27,0.05,1,1],[0.96,0.64,0,1],[0.85,0.47,0,1],[0.88,0.455,0,1],[0.62,0.035,1,1],[0.36,0.0,1,1],[0.94,0.795,0,1],[0.22,0.03,1,1],[0.47,0.04,0,1],[0.69,0.435,0,1],[0.74,0.145,0,1],[0.37,0.01,0,1],[0.87,0.69,0,1],[0.17,0.01,1,1],[0.82,0.335,0,1],[0.57,0.14,1,1],[0.94,0.595,0,1],[0.35,0.1,2,1],[0.01,0.0,2,1]];
+  var NS="http://www.w3.org/2000/svg", svg=document.getElementById("strip");
+  var X0=150, X1=990, ROWS=[{y:70,label:"Original wording",k:0},{y:190,label:"Reworded",k:1}];
+  var COL=["#7fd6a8","#f0b35a","#ff8a80"], set="all";
+  function el(n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t)e.textContent=t;return e;}
+  function x(v){return X0+v*(X1-X0);}
+  function jitter(i){return ((i*37)%41)-20;}
+  function rows(){return D.filter(function(d){return set==="all"||String(d[3])===set;});}
+  function draw(){
+    var thr=parseFloat(document.getElementById("thr").value), data=rows();
+    while(svg.lastChild && svg.lastChild.tagName!=="title") svg.removeChild(svg.lastChild);
+    ROWS.forEach(function(r){
+      svg.appendChild(el("rect",{x:x(thr),y:r.y-34,width:X1-x(thr)+6,height:68,fill:"#9fb0ff",opacity:"0.12",rx:4}));
+      svg.appendChild(el("line",{x1:X0,x2:X1,y1:r.y+34,y2:r.y+34,stroke:"#3a4a73"}));
+      svg.appendChild(el("text",{x:0,y:r.y+5,fill:"#e8ecf5","font-size":15,"font-weight":600,"font-family":"IBM Plex Sans,sans-serif"},r.label));
+      var maxNeg=Math.max.apply(null,data.filter(function(d){return d[2]>0;}).map(function(d){return d[r.k];}));
+      svg.appendChild(el("line",{x1:x(maxNeg),x2:x(maxNeg),y1:r.y-38,y2:r.y+34,stroke:"#c6cfe6","stroke-dasharray":"4 4","stroke-width":1.5}));
+      svg.appendChild(el("text",{x:x(maxNeg),y:r.y-44,fill:"#c6cfe6","font-size":12.5,"text-anchor":maxNeg>0.85?"end":"middle","font-family":"IBM Plex Mono,monospace"},maxNeg.toFixed(2)));
+      data.forEach(function(d,i){
+        var cleared=d[r.k]>thr, bad=cleared&&d[2]>0;
+        svg.appendChild(el("circle",{cx:x(d[r.k]),cy:r.y+jitter(i+r.k*7),r:bad?7:5,fill:COL[d[2]],opacity:cleared?"0.95":"0.45",stroke:bad?"#fff":"none","stroke-width":2}));
+      });
+    });
+    [0,0.25,0.5,0.75,1].forEach(function(t){
+      svg.appendChild(el("text",{x:x(t),y:250,fill:"#a9b4cc","font-size":12.5,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace"},t.toFixed(2)));
+    });
+    svg.appendChild(el("line",{x1:x(thr),x2:x(thr),y1:24,y2:232,stroke:"#fff","stroke-width":2}));
+    svg.appendChild(el("text",{x:x(thr),y:12,fill:"#fff","font-size":13,"font-weight":600,"text-anchor":thr>0.9?"end":(thr<0.1?"start":"middle"),"font-family":"IBM Plex Sans,sans-serif"},"cleared →"));
+    [0,1].forEach(function(k){
+      var hit=data.filter(function(d){return d[k]>thr;}), bad=hit.filter(function(d){return d[2]>0;}).length;
+      document.getElementById("c"+k).innerHTML=hit.length+" <small>of "+data.length+" cleared without a full model</small>";
+      document.getElementById("b"+k).innerHTML=bad===0?'<span class="is-ok">0 not-supported claims let through</span>':'<span class="is-bad">'+bad+" not-supported claim"+(bad>1?"s":"")+" let through</span>";
+    });
+    document.getElementById("thrOut").textContent=thr.toFixed(2);
+  }
+  document.getElementById("thr").addEventListener("input",draw);
+  Array.prototype.forEach.call(document.querySelectorAll(".seg button"),function(b){
+    b.addEventListener("click",function(){
+      set=b.getAttribute("data-set");
+      Array.prototype.forEach.call(document.querySelectorAll(".seg button"),function(o){o.setAttribute("aria-pressed",o===b?"true":"false");});
+      draw();
+    });
+  });
+
+  var STEPS=[
+    {t:"Read the failures, with their reasons",c:"free",b:"List the not-supported examples that score highest and the supported ones that fall just short. Show why each carries its label: a reviewer's note or the full model's written finding. A bare accuracy number gives the question writer nothing to work with.",e:"All seven blocking claims in round 0 carried the same kind of note: the case supports one half of the proposition and is silent on the other."},
+    {t:"Write questions that state the general pattern",c:"free",b:"Turn the diagnosis into new questions. Keep each one literal and about a single judgment. Declare which answer counts as good. Never paste an example, a case name, or a party into a question.",e:"“Does `proposition` add a specific standard, element, category, or example that does not appear in `opinion`?”"},
+    {t:"Ask every new question in one request per example",c:"look",b:"This is the only step that costs money and the only one that counts as a look at your data. Put the whole batch in a single request per example, since parallel questions are nearly free. Cache every response so reruns cost nothing.",e:"Twelve new questions across 142 claims took about 20 seconds and 3 cents."},
+    {t:"Score each question on its own",c:"free",b:"Measure how well each answer separates the classes, overall and against the hard class, and per source document. Flag any question whose answers barely vary: TypeSafe's guidance is that flat probabilities mean vague criteria.",e:"Against “partial” claims, the original question scored 0.874 and the new one 0.927. A probe for “the first half of the proposition” scored 0.684 and was ignored."},
+    {t:"Re-fit how the answers combine",c:"free",b:"Search combination rules over answers you already hold. Keep the rule small: greedy selection of at most four signals, combined by minimum or by mean. A large fitted model will memorise 100 examples.",e:"Round 1 chose the mean of “every part covered” and “adds specifics,” and the highest-scoring not-supported claim fell from 0.888 to 0.550."},
+    {t:"Accept only on a pessimistic win",c:"free",b:"The challenger replaces the champion only if its 20th-percentile result under resampling beats the champion's by a set amount, and it adds no errors when the threshold is set on other documents. Otherwise the round is discarded.",e:"Round 2's seven questions changed nothing and were rejected. Round 3 won by the minimum allowed gain. We stopped there and opened the lockbox."}
+  ];
+  var cur=0, list=document.getElementById("stepList");
+  STEPS.forEach(function(s,i){
+    var li=document.createElement("li"), b=document.createElement("button");
+    b.type="button"; b.textContent=s.t; b.addEventListener("click",function(){go(i);});
+    li.appendChild(b); list.appendChild(li);
+  });
+  function go(i){
+    cur=i; var s=STEPS[i];
+    Array.prototype.forEach.call(list.querySelectorAll("button"),function(b,j){if(j===i)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current");});
+    document.getElementById("stepTitle").textContent=(i+1)+". "+s.t;
+    document.getElementById("stepBody").textContent=s.b;
+    document.getElementById("stepEx").textContent=s.e;
+    var c=document.getElementById("stepCost");
+    c.className="cost "+s.c; c.textContent=s.c==="look"?"Costs a request · counts as a look":"Free · no API calls";
+    document.getElementById("prev").disabled=i===0;
+    document.getElementById("next").textContent=i===STEPS.length-1?"Start over":"Next step";
+  }
+  document.getElementById("prev").addEventListener("click",function(){if(cur>0)go(cur-1);});
+  document.getElementById("next").addEventListener("click",function(){go(cur===STEPS.length-1?0:cur+1);});
+
+  function rule3(){
+    var n=parseInt(document.getElementById("nneg").value,10), p=(1-Math.pow(0.05,1/n))*100;
+    document.getElementById("nnegOut").textContent=n;
+    document.getElementById("r3").innerHTML="up to "+p.toFixed(1)+"%<small>of not-supported claims could still get through, even though none of the "+n+" tested did."+(n===59?" This is where our pooled data stands.":"")+"</small>";
+  }
+  document.getElementById("nneg").addEventListener("input",rule3);
+
+  function init(){draw();go(0);rule3();}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
+</script>
+
+<!-- Review & edit overlay — injected by assemble.mjs (invariant; do not hand-edit) -->
+<script>
+/* =====================================================================
+   review-mode.js — drop-in "Review & edit" overlay for html-explainer pages
+
+   WHAT IT IS
+   A self-contained client-side overlay that lets a reader edit or annotate
+   an explainer in-place, then export the result — the front end of the
+   Phase 6 revise loop. No server. Works deployed or from a local file.
+
+   HOW TO USE (two steps)
+   1. Paste this entire block inside a <script> just before </body> in the
+      built HTML. It injects its own <style> and builds its own UI; there is
+      nothing else to wire up.
+   2. If the page has its own keyboard handler (e.g. a slide deck), add
+      `|| e.target.isContentEditable` to its "am I typing?" guard so editing
+      text doesn't trigger navigation. (Scrolling pages usually need nothing.)
+
+   ACTIVATION
+   - Deployed: append `?edit` to the URL. Hand reviewers a *labelled* link
+     (View = the plain URL; Review & edit = the URL + `?edit`).
+   - Local file (no second URL to give out): add the attribute
+     `<body data-review-toggle>` and a prominent top-right "Review & edit"
+     button appears that turns the toolbar on.
+
+   OPTIONAL DECK HOOK
+   - On a deck where off-screen sections can't be reached by scrollIntoView,
+     define `window.reviewGoto = note => goToSlide(note.slideIdx)` so the
+     panel's "jump to annotation" works. (Store slideIdx on the note via the
+     same hook if you need it.) Falls back to scrollIntoView otherwise.
+
+   LIMITS (state these in the hand-off)
+   - Edits/notes are per-browser: no shared live document, no server save
+     (localStorage is best-effort and not always available on file://).
+   - `contenteditable` edits the rendered markup, NOT JS-rendered content
+     (quiz/demo data arrays) — route those changes through the *note* path.
+   ===================================================================== */
+(function () {
+  "use strict";
+  var qs = new URLSearchParams(location.search);
+  var viaQuery = qs.has("edit");
+  var viaToggle = document.body.hasAttribute("data-review-toggle");
+  if (!viaQuery && !viaToggle) return;
+
+  // ---- styles (use the page's design tokens, with fallbacks) ----
+  var css = [
+    "body.rv-on #topbar{top:46px}", // example: offset a known fixed header; harmless if absent
+    "body.rv-pad{padding-top:46px}", // scrolling pages: push content below the toolbar (decks skip this)
+    "#rv-bar{position:fixed;top:0;left:0;right:0;min-height:46px;z-index:9000;display:flex;align-items:center;gap:10px;padding:6px 14px;background:#23211c;color:#f6f3ec;font-family:var(--sans,system-ui,sans-serif);font-size:13px;box-shadow:0 2px 12px rgba(0,0,0,.25);flex-wrap:wrap}",
+    "#rv-bar .rv-tag{font-family:var(--mono,ui-monospace,monospace);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#e6b566;display:flex;align-items:center;gap:7px}",
+    "#rv-bar .rv-tag::before{content:'';width:7px;height:7px;border-radius:50%;background:#e6b566}",
+    ".rv-seg{display:inline-flex;border:1px solid #4a463d;border-radius:8px;overflow:hidden}",
+    ".rv-seg button{background:none;border:none;color:#cfc9bb;font-family:inherit;font-size:12px;padding:6px 11px;cursor:pointer}",
+    ".rv-seg button.on{background:#e6b566;color:#23211c;font-weight:600}",
+    ".rv-act{background:#3a362e;border:1px solid #4a463d;color:#f6f3ec;font-family:inherit;font-size:12px;padding:6px 11px;border-radius:8px;cursor:pointer}",
+    ".rv-act:hover{background:#4a463d}",
+    "#rv-bar .rv-spacer{flex:1}",
+    "#rv-bar .rv-exit{color:#cfc9bb;text-decoration:none;font-size:12px;border-bottom:1px dashed #6a6456;cursor:pointer}",
+    "#rv-launch{position:fixed;top:8px;right:14px;z-index:9002;background:#b9772a;color:#fff;border:none;border-radius:24px;padding:11px 18px;font-family:var(--sans,system-ui,sans-serif);font-size:13.5px;font-weight:600;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.28);display:inline-flex;align-items:center;gap:7px}",
+    "#rv-launch:hover{background:#a3641f}",
+    "#rv-launch svg{display:block}",
+    "body.rv-mode-edit [data-rv-edit]:hover{outline:2px dashed #1f6f8b;outline-offset:3px;cursor:text}",
+    "body.rv-mode-edit [data-rv-edit]:focus{outline:2px solid #1f6f8b;outline-offset:3px;background:rgba(31,111,139,.06)}",
+    "body.rv-mode-note .rv-target:hover{cursor:crosshair;outline:1px dashed #b9772a;outline-offset:2px}",
+    ".rv-annotated{outline:2px dashed #b9772a !important;outline-offset:3px;background:rgba(185,119,42,.09)}",
+    ".rv-flash{animation:rvflash 1.2s ease}",
+    "@keyframes rvflash{0%,100%{background:transparent}30%{background:rgba(230,181,102,.35)}}",
+    "#rv-notes{position:fixed;top:46px;right:0;bottom:0;width:330px;max-width:86vw;z-index:8999;background:var(--card,#fffdf8);border-left:1px solid var(--line-strong,#c8bfab);box-shadow:-6px 0 24px rgba(0,0,0,.08);transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}",
+    "#rv-notes.open{transform:none}",
+    "#rv-notes .rv-notes-hd{display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 0}",
+    "#rv-notes h4{font-family:var(--display,Georgia,serif);font-size:16px;margin:0;padding:16px 18px 10px;color:var(--ink,#23211c)}",
+    "#rv-collapse{font-family:var(--sans,sans-serif);font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--ink-faint,#8a8478);background:transparent;border:1px solid var(--line,#ddd5c5);border-radius:7px;padding:5px 10px;cursor:pointer}",
+    "#rv-collapse:hover{color:var(--ink,#23211c);border-color:var(--line-strong,#c8bfab)}",
+    "#rv-notes .rv-list{flex:1;overflow:auto;padding:0 14px 14px}",
+    "#rv-notes .rv-empty{color:var(--ink-faint,#8a8478);font-size:13px;padding:10px 4px;font-style:italic;line-height:1.5}",
+    ".rv-note{border:1px solid var(--line,#ddd5c5);border-radius:10px;padding:11px 12px;margin-bottom:9px;background:var(--card,#fffdf8)}",
+    ".rv-note .rv-loc{font-family:var(--mono,ui-monospace,monospace);font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--augment,#b9772a);cursor:pointer}",
+    ".rv-note .rv-ex{font-size:12px;color:var(--ink-faint,#8a8478);margin:4px 0;line-height:1.4}",
+    ".rv-note .rv-txt{font-size:13.5px;color:var(--ink,#23211c);line-height:1.45}",
+    ".rv-note .rv-del{float:right;border:none;background:none;color:var(--ink-faint,#8a8478);cursor:pointer;font-size:15px;line-height:1}",
+    "#rv-pop{position:fixed;z-index:9010;width:280px;background:var(--card,#fffdf8);border:1px solid var(--line-strong,#c8bfab);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:12px;display:none}",
+    "#rv-pop.open{display:block}",
+    "#rv-pop .rv-ex{font-size:11.5px;color:var(--ink-faint,#8a8478);margin-bottom:8px;line-height:1.4;max-height:48px;overflow:hidden}",
+    "#rv-pop textarea{width:100%;height:74px;resize:vertical;font-family:var(--sans,system-ui,sans-serif);font-size:13px;border:1px solid var(--line-strong,#c8bfab);border-radius:8px;padding:8px;box-sizing:border-box}",
+    "#rv-pop .rv-pop-act{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}",
+    "#rv-pop button{font-family:var(--sans,system-ui,sans-serif);font-size:12px;padding:6px 12px;border-radius:7px;cursor:pointer;border:1px solid var(--line-strong,#c8bfab);background:var(--card,#fffdf8)}",
+    "#rv-pop button.rv-save{background:#b9772a;color:#fff;border-color:#b9772a}",
+    ".rv-toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:#23211c;color:#f6f3ec;font-size:13px;padding:9px 16px;border-radius:20px;z-index:9010;opacity:0;transition:opacity .25s;pointer-events:none}",
+    ".rv-toast.show{opacity:1}",
+    "#rv-fallback{position:fixed;inset:0;z-index:9020;background:rgba(35,33,28,.5);display:none;align-items:center;justify-content:center;padding:24px}",
+    "#rv-fallback.open{display:flex}",
+    "#rv-fallback .rv-fb-card{background:var(--card,#fffdf8);border-radius:12px;padding:16px;max-width:560px;width:100%}",
+    "#rv-fallback textarea{width:100%;height:240px;font-family:var(--mono,ui-monospace,monospace);font-size:12px;box-sizing:border-box}"
+  ].join("\n");
+  var styleEl = document.createElement("style");
+  styleEl.textContent = css;
+  document.head.appendChild(styleEl);
+
+  // state must be initialised before activate() can render
+  var built = false, mode = "interact", pendingEl = null, notes = load();
+
+  function $(id) { return document.getElementById(id); }
+
+  // local files: show a launcher button instead of opening immediately
+  if (viaToggle && !viaQuery) {
+    var launch = document.createElement("button");
+    launch.id = "rv-launch";
+    launch.setAttribute("aria-label", "Review & edit this page");
+    launch.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Review &amp; edit</span>';
+    launch.onclick = function () { launch.style.display = "none"; activate(); };
+    document.body.appendChild(launch);
+    // Slide decks put their nav in the top-right — move launcher to bottom-left to avoid collision.
+    // Scrolling pages: position just below any fixed/sticky top nav instead.
+    requestAnimationFrame(function () {
+      var isDeck = !!document.querySelector(".slide,[data-deck],[data-slide],.slides-track,.deck");
+      if (isDeck) {
+        launch.style.top = "auto";
+        launch.style.right = "auto";
+        launch.style.bottom = "16px";
+        launch.style.left = "14px";
+      } else {
+        var navBottom = 0;
+        document.querySelectorAll("nav,header,[role=navigation],[role=banner]").forEach(function (el) {
+          var s = getComputedStyle(el);
+          if (s.position === "fixed" || s.position === "sticky") {
+            navBottom = Math.max(navBottom, el.getBoundingClientRect().bottom);
+          }
+        });
+        if (navBottom > 0) launch.style.top = (navBottom + 8) + "px";
+      }
+    });
+  } else {
+    activate();
+  }
+
+  function activate() {
+    document.body.classList.add("rv-on");
+    if (!document.querySelector(".slide,[data-deck]")) document.body.classList.add("rv-pad");
+    var bar = document.getElementById("rv-bar"); if (bar) bar.style.display = ""; // re-show on re-entry
+    if (built) return;
+    built = true;
+    markEditable();
+    buildToolbar();
+    buildPanel();
+    buildPopover();
+    buildFallback();
+    renderNotes();
+  }
+
+  // ---- editable prose (broad, but never controls or the review UI) ----
+  function markEditable() {
+    // Skip the overlay's own UI, interactive controls, and anything already
+    // covered by an editable ancestor (so we don't double-mark nested text).
+    var skip = "#rv-bar,#rv-notes,#rv-pop,#rv-fallback,#rv-launch,input,textarea,select,[data-rv-edit],[contenteditable],[data-rv-edit-exclude]";
+    function mark(el) {
+      if (el.closest(skip)) return;
+      el.setAttribute("data-rv-edit", "");
+    }
+    // 1) Known text-bearing elements (broadened well past the old p/h/li set:
+    //    table cells, summaries, definition lists, captions all hold prose too).
+    var sel = "h1,h2,h3,h4,h5,h6,p,li,blockquote,figcaption,figure,summary,caption,td,th,dt,dd,button,a,label,[data-rv-edit-include]";
+    Array.prototype.forEach.call(document.querySelectorAll(sel), mark);
+    // 2) Generic containers (div/section/etc.) that hold their OWN text directly
+    //    rather than via a block child — extremely common in AI-generated markup,
+    //    and the reason "some text wasn't editable". Only mark the ones with loose
+    //    text so we don't turn whole layout wrappers into one big editable blob.
+    Array.prototype.forEach.call(
+      document.querySelectorAll("div,section,article,header,footer,main,aside,span"),
+      function (el) {
+        var ownText = Array.prototype.some.call(el.childNodes, function (n) {
+          return n.nodeType === 3 && n.textContent.trim();
+        });
+        if (ownText) mark(el);
+      }
+    );
+  }
+
+  function buildToolbar() {
+    var bar = document.createElement("div");
+    bar.id = "rv-bar";
+    bar.innerHTML =
+      '<span class="rv-tag">Review mode</span>' +
+      '<div class="rv-seg" id="rv-seg">' +
+        '<button data-mode="interact" class="on">Preview</button>' +
+        '<button data-mode="edit">Edit text</button>' +
+        '<button data-mode="note">Add note</button>' +
+      "</div>" +
+      '<span class="rv-spacer"></span>' +
+      '<button class="rv-act" id="rv-toggle-notes">Notes (0)</button>' +
+      '<button class="rv-act" id="rv-copy">Copy notes for LLM</button>' +
+      '<button class="rv-act" id="rv-download">Download edits</button>' +
+      '<span class="rv-exit" id="rv-exit">Exit</span>';
+    document.body.appendChild(bar);
+    Array.prototype.forEach.call(bar.querySelectorAll("#rv-seg button"), function (b) {
+      b.onclick = function () { setMode(b.dataset.mode); };
+    });
+    $("rv-toggle-notes").onclick = function () { $("rv-notes").classList.toggle("open"); };
+    $("rv-copy").onclick = copyBrief;
+    $("rv-download").onclick = downloadEdits;
+    $("rv-exit").onclick = function () {
+      if (viaQuery) location.href = location.pathname; // drop ?edit
+      else { document.body.classList.remove("rv-on", "rv-mode-edit", "rv-mode-note", "rv-pad"); setMode("interact"); $("rv-bar").style.display = "none"; var l = $("rv-launch"); if (l) l.style.display = ""; }
+    };
+  }
+
+  function buildPanel() {
+    var p = document.createElement("div");
+    p.id = "rv-notes";
+    p.innerHTML = '<div class="rv-notes-hd"><h4>Annotations</h4><button id="rv-collapse" title="Collapse panel (your notes are kept)" aria-label="Collapse panel">Collapse &rsaquo;</button></div><div class="rv-list" id="rv-list"></div>';
+    document.body.appendChild(p);
+    // Collapse hides the panel without deleting notes (they persist in
+    // localStorage and reopen via the toolbar's "Notes (N)" button).
+    $("rv-collapse").onclick = function () { $("rv-notes").classList.remove("open"); };
+  }
+
+  function buildPopover() {
+    var pop = document.createElement("div");
+    pop.id = "rv-pop";
+    pop.innerHTML =
+      '<div class="rv-ex" id="rv-pop-ex"></div>' +
+      '<textarea id="rv-pop-ta" placeholder="What should change here?"></textarea>' +
+      '<div class="rv-pop-act"><button id="rv-pop-cancel">Cancel</button>' +
+      '<button class="rv-save" id="rv-pop-save">Save note</button></div>';
+    document.body.appendChild(pop);
+    $("rv-pop-cancel").onclick = closePop;
+    $("rv-pop-save").onclick = saveNote;
+  }
+
+  function buildFallback() {
+    var f = document.createElement("div");
+    f.id = "rv-fallback";
+    f.innerHTML = '<div class="rv-fb-card"><p style="margin:0 0 8px;font-family:var(--sans,sans-serif);font-size:13px">Copy the revision brief below (clipboard was blocked):</p><textarea id="rv-fb-ta" readonly></textarea><div style="text-align:right;margin-top:8px"><button class="rv-act" id="rv-fb-close" style="background:#23211c">Close</button></div></div>';
+    document.body.appendChild(f);
+    $("rv-fb-close").onclick = function () { f.classList.remove("open"); };
+  }
+
+  function setMode(m) {
+    mode = m;
+    document.body.classList.toggle("rv-mode-edit", m === "edit");
+    document.body.classList.toggle("rv-mode-note", m === "note");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-rv-edit]"), function (el) {
+      el.contentEditable = (m === "edit" ? "true" : "false");
+      el.classList.toggle("rv-target", m === "note");
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#rv-seg button"), function (b) {
+      b.classList.toggle("on", b.dataset.mode === m);
+    });
+    if (m !== "note") closePop();
+  }
+
+  // ---- note capture (capture-phase so it beats demo handlers) ----
+  document.addEventListener("click", function (e) {
+    if (mode !== "note") return;
+    if (e.target.closest("#rv-bar,#rv-notes,#rv-pop,#rv-fallback,#rv-launch")) return;
+    var el = e.target;
+    if (!el || el === document.body || el === document.documentElement) return;
+    e.preventDefault(); e.stopPropagation();
+    pendingEl = el;
+    var ex = excerpt(el);
+    $("rv-pop-ex").textContent = "“" + ex + "”";
+    $("rv-pop-ta").value = "";
+    openPop(e.clientX, e.clientY);
+    setTimeout(function () { $("rv-pop-ta").focus(); }, 30);
+  }, true);
+
+  // In Edit mode, clicking an editable button/link must place the caret to edit
+  // its text — NOT trigger its action. Capture-phase so it beats page handlers.
+  document.addEventListener("click", function (e) {
+    if (mode !== "edit") return;
+    if (e.target.closest("#rv-bar,#rv-notes,#rv-pop,#rv-fallback,#rv-launch")) return;
+    if (e.target.closest("[data-rv-edit]") && e.target.closest("button,a")) {
+      e.preventDefault(); e.stopPropagation();
+    }
+  }, true);
+
+  function saveNote() {
+    var txt = $("rv-pop-ta").value.trim();
+    if (!txt || !pendingEl) { closePop(); return; }
+    pendingEl.classList.add("rv-annotated");
+    notes.push({ loc: locate(pendingEl), excerpt: excerpt(pendingEl), note: txt, el: pendingEl });
+    closePop(); save(); renderNotes();
+    $("rv-notes").classList.add("open"); toast("Note added");
+  }
+
+  function openPop(x, y) {
+    var pop = $("rv-pop");
+    pop.classList.add("open");
+    var w = 280, h = pop.offsetHeight || 190;
+    pop.style.left = Math.max(12, Math.min(x, window.innerWidth - w - 12)) + "px";
+    pop.style.top = Math.max(54, Math.min(y, window.innerHeight - h - 12)) + "px";
+  }
+  function closePop() { $("rv-pop") && $("rv-pop").classList.remove("open"); pendingEl = null; }
+
+  function renderNotes() {
+    $("rv-toggle-notes").textContent = "Notes (" + notes.length + ")";
+    var list = $("rv-list");
+    if (!notes.length) {
+      list.innerHTML = '<div class="rv-empty">No annotations yet. Switch to “Add note”, then click any text to leave a comment for the LLM.</div>';
+      return;
+    }
+    list.innerHTML = "";
+    notes.forEach(function (n, i) {
+      var d = document.createElement("div");
+      d.className = "rv-note";
+      d.innerHTML =
+        '<button class="rv-del" title="Delete this note">×</button>' +
+        '<div class="rv-loc">' + esc(n.loc) + "</div>" +
+        '<div class="rv-ex">“' + esc(n.excerpt) + '”</div>' +
+        '<div class="rv-txt">' + esc(n.note) + "</div>";
+      d.querySelector(".rv-loc").onclick = function () { gotoNote(n); };
+      d.querySelector(".rv-del").onclick = function () { notes.splice(i, 1); save(); renderNotes(); };
+      list.appendChild(d);
+    });
+  }
+
+  // Shared revision-brief text, used by both "Copy notes" and the download.
+  function briefText() {
+    var out = "# Revision requests\n(" + notes.length + " annotation" + (notes.length > 1 ? "s" : "") + " from a reviewer)\n\n";
+    notes.forEach(function (n, i) {
+      out += (i + 1) + ". " + n.loc + "\n   Text: \"" + n.excerpt + "\"\n   Change: " + n.note + "\n\n";
+    });
+    out += "Please apply these to the source HTML, keeping the structured data arrays and CSS tokens intact, then re-screenshot to verify.";
+    return out;
+  }
+
+  function copyBrief() {
+    if (!notes.length) { toast("No notes yet"); return; }
+    copy(briefText());
+  }
+
+  function downloadEdits() {
+    var was = mode; setMode("interact");
+    var clone = document.documentElement.cloneNode(true);
+    rm(clone, "#rv-bar,#rv-notes,#rv-pop,#rv-fallback,#rv-launch,.rv-toast");
+    Array.prototype.forEach.call(clone.querySelectorAll("[data-rv-edit]"), function (n) {
+      n.removeAttribute("data-rv-edit"); n.removeAttribute("contenteditable"); n.classList.remove("rv-target");
+    });
+    Array.prototype.forEach.call(clone.querySelectorAll(".rv-annotated"), function (n) { n.classList.remove("rv-annotated"); });
+    var b = clone.querySelector("body");
+    if (b) b.classList.remove("rv-on", "rv-mode-edit", "rv-mode-note");
+    var html = "<!DOCTYPE html>\n" + clone.outerHTML;
+    // Append the reviewer's notes as an HTML comment so a single download carries
+    // BOTH the inline text edits and the comments. Invisible on the rendered page;
+    // sanitize so note text can't break out of the comment.
+    if (notes.length) {
+      var safe = briefText().replace(/<!--/g, "<!-").replace(/-->/g, "->").replace(/--/g, "—");
+      html += "\n\n<!-- ===== REVIEWER NOTES (" + notes.length + ") — appended by review-mode.js =====\n\n" +
+              safe + "\n\n===== end reviewer notes ===== -->\n";
+    }
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    a.download = (document.title || "page").replace(/[^a-z0-9]+/gi, "-").toLowerCase() + "-edited.html";
+    a.click();
+    setMode(was);
+    toast(notes.length ? "Downloaded — edits + " + notes.length + " note" + (notes.length > 1 ? "s" : "") : "Downloaded edited copy");
+  }
+
+  // ---- location label: nearest section heading, deck-agnostic ----
+  function locate(el) {
+    var sec = el.closest("section,[data-section],.slide,article");
+    var head = sec && sec.querySelector("h1,h2,h3,h4");
+    if (!head) head = nearestHeading(el);
+    return head ? head.innerText.trim().replace(/\s+/g, " ").slice(0, 60) : "Page";
+  }
+  function nearestHeading(el) {
+    var heads = Array.prototype.slice.call(document.querySelectorAll("h1,h2,h3,h4"))
+      .filter(function (h) { return !h.closest("#rv-bar,#rv-notes,#rv-pop"); });
+    var best = null;
+    for (var i = 0; i < heads.length; i++) {
+      var h = heads[i];
+      if (h === el || (h.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)) best = h;
+      else break;
+    }
+    return best;
+  }
+  function gotoNote(n) {
+    if (typeof window.reviewGoto === "function") { window.reviewGoto(n); return; }
+    if (n.el && n.el.isConnected) {
+      n.el.scrollIntoView({ behavior: "smooth", block: "center" });
+      n.el.classList.add("rv-flash");
+      setTimeout(function () { n.el.classList.remove("rv-flash"); }, 1200);
+    }
+  }
+
+  // ---- helpers ----
+  function excerpt(el) { return (el.innerText || el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 140); }
+  function esc(s) { return (s || "").replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function rm(root, sel) { Array.prototype.forEach.call(root.querySelectorAll(sel), function (n) { n.remove(); }); }
+  // Per-page key so notes from one explainer never leak into another on the same origin.
+  function notesKey() { try { return "rv-notes:" + (location.pathname || "") + (location.search || ""); } catch (e) { return "rv-notes"; } }
+  function save() { try { localStorage.setItem(notesKey(), JSON.stringify(notes.map(function (n) { return { loc: n.loc, excerpt: n.excerpt, note: n.note }; }))); } catch (e) {} }
+  function load() { try { return JSON.parse(localStorage.getItem(notesKey()) || "[]"); } catch (e) { return []; } }
+  function copy(t) {
+    var ok = false;
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t); ok = true; } } catch (e) {}
+    if (ok) { toast("Revision brief copied — paste it to the LLM"); }
+    else { $("rv-fb-ta").value = t; $("rv-fallback").classList.add("open"); $("rv-fb-ta").select(); } // clipboard blocked (e.g. file://)
+  }
+  var tT;
+  function toast(m) {
+    var el = document.querySelector(".rv-toast");
+    if (!el) { el = document.createElement("div"); el.className = "rv-toast"; document.body.appendChild(el); }
+    el.textContent = m; el.classList.add("show");
+    clearTimeout(tT); tT = setTimeout(function () { el.classList.remove("show"); }, 1900);
+  }
+})();
+
+</script>
+</body>
+</html>
