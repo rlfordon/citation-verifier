@@ -14,14 +14,19 @@ from dataclasses import dataclass
 # --- Quote text normalization (moved verbatim from proposition_pipeline) ---
 
 
+def _straighten_quotes(text: str) -> str:
+    """Smart quotes -> straight. 1:1 per character, so offsets are preserved."""
+    s = text.replace("“", '"').replace("”", '"')
+    return s.replace("‘", "'").replace("’", "'")
+
+
 def _normalize_quote_text(text: str) -> str:
     """Normalize quoted text for fuzzy matching.
 
     Strips bracketed alterations, ellipses, smart quotes, and excess whitespace.
     """
     # Smart quotes to straight
-    s = text.replace("“", '"').replace("”", '"')
-    s = s.replace("‘", "'").replace("’", "'")
+    s = _straighten_quotes(text)
     # Strip bracketed alterations: [T] -> t (lowercase), [word] -> ""
     s = re.sub(r"\[([A-Z])\]", lambda m: m.group(1).lower(), s)
     s = re.sub(r"\[[^\]]*\]", "", s)
@@ -70,10 +75,14 @@ def _best_match_with_passage(
         needle_norm = _normalize_ocr_confusions(needle_norm)
     needle_norm = needle_norm.lower()
 
+    # The haystack gets the same smart-quote straightening as the needle
+    # (length-preserving, so the passage slice below stays aligned). Without
+    # it a quote with an apostrophe never exact-matches a curly-quote opinion.
+    haystack_cmp = _straighten_quotes(haystack)
     if ocr:
-        haystack_cmp = _normalize_ocr_confusions(haystack).lower()
+        haystack_cmp = _normalize_ocr_confusions(haystack_cmp).lower()
     else:
-        haystack_cmp = haystack.lower()
+        haystack_cmp = haystack_cmp.lower()
 
     if not needle_norm:
         return 0.0, ""

@@ -68,6 +68,32 @@ class TestBestMatchOcr:
         assert isinstance(passage, str) and passage != ""
 
 
+class TestHaystackSmartQuotes:
+    """The needle always had smart quotes straightened; the opinion text did
+    not, so any quote with an apostrophe missed the exact-substring path
+    against a curly-quote opinion (found 2026-09-19: 36 of 106 recorded
+    opinion_block segments)."""
+
+    def test_curly_apostrophe_in_opinion_is_exact(self):
+        opinion = "We hold that counsel’s performance was not deficient here."
+        qv = verify_quote("counsel's performance was not deficient", opinion)
+        assert qv.similarity == 1.0
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_curly_double_quotes_in_opinion_are_exact(self):
+        opinion = "The phrase “in his presence” is construed broadly by courts."
+        ratio, passage = _best_match_with_passage(
+            'phrase "in his presence" is construed', opinion)
+        assert ratio == 1.0
+        # displayed passage is sliced from the ORIGINAL (curly) opinion text
+        assert "“in his presence”" in passage
+
+    def test_straightening_never_rescues_a_real_misquote(self):
+        opinion = "We hold that counsel’s performance was not deficient here."
+        qv = verify_quote("counsel's performance was plainly deficient", opinion)
+        assert qv.similarity < 1.0
+
+
 class TestVerifyQuoteContract:
     def test_returns_quoteverification_with_enum_result(self):
         qv = verify_quote("hello world", "well, hello world!")
