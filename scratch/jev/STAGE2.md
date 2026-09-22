@@ -66,10 +66,14 @@ once a claim has already failed, topic is exactly what distinguishes
 
 ## The stage-2 dataset (`stage2_data.py` -> `stage2_dataset.json`)
 
-Labelled by **badge, not colour**. A Yellow can mean "quote is a paraphrase",
-which is not a support failure at all; the badge names the *kind* of failure,
-so quote and citation-resolution findings can be dropped instead of poisoning
-the partial class. 47 claims dropped on that rule.
+**332 claims across 13 briefs.** Two independent axes, deliberately kept apart:
+
+- `label_source` — **badge** (`badge_label` names the *kind* of failure, so
+  quote and citation-resolution findings are dropped instead of poisoning the
+  partial class) or **colour** (legacy `/verify-brief` runs that only recorded
+  Green/Yellow/Red — coarser, older prompt, a secondary check).
+- `split` — **search** (briefs some Jev tuning has touched) or **lock2**
+  (briefs no Jev tuning has ever touched).
 
 | badge | class | kind |
 |---|---|---|
@@ -79,19 +83,27 @@ the partial class. 47 claims dropped on that rule.
 | Inverts the holding | unsupported | inverted |
 | Not supported by cited case | unsupported | not_supported |
 
-Splits are by **brief** — a brief never straddles two splits, and re-runs of
-the same brief share a group.
+| source | split | claims | supported | partial | unsupported | briefs |
+|---|---|---|---|---|---|---|
+| badge | search | 138 | 79 | 35 | 24 | payne, kettering, sonnet-q3, ohio-mailbox, extrinsic, withers |
+| badge | lock2 | 71 | 51 | 7 | 13 | maxwell, ohio-pc, lawd207038, protege, makewhole |
+| colour | search | 40 | 24 | 7 | 9 | payne, kettering |
+| colour | lock2 | **83** | 17 | **37** | **29** | fletcher, fivehouse, valve |
 
-| split | briefs | claims | supported | partial | unsupported |
-|---|---|---|---|---|---|
-| `search` | payne, kettering-mtd, sonnet-q3, ohio-mailbox, extrinsic, withers | 196 | 117 | 46 | 33 |
-| `lock2` | maxwell, ohio-pc, lawd207038, protege, makewhole | 71 | 51 | 7 | 13 |
-| `colour` | fletcher, fivehouse | 41 | 6 | 23 | 12 |
+Two fixes went into getting here, both of which changed the numbers:
 
-`lock2` briefs have never been touched by any Jev tuning. `colour` is a
-**secondary** check only: legacy `/verify-brief` runs with no badge, labelled
-from the colour with all quote-problem claims dropped — coarser, and from an
-older assessment prompt.
+- **Truncated `opinion_file` paths.** The oldest workdirs stored a
+  repo-relative path that the CSV writer cut off mid-name
+  (`briefs/Valve v Rothschild/opinions/moore-v-ashland`), so every row looked
+  textless and three whole briefs had been silently excluded.
+  `resolve_opinion()` falls back to a unique stem-prefix match. Recovered
+  Valve (42 rows, negative-rich), kettering-v-collier and fivehouse.
+- **Cross-workdir duplicates.** Deduplication was per *workdir*, but the same
+  brief appears in several (`matters/payne` and `briefs/payne-proposed` are one
+  brief twice). Deduplicating per *group* removed **114 double-counted
+  claims** — the earlier 308-claim count was inflated.
+
+A brief never straddles a split: re-runs and companion filings share a `group`.
 
 Long opinions in the newer briefs exceed Jev's ~32K-token input cap, so
 `long_excerpt()` locates in batches that fit and runs a second locator pass
@@ -102,59 +114,77 @@ over the pooled candidates. It collapses to the original single-pass request
 
 Task B = partial vs unsupported, among non-supported claims only.
 
-| signal | origin | B search | B lock2 | B colour | lock2 90% CI |
-|---|---|---|---|---|---|
-| `whose_view` | carried | 0.925 | **0.879** | 0.815 | [0.73, 1.00] |
-| `support_level` | carried | 0.857 | 0.874 | 0.795 | [0.71, 1.00] |
-| `direction` | new | 0.892 | 0.874 | 0.764 | [0.71, 1.00] |
-| `states_it` | carried | 0.905 | 0.868 | 0.788 | [0.71, 0.98] |
-| `same_issue` | carried | 0.893 | 0.835 | 0.768 | [0.67, 0.97] |
-| `gap` | new | 0.820 | 0.813 | 0.726 | [0.64, 0.95] |
-| `topic` | new | 0.852 | 0.791 | 0.774 | [0.61, 0.93] |
-| `reach` | new | 0.798 | 0.747 | 0.743 | [0.55, 0.92] |
+**Measure it within a brief.** The review queue is ordered inside one brief, so
+that is the operationally relevant number — and pooling across briefs reads
+*lower than every brief in the pool* (0.844 pooled vs 0.860 within, and single
+briefs ranging 0.76–0.96). Different briefs sit on different score scales;
+pooling mixes them. That is an artefact, not a finding.
 
-**1. Stage 2 works, and better than the first pass suggested.** `whose_view`
-reaches 0.879 on briefs no tuning has seen. The earlier read was 0.847 on a
-noisier label set; dropping quote-driven failures from the partial class is
-most of the difference.
+| signal | origin | pooled | within-brief, all | within, badge | within, colour |
+|---|---|---|---|---|---|
+| `whose_view` | carried | 0.844 | **0.860** | 0.969 | 0.795 |
+| `states_it` | carried | 0.821 | 0.843 | 0.933 | 0.794 |
+| `direction` | new | 0.829 | 0.841 | 0.935 | 0.786 |
+| `support_level` | carried | 0.804 | 0.812 | 0.910 | 0.767 |
+| `same_issue` | carried | 0.822 | 0.808 | 0.901 | 0.733 |
+| `topic` | new | 0.796 | 0.787 | 0.874 | 0.728 |
+| `gap` | new | 0.740 | 0.757 | 0.872 | 0.698 |
+| `reach` | new | 0.734 | 0.738 | 0.830 | 0.686 |
+
+**1. Stage 2 works: ~0.86 within-brief on 13 briefs.** The badge/colour gap
+(0.969 vs 0.795) is large and holds for **all eight signals**, which points at
+label quality rather than task difficulty — badge labels name the failure kind,
+colours are a coarse proxy. The truth is likely between: the badge figure is
+flattered because the badge was assigned by an LLM reading the same opinion,
+and the colour figure is depressed by label noise.
+
+An earlier, smaller cut of this put `whose_view` at 0.879 on 7-vs-13 held-out
+claims with a 90% interval of [0.73, 1.00]. The bigger sample lands inside that
+interval and pins it down; treat the earlier number as superseded.
 
 **2. Purpose-built questions did not beat carried ones.** `gap`, `topic` and
 `reach` were written for this taxonomy and all lost to `whose_view` and
-`support_level`, which were written for the gate. Only `direction` was
-competitive. This matches LOOP.md's finding that single-question wording gains
-mostly do not transfer.
+`states_it`, which were written for the gate. Only `direction` was competitive.
+This matches LOOP.md's finding that single-question wording gains mostly do not
+transfer.
 
-**3. "Wrong subject" vs "overstated" is the sharpest cut available** — 0.966
-search / 0.886 lock2 on `same_issue`. That is the distinction with the clearest
-operational meaning: a wrong-subject citation is a different conversation with
-the author than an overstated one.
+**3. "Wrong subject" vs "overstated" is the sharpest cut available** — 0.986
+search / 0.886 held out on `same_issue`. That is the distinction with the
+clearest operational meaning: a wrong-subject citation is a different
+conversation with the author than an overstated one.
 
-**4. Combining still does not beat the best single signal.** Third time:
-`whose_view` alone 0.879 vs carried-4 mean 0.868 vs all-8 mean 0.846. The
-signals are ~0.92 correlated within family — they are the same model answering
-near-paraphrases about the same text. Weights need far more data than we have;
-test6 showed a fitted 30-signal model tying a 3-signal unweighted mean.
+**4. Combining still does not beat the best single signal by much.** Fourth
+time: on colour/lock2 the carried-4 mean (0.777) edges `whose_view` alone
+(0.759), but that is inside the noise, and on badge/lock2 the single signal
+wins (0.879 vs 0.868). The signals are ~0.92 correlated within family — the
+same model answering near-paraphrases about the same text.
 
-**5. A score question is fine here.** `support_level` is the #2 stage-2 signal
+**5. A score question is fine here.** `support_level` is a top-4 stage-2 signal
 despite being the worst kind of gate signal. The averaging that destroys safety
 margin is harmless when nothing auto-clears and you only want an ordering.
 
 ## Caveats
 
-- `lock2` task B rests on **7 partial vs 13 unsupported**. The 90% interval on
-  0.879 is [0.73, 1.00]. Treat the ranking as a hypothesis, not a measurement.
-- The `colour` split is systematically lower on every signal, which is what
-  coarser labels should look like — but it could also mean the effect is
-  partly an artefact of how badges are assigned.
-- Labels are Opus verdicts, not human judgements, except in the frozen corpora.
-- `payne` appears three times (corpus, `matters/payne`, `briefs/payne-proposed`);
-  near-duplicate propositions are dropped and all three share one group.
+- `badge/lock2` task B still rests on **7 partial vs 13 unsupported**. The big
+  held-out cell (`colour/lock2`, 37 vs 29) has the coarser labels. There is no
+  cell that is both large and cleanly labelled — that is the gap to close.
+- Labels are Opus verdicts, not human judgements, except in the frozen corpora,
+  and the badge was assigned by a model that read the same opinion Jev reads.
+- `valve` is a brief built largely of fabricated citations, so its negatives
+  may be unrepresentatively blatant; it is 42 of the 83 colour/lock2 rows.
+- The `quote_suspect` flag (legacy free-text that complains only about quote
+  wording on a claim the case otherwise supports) is heuristic. Only 3 rows
+  trip it; `--strict` excludes them and changes nothing material.
 
 ## Next
 
-1. **More held-out `partial` claims** is the binding constraint, exactly as it
-   was for the gate. Every `/proposition-verifier` run with `JEV_SHADOW=1`
-   grows the pool; stage 2 needs the badge written too.
+1. **Cleanly-labelled held-out claims** is the binding constraint, exactly as
+   it was for the gate. The repo is now exhausted: every workdir with a label
+   and recoverable opinion text is in the dataset. Growing it further means
+   *running the pipeline on new briefs* — `briefs/` holds several unprocessed
+   source documents (`north atlantic v indiana import/brief.pdf`,
+   `gov.uscourts.insd.216295.134.0.pdf`, `appellant-brief.txt`, the make-whole
+   .docx) that would yield badge-labelled claims at Opus assess cost.
 2. Log the stage-2 questions in `jev_shadow.py` alongside the gate rubric
    (bump `RUBRIC_VERSION`), so the pool grows for both jobs at once.
 3. Only then consider a `JevExecutor` that orders the review queue. Nothing

@@ -5,16 +5,16 @@ different question of the escalated pile: is this an OVERSTATEMENT (the case is
 on point, the brief claimed more than it holds) or is the case NOT DOING THE
 WORK (wrong subject, or the holding runs the other way)? That ordering drives a
 review queue and never auto-clears anything, so it carries none of the gate's
-safety risk -- which is why it is a reasonable place to use question types and
-combination rules the gate cannot afford.
+safety risk -- which is why it can afford question types and combination rules
+the gate cannot.
 
 test6 found the two jobs want DIFFERENT questions: the "every part as written"
 family gates well and grades badly; the topic / whose-view family does the
-reverse. This tests that on 209 badge-labelled claims (vs 97), with 71 of them
-in briefs no Jev tuning has ever touched.
+reverse. This tests that across four cells -- badge vs colour labels, crossed
+with briefs tuning has seen vs briefs it has not.
 
     venv/Scripts/python.exe scratch/jev/test7_stage2.py          # cache only
-    venv/Scripts/python.exe scratch/jev/test7_stage2.py --live   # ~$0.07
+    venv/Scripts/python.exe scratch/jev/test7_stage2.py --live   # ~$0.10
 """
 from __future__ import annotations
 
@@ -33,6 +33,11 @@ from loop_bank import _green_value
 from stage2_data import load_dataset
 
 ROUND = HERE / "bank" / "stage2_round_00.json"
+CARRIED = {"same_issue", "states_it", "whose_view", "support_level"}
+# (label_source, split) -- the primary result is badge/lock2; colour/lock2 is
+# a bigger but coarser held-out check.
+CELLS = [("badge", "search"), ("badge", "lock2"),
+         ("colour", "search"), ("colour", "lock2")]
 
 
 def auc(pos, neg) -> float:
@@ -44,12 +49,33 @@ def auc(pos, neg) -> float:
 
 
 def boot_ci(pos, neg, n=2000, seed=0):
-    """Percentile bootstrap on AUC -- these samples are small, say so."""
+    """Percentile bootstrap on AUC -- these samples are small, so say so."""
+    if len(pos) < 2 or len(neg) < 2:
+        return float("nan"), float("nan")
     rng = np.random.default_rng(seed)
     pos, neg = np.asarray(pos, float), np.asarray(neg, float)
     vals = [auc(rng.choice(pos, len(pos)), rng.choice(neg, len(neg)))
             for _ in range(n)]
     return float(np.percentile(vals, 5)), float(np.percentile(vals, 95))
+
+
+def within_brief(X, j, grp, lab, mask):
+    """Weighted mean of per-brief task-B AUCs.
+
+    The review queue is ordered INSIDE one brief, so this is the operationally
+    relevant number. Pooling across briefs mixes score scales and reads lower
+    than every brief in the pool -- an artefact, not a finding.
+    """
+    num = den = 0.0
+    for g in set(grp[mask]):
+        m = mask & (grp == g)
+        p, u = X[m & (lab == "partial"), j], X[m & (lab == "unsupported"), j]
+        if len(p) < 2 or len(u) < 2:
+            continue
+        w = len(p) * len(u)
+        num += w * auc(p, u)
+        den += w
+    return num / den if den else float("nan")
 
 
 def signals(rows):
@@ -66,86 +92,103 @@ def signals(rows):
     return names, X
 
 
-CARRIED = {"same_issue", "states_it", "whose_view", "support_level"}
-SPLITS = ("search", "lock2", "colour")
-
-
 def main() -> None:
     if "--live" not in sys.argv:
         jev_common._get_client = lambda: (_ for _ in ()).throw(
             RuntimeError("cache miss -- rerun with --live to spend money"))
 
-    rows = load_dataset()
+    rows = load_dataset(drop_quote_suspect="--strict" in sys.argv)
     names, X = signals(rows)
-    split = np.array([r["split"] for r in rows])
+    cell = np.array([f"{r['label_source']}/{r['split']}" for r in rows])
     lab = np.array([r["label"] for r in rows])
     kind = np.array([r["kind"] for r in rows])
+    keys = [f"{s}/{sp}" for s, sp in CELLS]
 
-    for s in SPLITS:
-        m = split == s
-        print(f"{s}: {m.sum()} claims  {dict(Counter(lab[m]))}")
-        print(f"   not-supported kinds: {dict(Counter(kind[m & (lab != 'supported')]))}")
+    for k in keys:
+        m = cell == k
+        print(f"{k:14s} {m.sum():3d} claims  {dict(Counter(lab[m]))}")
     print()
-
     print("Task A = supported vs rest (what stage 1 does).")
     print("Task B = partial vs unsupported, among non-supported claims only")
-    print("         (what stage 2 would do). 1.0 = perfect, 0.5 = coin flip.\n")
-    print(f"{'signal':16s} {'kind':8s} {'A search':>9s} {'A lock2':>8s} "
-          f"{'B search':>9s} {'B lock2':>8s} {'B colour':>9s} {'B lock2 90% CI':>17s}")
+    print("         (what stage 2 would do). 1.0 = perfect, 0.5 = coin flip.")
+    print("badge/lock2 is the cleanest held-out cell but the smallest;")
+    print("colour/lock2 is 3x bigger with coarser labels.\n")
+
+    head = f"{'signal':16s} {'kind':8s}" + "".join(f"{'A ' + k:>16s}" for k in keys)
+    print(head)
+    A = {}
+    for j, n in enumerate(names):
+        vals = []
+        for k in keys:
+            m = cell == k
+            vals.append(auc(X[m & (lab == "supported"), j],
+                            X[m & (lab != "supported"), j]))
+        A[n] = vals
+        kk = "carried" if n in CARRIED else "new"
+        print(f"{n:16s} {kk:8s}" + "".join(f"{v:16.3f}" for v in vals))
+
+    print()
+    head = (f"{'signal':16s} {'kind':8s}" + "".join(f"{'B ' + k:>16s}" for k in keys)
+            + f"{'B colour/lock2 CI':>20s}")
+    print(head)
     table = []
     for j, n in enumerate(names):
-        row = {}
-        for s in SPLITS:
-            m = split == s
-            sup, rest = X[m & (lab == "supported"), j], X[m & (lab != "supported"), j]
-            par = X[m & (lab == "partial"), j]
-            uns = X[m & (lab == "unsupported"), j]
-            row[f"A{s}"] = auc(sup, rest)
-            row[f"B{s}"] = auc(par, uns)
-            if s == "lock2":
-                row["ci"] = boot_ci(par, uns)
-        table.append((row["Block2"], n, row))
-    for _, n, r in sorted(table, reverse=True):
-        k = "carried" if n in CARRIED else "new"
-        print(f"{n:16s} {k:8s} {r['Asearch']:9.3f} {r['Alock2']:8.3f} "
-              f"{r['Bsearch']:9.3f} {r['Block2']:8.3f} {r['Bcolour']:9.3f} "
-              f"{'[%.2f, %.2f]' % r['ci']:>17s}")
+        vals, ci = [], (float("nan"), float("nan"))
+        for k in keys:
+            m = cell == k
+            par, uns = X[m & (lab == "partial"), j], X[m & (lab == "unsupported"), j]
+            vals.append(auc(par, uns))
+            if k == "colour/lock2":
+                ci = boot_ci(par, uns)
+        table.append((vals[-1], n, vals, ci))
+    for _, n, vals, ci in sorted(table, reverse=True):
+        kk = "carried" if n in CARRIED else "new"
+        print(f"{n:16s} {kk:8s}" + "".join(f"{v:16.3f}" for v in vals)
+              + f"{'[%.2f, %.2f]' % ci:>20s}")
 
-    # Can stage 2 recover the specific badge? wrong_subject vs overstated is
-    # the distinction with an obvious operational meaning.
-    print("\nwrong_subject vs overstated (the two biggest non-supported kinds):")
-    print(f"{'signal':16s} {'search':>8s} {'lock2':>8s}")
+    print("\nwrong_subject vs overstated (badge cells only -- colour rows have "
+          "no kind detail):")
     for j, n in enumerate(names):
         out = []
-        for s in ("search", "lock2"):
-            m = split == s
+        for k in ("badge/search", "badge/lock2"):
+            m = cell == k
             out.append(auc(X[m & (kind == "overstated"), j],
                            X[m & (kind == "wrong_subject"), j]))
-        print(f"{n:16s} {out[0]:8.3f} {out[1]:8.3f}")
+        print(f"  {n:16s} {out[0]:8.3f} {out[1]:8.3f}")
 
-    # Unweighted means of small hand-picked sets -- weights need more data
-    # than we have (test6: fitted 30-signal model tied a 3-signal mean).
+    print("\nTask B measured WITHIN each brief (weighted mean of per-brief")
+    print("AUCs) -- the queue is ordered inside one brief. Pooling across")
+    print("briefs mixes score scales and reads low; see STAGE2.md.")
+    src = np.array([r["label_source"] for r in rows])
+    grp = np.array([r["group"] for r in rows])
+    allm = np.ones(len(rows), bool)
+    print(f"\n{'signal':16s} {'pooled':>9s} {'within all':>11s} "
+          f"{'within badge':>13s} {'within colour':>14s}")
+    wb_rows = []
+    for j, n in enumerate(names):
+        p, u = X[lab == "partial", j], X[lab == "unsupported", j]
+        wb_rows.append((within_brief(X, j, grp, lab, allm), n, auc(p, u),
+                        within_brief(X, j, grp, lab, src == "badge"),
+                        within_brief(X, j, grp, lab, src == "colour")))
+    for w, n, pooled, wbb, wbc in sorted(wb_rows, reverse=True):
+        print(f"{n:16s} {pooled:9.3f} {w:11.3f} {wbb:13.3f} {wbc:14.3f}")
+
     idx = {n: j for j, n in enumerate(names)}
     combos = {
         "carried 4": ["same_issue", "states_it", "whose_view", "support_level"],
         "new 4": ["gap", "topic", "direction", "reach"],
-        "topic+direction": ["topic", "direction"],
-        "topic+direction+whose_view": ["topic", "direction", "whose_view"],
+        "whose_view + same_issue": ["whose_view", "same_issue"],
         "all 8": names,
     }
-    print("\nUnweighted means (no fitting):")
-    print(f"{'combo':30s} {'A search':>9s} {'A lock2':>8s} {'B search':>9s} "
-          f"{'B lock2':>8s} {'B colour':>9s}")
+    print("\nUnweighted means (no fitting), task B:")
+    print(f"{'combo':26s}" + "".join(f"{k:>16s}" for k in keys))
     for name, cols in combos.items():
-        j = [idx[c] for c in cols]
-        s = X[:, j].mean(1)
-        out = []
-        for sp in SPLITS:
-            m = split == sp
-            out += [auc(s[m & (lab == "supported")], s[m & (lab != "supported")]),
-                    auc(s[m & (lab == "partial")], s[m & (lab == "unsupported")])]
-        print(f"{name:30s} {out[0]:9.3f} {out[2]:8.3f} {out[1]:9.3f} "
-              f"{out[3]:8.3f} {out[5]:9.3f}")
+        s = X[:, [idx[c] for c in cols]].mean(1)
+        vals = []
+        for k in keys:
+            m = cell == k
+            vals.append(auc(s[m & (lab == "partial")], s[m & (lab == "unsupported")]))
+        print(f"{name:26s}" + "".join(f"{v:16.3f}" for v in vals))
 
 
 if __name__ == "__main__":

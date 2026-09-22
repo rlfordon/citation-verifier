@@ -705,6 +705,55 @@
 "latency_s": 0.186,
 "model": "jev-1.13.0"
 },
+"0234fe7b4b113cba311f61806aa6d28b6f224122d33d43c43e157840d18e557a": {
+"answers": {
+"exists": {
+"noul": 0.95,
+"type": "noul"
+},
+"where": {
+"choice": "P013",
+"confidence": 1.0,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 1.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 9433,
+"latency_s": 0.221,
+"model": "jev-1.13.0"
+},
 "02574b00edc6d29e1a46b9bb58659f10b22a55932853fb1de2ee0dc11e28c6c4": {
 "answers": {
 "opposite": {
@@ -1395,6 +1444,88 @@
 "latency_s": 0.185,
 "model": "jev-1.13.0"
 },
+"0406c0bfede59583631c1203cea996e86bb75adc18d01c3ffb0186ed4bfdb6df": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P036",
+"confidence": 0.27,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.02,
+"P007": 0.07,
+"P008": 0.01,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.01,
+"P014": 0.02,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.09999999999999999,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.01,
+"P034": 0.0,
+"P035": 0.14,
+"P036": 0.29000000000000004,
+"P037": 0.22,
+"P038": 0.01,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.01,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.01,
+"P061": 0.03,
+"P062": 0.03,
+"P063": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 18668,
+"latency_s": 0.215,
+"model": "jev-1.13.0"
+},
 "043a59d06850535fd1fce78fcc46d8d0834d1e2e674f46768bbd45e90cf7260f": {
 "answers": {
 "exists": {
@@ -1929,6 +2060,97 @@
 "latency_s": 0.195,
 "model": "jev-1.13.0"
 },
+"0551e6829f9d54c2888139e1dae32d7938991e03c11e2dcb792003fe1e1fc0c5": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.8,
+"probabilities": {
+"other_way": 0.12,
+"same_way": 0.01,
+"silent": 0.87
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.92,
+"probabilities": {
+"claims_more": 0.05,
+"different_question": 0.94,
+"nothing_missing": 0.0,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.9,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.0,
+"2": 0.09,
+"3": 0.91
+},
+"score": 2.9,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.04,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.07,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.8,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.84,
+"1": 0.13,
+"2": 0.03,
+"3": 0.0
+},
+"score": 0.2,
+"type": "score"
+},
+"topic": {
+"choice": "unrelated",
+"confidence": 0.83,
+"probabilities": {
+"neighbouring": 0.11,
+"same_question": 0.0,
+"unrelated": 0.89
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.9,
+"probabilities": {
+"court": 0.06,
+"not_discussed": 0.93,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3758,
+"latency_s": 0.173,
+"model": "jev-1.13.0"
+},
 "05632ef2864e759208a5066cc03bc6f843e64b46f71c4d2490a61b30d515bb74": {
 "answers": {
 "direction": {
@@ -2225,6 +2447,97 @@
 },
 "input_tokens": 2903,
 "latency_s": 0.179,
+"model": "jev-1.13.0"
+},
+"060159808105c13c97b6cd4626ac4b538679e0d3935d47130674e6aec51236c2": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.28,
+"probabilities": {
+"other_way": 0.06,
+"same_way": 0.41,
+"silent": 0.53
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.58,
+"probabilities": {
+"claims_more": 0.28,
+"different_question": 0.68,
+"nothing_missing": 0.02,
+"other_way": 0.02
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.68,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.08,
+"2": 0.05,
+"3": 0.83
+},
+"score": 2.68,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.66,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.18,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.57,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.68,
+"1": 0.25,
+"2": 0.04,
+"3": 0.03
+},
+"score": 0.43,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.51,
+"probabilities": {
+"neighbouring": 0.67,
+"same_question": 0.25,
+"unrelated": 0.08
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.35,
+"probabilities": {
+"court": 0.47,
+"not_discussed": 0.52,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3165,
+"latency_s": 0.148,
 "model": "jev-1.13.0"
 },
 "062ee91b66060c222a1ec0398bcd9a587fbadffc39673e8d670c415e7aef62db": {
@@ -4166,6 +4479,97 @@
 },
 "input_tokens": 1758,
 "latency_s": 0.134,
+"model": "jev-1.13.0"
+},
+"0ce2e2808cef49cc6591d12f532cc11aac7dec0a996ba52f7124c55f22056468": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.99,
+"probabilities": {
+"other_way": 0.0,
+"same_way": 0.0,
+"silent": 1.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 1.0,
+"probabilities": {
+"claims_more": 0.0,
+"different_question": 1.0,
+"nothing_missing": 0.0,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.99,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.0,
+"2": 0.0,
+"3": 1.0
+},
+"score": 2.99,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.03,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.03,
+"type": "noul"
+},
+"support_level": {
+"confidence": 1.0,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 1.0,
+"1": 0.0,
+"2": 0.0,
+"3": 0.0
+},
+"score": 0.0,
+"type": "score"
+},
+"topic": {
+"choice": "unrelated",
+"confidence": 1.0,
+"probabilities": {
+"neighbouring": 0.0,
+"same_question": 0.0,
+"unrelated": 1.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.99,
+"probabilities": {
+"court": 0.01,
+"not_discussed": 0.99,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 2293,
+"latency_s": 0.142,
 "model": "jev-1.13.0"
 },
 "0cec3e07959a58ebd9f9506497e5073fdb29a41eccec6f9b1cf8b4a88eea814c": {
@@ -9086,6 +9490,60 @@
 "latency_s": 0.181,
 "model": "jev-1.13.0"
 },
+"16da254d82fc073099e5aac72c91b5fe53609f8ef960383d89223d46caf358bb": {
+"answers": {
+"exists": {
+"noul": 0.18,
+"type": "noul"
+},
+"where": {
+"choice": "P015",
+"confidence": 0.6,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.02,
+"P012": 0.09999999999999999,
+"P013": 0.06,
+"P014": 0.18000000000000002,
+"P015": 0.62,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.01,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.01,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 10087,
+"latency_s": 0.176,
+"model": "jev-1.13.0"
+},
 "17005bfe172376866d7a1d9e1ebff7e9a9ba1ae6215051ee666614f9cd7a12e0": {
 "answers": {
 "opposite": {
@@ -10295,6 +10753,97 @@
 "latency_s": 0.178,
 "model": "jev-1.13.0"
 },
+"19defa4d0998231e184d4cdb623081900f25b0753d31f14f627d9e4e6dc3a073": {
+"answers": {
+"direction": {
+"choice": "other_way",
+"confidence": 0.94,
+"probabilities": {
+"other_way": 0.96,
+"same_way": 0.01,
+"silent": 0.03
+},
+"type": "choice"
+},
+"gap": {
+"choice": "other_way",
+"confidence": 0.92,
+"probabilities": {
+"claims_more": 0.02,
+"different_question": 0.03,
+"nothing_missing": 0.0,
+"other_way": 0.95
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.49,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.03,
+"1": 0.06,
+"2": 0.32,
+"3": 0.59
+},
+"score": 2.49,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.62,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.13,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.56,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.6,
+"1": 0.36,
+"2": 0.03,
+"3": 0.01
+},
+"score": 0.44,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.69,
+"probabilities": {
+"neighbouring": 0.8,
+"same_question": 0.17,
+"unrelated": 0.03
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.28,
+"probabilities": {
+"court": 0.21,
+"not_discussed": 0.46,
+"other_judge": 0.0,
+"party": 0.33
+},
+"type": "choice"
+}
+},
+"input_tokens": 2951,
+"latency_s": 0.166,
+"model": "jev-1.13.0"
+},
 "19fc4b038a802b21cdde5b52977db81c82ce8eb2dfc5b5bca716ed1c0810cb40": {
 "answers": {
 "adds_specifics_structured": {
@@ -11299,6 +11848,97 @@
 "latency_s": 0.189,
 "model": "jev-1.13.0"
 },
+"1c391f1dd0058580791f2de6616523f1bb06e64f2964ee68a8187f1623883bc8": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.19,
+"probabilities": {
+"other_way": 0.12,
+"same_way": 0.42,
+"silent": 0.46
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.33,
+"probabilities": {
+"claims_more": 0.51,
+"different_question": 0.43,
+"nothing_missing": 0.05,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.42,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.07,
+"1": 0.19,
+"2": 0.48,
+"3": 0.26
+},
+"score": 1.94,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.44,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.56,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.4,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.22,
+"1": 0.48,
+"2": 0.22,
+"3": 0.08
+},
+"score": 1.17,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.67,
+"probabilities": {
+"neighbouring": 0.78,
+"same_question": 0.08,
+"unrelated": 0.14
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.55,
+"probabilities": {
+"court": 0.67,
+"not_discussed": 0.3,
+"other_judge": 0.0,
+"party": 0.03
+},
+"type": "choice"
+}
+},
+"input_tokens": 2289,
+"latency_s": 0.152,
+"model": "jev-1.13.0"
+},
 "1c7df58f5c16b2ac2bc09b8821d65ab576a6e622d5707e4aed69e5781c17e282": {
 "answers": {
 "exists": {
@@ -12034,6 +12674,35 @@
 "latency_s": 0.172,
 "model": "jev-1.13.0"
 },
+"1dc31fb153dc39f36462d5dbe92c6c3011ce4f54c69acce9318d834fb9412544": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P000",
+"confidence": 0.66,
+"probabilities": {
+"P000": 0.7,
+"P001": 0.13,
+"P002": 0.01,
+"P003": 0.01,
+"P004": 0.07,
+"P005": 0.01,
+"P006": 0.01,
+"P007": 0.01,
+"P008": 0.02,
+"P009": 0.01,
+"P010": 0.02
+},
+"type": "choice"
+}
+},
+"input_tokens": 1961,
+"latency_s": 0.131,
+"model": "jev-1.13.0"
+},
 "1deed3714371f9b3012601c815d276f5df3b0a666b3050919672b3782c4e191e": {
 "answers": {
 "opposite": {
@@ -12538,6 +13207,60 @@
 },
 "input_tokens": 2613,
 "latency_s": 0.167,
+"model": "jev-1.13.0"
+},
+"1ebc6df0bedbeead1fc2fc414a0bb3b10257ba3fe0df01f2ad9e20696955a758": {
+"answers": {
+"exists": {
+"noul": 0.91,
+"type": "noul"
+},
+"where": {
+"choice": "P017",
+"confidence": 0.8,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.03,
+"P013": 0.0,
+"P014": 0.02,
+"P015": 0.12,
+"P016": 0.01,
+"P017": 0.81,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 10057,
+"latency_s": 0.217,
 "model": "jev-1.13.0"
 },
 "1ec8b574292ab25a3954aa27871df97f41a6ae377a22b73830678a15b289e862": {
@@ -13716,6 +14439,45 @@
 "latency_s": 0.175,
 "model": "jev-1.13.0"
 },
+"204497e518f0392b451b5c1116068b566a15809c6c827e94f2a6ab45ec3c956b": {
+"answers": {
+"exists": {
+"noul": 0.06,
+"type": "noul"
+},
+"where": {
+"choice": "P010",
+"confidence": 0.41,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.01,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.45,
+"P011": 0.08,
+"P012": 0.15000000000000002,
+"P013": 0.23,
+"P014": 0.06,
+"P015": 0.01,
+"P016": 0.0,
+"P017": 0.01,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 5992,
+"latency_s": 0.363,
+"model": "jev-1.13.0"
+},
 "2049dc1fbf9900e6f00a911c451ea40e58900313d0ce914e592eeee7b70529ac": {
 "answers": {
 "direction": {
@@ -14208,6 +14970,97 @@
 },
 "input_tokens": 2235,
 "latency_s": 0.203,
+"model": "jev-1.13.0"
+},
+"21a4bf55dcd75229b8d3a08bbf05c03bc3c62c1611c582b8b26284a0fdd9716f": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.31,
+"probabilities": {
+"other_way": 0.22,
+"same_way": 0.54,
+"silent": 0.24
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.16,
+"probabilities": {
+"claims_more": 0.29,
+"different_question": 0.37,
+"nothing_missing": 0.31,
+"other_way": 0.03
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.0,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.2,
+"1": 0.29,
+"2": 0.21,
+"3": 0.3
+},
+"score": 1.59,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.38,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.65,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.01,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.14,
+"1": 0.3,
+"2": 0.28,
+"3": 0.28
+},
+"score": 1.7,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.29,
+"probabilities": {
+"neighbouring": 0.53,
+"same_question": 0.2,
+"unrelated": 0.27
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.55,
+"probabilities": {
+"court": 0.67,
+"not_discussed": 0.17,
+"other_judge": 0.0,
+"party": 0.16
+},
+"type": "choice"
+}
+},
+"input_tokens": 3324,
+"latency_s": 0.242,
 "model": "jev-1.13.0"
 },
 "220571d003acbec5e202da90d29d220c9c4383d28553546f4fa67da7a0975314": {
@@ -16538,6 +17391,97 @@
 "latency_s": 0.133,
 "model": "jev-1.13.0"
 },
+"2595f30801ffad8f7272d5085678c6e40845b4ae6ad40c088a812ad8904a78fc": {
+"answers": {
+"direction": {
+"choice": "other_way",
+"confidence": 0.76,
+"probabilities": {
+"other_way": 0.84,
+"same_way": 0.07,
+"silent": 0.09
+},
+"type": "choice"
+},
+"gap": {
+"choice": "other_way",
+"confidence": 0.52,
+"probabilities": {
+"claims_more": 0.24,
+"different_question": 0.11,
+"nothing_missing": 0.01,
+"other_way": 0.64
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.5,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.11,
+"2": 0.53,
+"3": 0.32
+},
+"score": 2.14,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.73,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.25,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.53,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.16,
+"1": 0.55,
+"2": 0.26,
+"3": 0.02
+},
+"score": 1.14,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.54,
+"probabilities": {
+"neighbouring": 0.69,
+"same_question": 0.26,
+"unrelated": 0.05
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.28,
+"probabilities": {
+"court": 0.45,
+"not_discussed": 0.39,
+"other_judge": 0.08,
+"party": 0.08
+},
+"type": "choice"
+}
+},
+"input_tokens": 4377,
+"latency_s": 0.188,
+"model": "jev-1.13.0"
+},
 "25bccde358127b2e0898b32fa1a9c6e70035fb7de0d367ae479ad227072f3509": {
 "answers": {
 "exists": {
@@ -16594,6 +17538,97 @@
 },
 "input_tokens": 8133,
 "latency_s": 0.207,
+"model": "jev-1.13.0"
+},
+"2642ac4b6a1acae01bda6510a82c6e15ccd228b8a7701b379354dc29200dddc8": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.35,
+"probabilities": {
+"other_way": 0.15,
+"same_way": 0.28,
+"silent": 0.57
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.55,
+"probabilities": {
+"claims_more": 0.2,
+"different_question": 0.66,
+"nothing_missing": 0.11,
+"other_way": 0.03
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.05,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.24,
+"2": 0.34,
+"3": 0.38
+},
+"score": 2.05,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.05,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.64,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.25,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.12,
+"1": 0.39,
+"2": 0.35,
+"3": 0.14
+},
+"score": 1.51,
+"type": "score"
+},
+"topic": {
+"choice": "unrelated",
+"confidence": 0.87,
+"probabilities": {
+"neighbouring": 0.08,
+"same_question": 0.0,
+"unrelated": 0.92
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.41,
+"probabilities": {
+"court": 0.56,
+"not_discussed": 0.43,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3812,
+"latency_s": 0.177,
 "model": "jev-1.13.0"
 },
 "264b52a2fd65e20522b9265959e05043c6aaddf867197ed4dacc6dab97e6203b": {
@@ -16957,6 +17992,136 @@
 },
 "input_tokens": 1964,
 "latency_s": 0.267,
+"model": "jev-1.13.0"
+},
+"2762823ed41d230521ee349908857b11df96472100dfe0165e0c1cbf3206db69": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.99,
+"probabilities": {
+"other_way": 0.0,
+"same_way": 1.0,
+"silent": 0.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.72,
+"probabilities": {
+"claims_more": 0.2,
+"different_question": 0.01,
+"nothing_missing": 0.79,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.65,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.71,
+"1": 0.22,
+"2": 0.06,
+"3": 0.01
+},
+"score": 0.35,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.85,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.97,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.93,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.01,
+"2": 0.03,
+"3": 0.96
+},
+"score": 2.93,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.62,
+"probabilities": {
+"neighbouring": 0.24,
+"same_question": 0.75,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.99,
+"probabilities": {
+"court": 1.0,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3446,
+"latency_s": 0.147,
+"model": "jev-1.13.0"
+},
+"2781af9be82f6ee7fbfd66362e9652ab91bc37809d16516c6f662c6acf443d77": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P018",
+"confidence": 0.21,
+"probabilities": {
+"P000": 0.18,
+"P001": 0.1,
+"P002": 0.0,
+"P003": 0.01,
+"P004": 0.01,
+"P005": 0.01,
+"P006": 0.01,
+"P007": 0.17,
+"P008": 0.02,
+"P009": 0.01,
+"P010": 0.12,
+"P011": 0.01,
+"P012": 0.01,
+"P013": 0.01,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.04,
+"P017": 0.01,
+"P018": 0.24,
+"P019": 0.03,
+"P020": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 6052,
+"latency_s": 0.163,
 "model": "jev-1.13.0"
 },
 "278a9ccbcd2ea50ac28a5ebf0da103eaadda0d92ed61755bdc06a4eeaaec692d": {
@@ -18586,6 +19751,97 @@
 "latency_s": 0.181,
 "model": "jev-1.13.0"
 },
+"2de34bc927bcc919ac7b2dfb806afb6194a7862bcd1a932dc491198093b9bae8": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.35,
+"probabilities": {
+"other_way": 0.39,
+"same_way": 0.57,
+"silent": 0.04
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.21,
+"probabilities": {
+"claims_more": 0.41000000000000003,
+"different_question": 0.1,
+"nothing_missing": 0.17,
+"other_way": 0.32
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.39,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.22,
+"1": 0.46,
+"2": 0.26,
+"3": 0.06
+},
+"score": 1.16,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.68,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.72,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.44,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.02,
+"1": 0.09,
+"2": 0.46,
+"3": 0.43
+},
+"score": 2.3,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.3,
+"probabilities": {
+"neighbouring": 0.45,
+"same_question": 0.54,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.92,
+"probabilities": {
+"court": 0.94,
+"not_discussed": 0.05,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3600,
+"latency_s": 0.222,
+"model": "jev-1.13.0"
+},
 "2e0517916a8bfa8e574efb1dde52e40bf99a922d6599fed1efc7bb3697da07c3": {
 "answers": {
 "exists": {
@@ -20204,6 +21460,142 @@
 },
 "input_tokens": 2522,
 "latency_s": 0.27,
+"model": "jev-1.13.0"
+},
+"309cb448623d408586a7de5b82b602769d9bab68cc4493bb2ad3e3b40d25f8b9": {
+"answers": {
+"exists": {
+"noul": 0.05,
+"type": "noul"
+},
+"where": {
+"choice": "P057",
+"confidence": 0.78,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.02,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.8,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.16,
+"P076": 0.0,
+"P077": 0.0,
+"P078": 0.0,
+"P079": 0.0,
+"P080": 0.0,
+"P081": 0.0,
+"P082": 0.0,
+"P083": 0.0,
+"P084": 0.0,
+"P085": 0.0,
+"P086": 0.0,
+"P087": 0.0,
+"P088": 0.0,
+"P089": 0.0,
+"P090": 0.0,
+"P091": 0.0,
+"P092": 0.0,
+"P093": 0.0,
+"P094": 0.0,
+"P095": 0.0,
+"P096": 0.0,
+"P097": 0.0,
+"P098": 0.0,
+"P099": 0.0,
+"P100": 0.0,
+"P101": 0.0,
+"P102": 0.0,
+"P103": 0.0,
+"P104": 0.0,
+"P105": 0.0,
+"P106": 0.0,
+"P107": 0.0,
+"P108": 0.0,
+"P109": 0.0,
+"P110": 0.0,
+"P111": 0.0,
+"P112": 0.0,
+"P113": 0.0,
+"P114": 0.0,
+"P115": 0.0,
+"P116": 0.0,
+"P117": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 12159,
+"latency_s": 0.21,
 "model": "jev-1.13.0"
 },
 "30c97c577cbb997296509f6612741633fd03f171be45a31fd1300c421c60655f": {
@@ -24388,6 +25780,97 @@
 "latency_s": 0.148,
 "model": "jev-1.13.0"
 },
+"39000c4818c0a312ee9459abd206c045a4ef77489d3d63a2dc125fe64f90a447": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 1.0,
+"probabilities": {
+"other_way": 0.0,
+"same_way": 1.0,
+"silent": 0.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.93,
+"probabilities": {
+"claims_more": 0.05,
+"different_question": 0.0,
+"nothing_missing": 0.95,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.91,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.92,
+"1": 0.07,
+"2": 0.01,
+"3": 0.0
+},
+"score": 0.09,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.98,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.98,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.99,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.0,
+"2": 0.0,
+"3": 1.0
+},
+"score": 2.99,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 1.0,
+"probabilities": {
+"neighbouring": 0.0,
+"same_question": 1.0,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 1.0,
+"probabilities": {
+"court": 1.0,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3623,
+"latency_s": 0.152,
+"model": "jev-1.13.0"
+},
 "39253e4d1fdba578c15bf2bc3559dfc1d2075d24ffaf74494c82fa1dd96469b4": {
 "answers": {
 "direction": {
@@ -24728,6 +26211,61 @@
 "latency_s": 0.242,
 "model": "jev-1.13.0"
 },
+"3975b4e8b5dc620d6e7424c31c591524802f146dc791571e6be44569cb1e4671": {
+"answers": {
+"exists": {
+"noul": 0.91,
+"type": "noul"
+},
+"where": {
+"choice": "P012",
+"confidence": 0.38,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.02,
+"P007": 0.0,
+"P008": 0.02,
+"P009": 0.33,
+"P010": 0.03,
+"P011": 0.15000000000000002,
+"P012": 0.4,
+"P013": 0.01,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.02,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.01,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 9916,
+"latency_s": 0.167,
+"model": "jev-1.13.0"
+},
 "3983d194b4c5777a65026f6980074df16cad611224f098c2608a121abd911d17": {
 "answers": {
 "adds_specifics_structured": {
@@ -24958,6 +26496,41 @@
 },
 "input_tokens": 2489,
 "latency_s": 0.153,
+"model": "jev-1.13.0"
+},
+"39fc0cc2b0dfe9a24ff3f7f251a631188a4fb9a5eaf9b77dfc36885635431c6f": {
+"answers": {
+"exists": {
+"noul": 0.99,
+"type": "noul"
+},
+"where": {
+"choice": "P014",
+"confidence": 0.86,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.12,
+"P014": 0.88,
+"P015": 0.0,
+"P016": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 4786,
+"latency_s": 0.168,
 "model": "jev-1.13.0"
 },
 "3a8f3b07248ff472d8ef92014b6906b21483f3349238bd1b52b53e47c0731eb0": {
@@ -25356,6 +26929,88 @@
 "latency_s": 0.281,
 "model": "jev-1.13.0"
 },
+"3be172d9c16b537697da17dd4c92307651b670f91bc15531077898df967fd35e": {
+"answers": {
+"exists": {
+"noul": 0.99,
+"type": "noul"
+},
+"where": {
+"choice": "P036",
+"confidence": 0.78,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.21,
+"P036": 0.78,
+"P037": 0.01,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 18644,
+"latency_s": 0.252,
+"model": "jev-1.13.0"
+},
 "3be2edb2b47c9d936cd79a957317a8db114a438d7a96eb33ee81a836dc92b769": {
 "answers": {
 "direction": {
@@ -25746,6 +27401,55 @@
 },
 "input_tokens": 2671,
 "latency_s": 0.191,
+"model": "jev-1.13.0"
+},
+"3c7756b35c62a5ae06a235dbe3d3af5c57b2f20e1dbecaec2855496ad6555ac0": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P017",
+"confidence": 0.32,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.01,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.05,
+"P012": 0.08,
+"P013": 0.01,
+"P014": 0.0,
+"P015": 0.18000000000000002,
+"P016": 0.13,
+"P017": 0.35000000000000003,
+"P018": 0.17,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.01,
+"P029": 0.0,
+"P030": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 9363,
+"latency_s": 0.21,
 "model": "jev-1.13.0"
 },
 "3ccac00025fc247e6fd59947577c7fbd6ecbb679a50fb51c572c7f60b0f9b22a": {
@@ -26467,6 +28171,41 @@
 "latency_s": 0.173,
 "model": "jev-1.13.0"
 },
+"3f41b81cd7fe7d8af1d3933bb18b6fc410f09a629e15cfb665ce7e73ea4239f4": {
+"answers": {
+"exists": {
+"noul": 0.58,
+"type": "noul"
+},
+"where": {
+"choice": "P014",
+"confidence": 0.66,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.02,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.11,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.16,
+"P014": 0.6900000000000001,
+"P015": 0.01,
+"P016": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 4756,
+"latency_s": 0.156,
+"model": "jev-1.13.0"
+},
 "3f5d717376bb6ab0eb4f7eac560dbfe94f062048fe47f1fc0d08fb1d8e308cd7": {
 "answers": {
 "opposite": {
@@ -26865,6 +28604,45 @@
 },
 "input_tokens": 2395,
 "latency_s": 0.147,
+"model": "jev-1.13.0"
+},
+"408fd60863765e8027e4f3421dc2c6e04dc8dd26d8fd99cb958ba079c6db389b": {
+"answers": {
+"exists": {
+"noul": 0.01,
+"type": "noul"
+},
+"where": {
+"choice": "P016",
+"confidence": 0.22,
+"probabilities": {
+"P000": 0.1,
+"P001": 0.02,
+"P002": 0.0,
+"P003": 0.01,
+"P004": 0.01,
+"P005": 0.03,
+"P006": 0.06,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.01,
+"P010": 0.04,
+"P011": 0.02,
+"P012": 0.09,
+"P013": 0.03,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.27,
+"P017": 0.02,
+"P018": 0.03,
+"P019": 0.04,
+"P020": 0.22
+},
+"type": "choice"
+}
+},
+"input_tokens": 5593,
+"latency_s": 0.161,
 "model": "jev-1.13.0"
 },
 "40a3a94947efde7a7cd7d75e22994bca73024a5784196fb560f62b32259719c8": {
@@ -28958,6 +30736,97 @@
 },
 "input_tokens": 3505,
 "latency_s": 0.146,
+"model": "jev-1.13.0"
+},
+"4562e080a1ce72a0959fe108e63146dff95d4dfd4f8e00aa7c5837c84377fd2e": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.93,
+"probabilities": {
+"other_way": 0.04,
+"same_way": 0.96,
+"silent": 0.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.85,
+"probabilities": {
+"claims_more": 0.09,
+"different_question": 0.0,
+"nothing_missing": 0.9,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.88,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.92,
+"1": 0.05,
+"2": 0.03,
+"3": 0.0
+},
+"score": 0.12,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.96,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.98,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.92,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.01,
+"2": 0.06,
+"3": 0.9299999999999999
+},
+"score": 2.92,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.96,
+"probabilities": {
+"neighbouring": 0.02,
+"same_question": 0.98,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.99,
+"probabilities": {
+"court": 0.99,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3176,
+"latency_s": 0.182,
 "model": "jev-1.13.0"
 },
 "4594e86bcbfdff7957b9a65a0a97cee33a7fe7e483aed73fc47db335f9584983": {
@@ -32590,6 +34459,102 @@
 "latency_s": 0.464,
 "model": "jev-1.13.0"
 },
+"4ea3692e25bfe03baa14321308568855e486702d30395a339ea665abdbe22e17": {
+"answers": {
+"exists": {
+"noul": 0.99,
+"type": "noul"
+},
+"where": {
+"choice": "P044",
+"confidence": 0.97,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.02,
+"P044": 0.98,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.0,
+"P077": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 15219,
+"latency_s": 0.307,
+"model": "jev-1.13.0"
+},
 "4edef695843ce195ba548ef33c09f425a1e9b12927089bdb6e8475bbbe6af3c9": {
 "answers": {
 "exists": {
@@ -32873,6 +34838,88 @@
 "latency_s": 0.132,
 "model": "jev-1.13.0"
 },
+"4fbbae382e5560a0059652a15bce9b4dd43c7d65c5446e22bce249874861d71b": {
+"answers": {
+"exists": {
+"noul": 0.99,
+"type": "noul"
+},
+"where": {
+"choice": "P036",
+"confidence": 0.75,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.07,
+"P036": 0.76,
+"P037": 0.17,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 18632,
+"latency_s": 0.245,
+"model": "jev-1.13.0"
+},
 "4fc316fc76572aa274218b365314f41f60bff4693d90bdadbee1ee5f2f98247e": {
 "answers": {
 "opposite": {
@@ -33079,6 +35126,97 @@
 },
 "input_tokens": 8297,
 "latency_s": 0.167,
+"model": "jev-1.13.0"
+},
+"502e0cc05321da06374a70c7ae0112d613c16e47f311641519b90ea71e94fb80": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.32,
+"probabilities": {
+"other_way": 0.43,
+"same_way": 0.54,
+"silent": 0.03
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.84,
+"probabilities": {
+"claims_more": 0.88,
+"different_question": 0.01,
+"nothing_missing": 0.02,
+"other_way": 0.09
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.68,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.03,
+"1": 0.25,
+"2": 0.71,
+"3": 0.01
+},
+"score": 1.69,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.87,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.75,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.8,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.03,
+"2": 0.81,
+"3": 0.16
+},
+"score": 2.12,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.45,
+"probabilities": {
+"neighbouring": 0.36,
+"same_question": 0.64,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.9,
+"probabilities": {
+"court": 0.93,
+"not_discussed": 0.01,
+"other_judge": 0.0,
+"party": 0.06
+},
+"type": "choice"
+}
+},
+"input_tokens": 3035,
+"latency_s": 0.152,
 "model": "jev-1.13.0"
 },
 "507eea23f0cf5932a46f699a0fb9f5ef2aafed951944c2ae7fa3de22f4f6b5b2": {
@@ -33589,6 +35727,34 @@
 },
 "input_tokens": 2575,
 "latency_s": 0.207,
+"model": "jev-1.13.0"
+},
+"51a6c78ffcca35caeb6574528dfa6ba6d2acc46ee329fc1c09edcc4d6d431227": {
+"answers": {
+"exists": {
+"noul": 0.97,
+"type": "noul"
+},
+"where": {
+"choice": "P005",
+"confidence": 0.96,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.02,
+"P005": 0.97,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3158,
+"latency_s": 0.149,
 "model": "jev-1.13.0"
 },
 "51aea2d3a08a8fea1db4845d85307a1ab4b941a1a0631bbb25e05b6c452a1cc5": {
@@ -36396,6 +38562,45 @@
 "latency_s": 0.205,
 "model": "jev-1.13.0"
 },
+"58921d207af6b5ff1760df1eac054b5479d1ad9a929cdf46cd0aba2dc1c20f3c": {
+"answers": {
+"exists": {
+"noul": 0.48,
+"type": "noul"
+},
+"where": {
+"choice": "P016",
+"confidence": 0.81,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.01,
+"P011": 0.02,
+"P012": 0.11,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.01,
+"P016": 0.83,
+"P017": 0.01,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 5621,
+"latency_s": 0.184,
+"model": "jev-1.13.0"
+},
 "58a15da9e60ef14f6986bb02769467068da127c3e2dabf20b07bc956f87b1968": {
 "answers": {
 "direction": {
@@ -38041,6 +40246,45 @@
 },
 "input_tokens": 6764,
 "latency_s": 0.605,
+"model": "jev-1.13.0"
+},
+"5c23e988d170917fca22e372429c4b0dafffa8651424773ee15680842a62c8a5": {
+"answers": {
+"exists": {
+"noul": 0.19,
+"type": "noul"
+},
+"where": {
+"choice": "P016",
+"confidence": 0.84,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.01,
+"P011": 0.01,
+"P012": 0.09999999999999999,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.01,
+"P016": 0.86,
+"P017": 0.01,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 5621,
+"latency_s": 0.149,
 "model": "jev-1.13.0"
 },
 "5c2401f5ac1f1014415210cee50ab418539348615a18a273314e7e9622976ba7": {
@@ -40249,6 +42493,104 @@
 },
 "input_tokens": 3403,
 "latency_s": 0.208,
+"model": "jev-1.13.0"
+},
+"6191a235550c076400f7313af99fadd9a3a3314fdb623480ba073f8b2b49b5e2": {
+"answers": {
+"exists": {
+"noul": 0.19,
+"type": "noul"
+},
+"where": {
+"choice": "P079",
+"confidence": 0.66,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.01,
+"P053": 0.03,
+"P054": 0.060000000000000005,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.0,
+"P077": 0.0,
+"P078": 0.21000000000000002,
+"P079": 0.68
+},
+"type": "choice"
+}
+},
+"input_tokens": 22835,
+"latency_s": 0.271,
 "model": "jev-1.13.0"
 },
 "61ab5cfde3da971d3c95f69aa7496c7093d3d421cb7367bc39af11379f391b91": {
@@ -42463,6 +44805,81 @@
 "latency_s": 0.19,
 "model": "jev-1.13.0"
 },
+"66ed743c4f1f533a840c558f3ba4966a206dda06286defb4fd289cdd49d3aaa3": {
+"answers": {
+"exists": {
+"noul": 0.81,
+"type": "noul"
+},
+"where": {
+"choice": "P035",
+"confidence": 0.69,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.01,
+"P020": 0.12,
+"P021": 0.01,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.71,
+"P036": 0.01,
+"P037": 0.06,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.08,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 15715,
+"latency_s": 0.236,
+"model": "jev-1.13.0"
+},
 "6703db0e887c51a49800b98b4563b52f4db5c14b284df6b92eeb38d8167d135a": {
 "answers": {
 "direction": {
@@ -43385,6 +45802,211 @@
 },
 "input_tokens": 4422,
 "latency_s": 0.245,
+"model": "jev-1.13.0"
+},
+"69ae435d8b86987d27146a8d8c266bda85bb576a948e463f9f84f925873c8777": {
+"answers": {
+"exists": {
+"noul": 0.17,
+"type": "noul"
+},
+"where": {
+"choice": "P069",
+"confidence": 0.4,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.15000000000000002,
+"P067": 0.02,
+"P068": 0.0,
+"P069": 0.41000000000000003,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.0,
+"P077": 0.0,
+"P078": 0.0,
+"P079": 0.0,
+"P080": 0.0,
+"P081": 0.0,
+"P082": 0.0,
+"P083": 0.0,
+"P084": 0.0,
+"P085": 0.0,
+"P086": 0.0,
+"P087": 0.0,
+"P088": 0.0,
+"P089": 0.0,
+"P090": 0.0,
+"P091": 0.0,
+"P092": 0.0,
+"P093": 0.0,
+"P094": 0.0,
+"P095": 0.0,
+"P096": 0.0,
+"P097": 0.0,
+"P098": 0.0,
+"P099": 0.0,
+"P100": 0.0,
+"P101": 0.0,
+"P102": 0.0,
+"P103": 0.0,
+"P104": 0.0,
+"P105": 0.0,
+"P106": 0.0,
+"P107": 0.0,
+"P108": 0.0,
+"P109": 0.0,
+"P110": 0.0,
+"P111": 0.0,
+"P112": 0.0,
+"P113": 0.0,
+"P114": 0.0,
+"P115": 0.0,
+"P116": 0.0,
+"P117": 0.0,
+"P118": 0.0,
+"P119": 0.0,
+"P120": 0.0,
+"P121": 0.0,
+"P122": 0.0,
+"P123": 0.0,
+"P124": 0.0,
+"P125": 0.0,
+"P126": 0.0,
+"P127": 0.0,
+"P128": 0.0,
+"P129": 0.0,
+"P130": 0.0,
+"P131": 0.0,
+"P132": 0.0,
+"P133": 0.0,
+"P134": 0.0,
+"P135": 0.0,
+"P136": 0.0,
+"P137": 0.0,
+"P138": 0.0,
+"P139": 0.0,
+"P140": 0.0,
+"P141": 0.0,
+"P142": 0.0,
+"P143": 0.0,
+"P144": 0.0,
+"P145": 0.0,
+"P146": 0.0,
+"P147": 0.0,
+"P148": 0.0,
+"P149": 0.0,
+"P150": 0.0,
+"P151": 0.03,
+"P152": 0.0,
+"P153": 0.0,
+"P154": 0.0,
+"P155": 0.0,
+"P156": 0.0,
+"P157": 0.0,
+"P158": 0.0,
+"P159": 0.0,
+"P160": 0.0,
+"P161": 0.0,
+"P162": 0.02,
+"P163": 0.0,
+"P164": 0.09999999999999999,
+"P165": 0.21000000000000002,
+"P166": 0.02,
+"P167": 0.02,
+"P168": 0.0,
+"P169": 0.0,
+"P170": 0.0,
+"P171": 0.0,
+"P172": 0.0,
+"P173": 0.0,
+"P174": 0.0,
+"P175": 0.0,
+"P176": 0.0,
+"P177": 0.0,
+"P178": 0.0,
+"P179": 0.0,
+"P180": 0.0,
+"P181": 0.0,
+"P182": 0.0,
+"P183": 0.0,
+"P184": 0.0,
+"P185": 0.0,
+"P186": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 19182,
+"latency_s": 0.313,
 "model": "jev-1.13.0"
 },
 "69bbd3daf7f2dd8da2ba2dd49dd8da2449b3c12ae72c130290ea3e4675f3c056": {
@@ -44710,6 +47332,188 @@
 "latency_s": 0.202,
 "model": "jev-1.13.0"
 },
+"6d299d6f3d8934f9e1d8847044c08f25c572948fc51bd58e69e2cfc5e2ff47fc": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.24,
+"probabilities": {
+"other_way": 0.15,
+"same_way": 0.5,
+"silent": 0.35
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.75,
+"probabilities": {
+"claims_more": 0.81,
+"different_question": 0.17,
+"nothing_missing": 0.01,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.74,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.03,
+"1": 0.12,
+"2": 0.76,
+"3": 0.09
+},
+"score": 1.92,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.47,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.6,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.33,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.14,
+"1": 0.32,
+"2": 0.47,
+"3": 0.07
+},
+"score": 1.48,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.86,
+"probabilities": {
+"neighbouring": 0.91,
+"same_question": 0.08,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.76,
+"probabilities": {
+"court": 0.82,
+"not_discussed": 0.17,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 2031,
+"latency_s": 0.144,
+"model": "jev-1.13.0"
+},
+"6d731122099401f1ba5613d4385816a794152a227eae95f047b0c0c9a9ed3da8": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.95,
+"probabilities": {
+"other_way": 0.02,
+"same_way": 0.96,
+"silent": 0.02
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.8,
+"probabilities": {
+"claims_more": 0.14,
+"different_question": 0.0,
+"nothing_missing": 0.86,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.6,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.64,
+"1": 0.34,
+"2": 0.02,
+"3": 0.0
+},
+"score": 0.4,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.95,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.97,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.93,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.01,
+"2": 0.05,
+"3": 0.94
+},
+"score": 2.93,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.78,
+"probabilities": {
+"neighbouring": 0.14,
+"same_question": 0.86,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.99,
+"probabilities": {
+"court": 1.0,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3389,
+"latency_s": 0.167,
+"model": "jev-1.13.0"
+},
 "6d7bbe35166b154e0ade2be55363d1f04f91638550a6cf89689b24ce9c11ad6a": {
 "answers": {
 "exists": {
@@ -45131,6 +47935,97 @@
 "latency_s": 0.287,
 "model": "jev-1.13.0"
 },
+"6e9606189227048b0de34244756bb9d36f08e05b8869f56eb3e17ab038d8d598": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.6,
+"probabilities": {
+"other_way": 0.07,
+"same_way": 0.73,
+"silent": 0.2
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.65,
+"probabilities": {
+"claims_more": 0.74,
+"different_question": 0.09,
+"nothing_missing": 0.16,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.4,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.08,
+"1": 0.44,
+"2": 0.44,
+"3": 0.04
+},
+"score": 1.43,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.55,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.65,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.22,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.11,
+"1": 0.26,
+"2": 0.33,
+"3": 0.3
+},
+"score": 1.82,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.56,
+"probabilities": {
+"neighbouring": 0.71,
+"same_question": 0.28,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.64,
+"probabilities": {
+"court": 0.74,
+"not_discussed": 0.21,
+"other_judge": 0.0,
+"party": 0.05
+},
+"type": "choice"
+}
+},
+"input_tokens": 2757,
+"latency_s": 0.149,
+"model": "jev-1.13.0"
+},
 "6e9bc0991b23a72eb494e95f49b8f01e66246a11bd954fb481b3378e6dd978bf": {
 "answers": {
 "adds_specifics_lean": {
@@ -45306,6 +48201,97 @@
 },
 "input_tokens": 5846,
 "latency_s": 0.158,
+"model": "jev-1.13.0"
+},
+"6ebd85b599261c088cb3cfc505091fe2acfd83f8ca722f080be93be37c9bf6c4": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.75,
+"probabilities": {
+"other_way": 0.08,
+"same_way": 0.84,
+"silent": 0.08
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.71,
+"probabilities": {
+"claims_more": 0.78,
+"different_question": 0.05,
+"nothing_missing": 0.15,
+"other_way": 0.02
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.53,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.19,
+"1": 0.55,
+"2": 0.25,
+"3": 0.01
+},
+"score": 1.08,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.8,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.83,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.36,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.03,
+"1": 0.22,
+"2": 0.4,
+"3": 0.35
+},
+"score": 2.06,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.73,
+"probabilities": {
+"neighbouring": 0.82,
+"same_question": 0.17,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.75,
+"probabilities": {
+"court": 0.8200000000000001,
+"not_discussed": 0.18,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3597,
+"latency_s": 0.15,
 "model": "jev-1.13.0"
 },
 "6ef2e62ddd6120bb9d5332ceaed84d7f607aecb5c5ede63822295c06d575fd46": {
@@ -45529,6 +48515,56 @@
 "latency_s": 0.181,
 "model": "jev-1.13.0"
 },
+"6fdfbeedcdc2f394ae8f99f35ad0ae862a3dc03dba4576c2a89e733c481472db": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P030",
+"confidence": 0.18,
+"probabilities": {
+"P000": 0.03,
+"P001": 0.01,
+"P002": 0.03,
+"P003": 0.02,
+"P004": 0.01,
+"P005": 0.0,
+"P006": 0.01,
+"P007": 0.01,
+"P008": 0.0,
+"P009": 0.01,
+"P010": 0.07,
+"P011": 0.03,
+"P012": 0.02,
+"P013": 0.02,
+"P014": 0.0,
+"P015": 0.01,
+"P016": 0.01,
+"P017": 0.01,
+"P018": 0.01,
+"P019": 0.04,
+"P020": 0.02,
+"P021": 0.01,
+"P022": 0.01,
+"P023": 0.01,
+"P024": 0.0,
+"P025": 0.04,
+"P026": 0.06,
+"P027": 0.08,
+"P028": 0.14,
+"P029": 0.06,
+"P030": 0.21,
+"P031": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 9574,
+"latency_s": 0.172,
+"model": "jev-1.13.0"
+},
 "700e17b17b926b75403736a4e7b05884d751ad2d74dc8ca023499c851b128945": {
 "answers": {
 "direction": {
@@ -45618,6 +48654,134 @@
 },
 "input_tokens": 3080,
 "latency_s": 0.198,
+"model": "jev-1.13.0"
+},
+"702932b99619e2c473a640a37dd03032dc3de8f85a1dd0b518919b1c96e05fa8": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.98,
+"probabilities": {
+"other_way": 0.01,
+"same_way": 0.99,
+"silent": 0.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.59,
+"probabilities": {
+"claims_more": 0.7,
+"different_question": 0.01,
+"nothing_missing": 0.29,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.43,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.31,
+"1": 0.43,
+"2": 0.25,
+"3": 0.01
+},
+"score": 0.95,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.82,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.95,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.65,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.04,
+"2": 0.26,
+"3": 0.7
+},
+"score": 2.65,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.74,
+"probabilities": {
+"neighbouring": 0.16,
+"same_question": 0.83,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.99,
+"probabilities": {
+"court": 1.0,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3450,
+"latency_s": 0.14,
+"model": "jev-1.13.0"
+},
+"70805cf1187f31ed3f00d7228af6189acf201bcadc4209a39c5a4a28768f1a92": {
+"answers": {
+"exists": {
+"noul": 0.16,
+"type": "noul"
+},
+"where": {
+"choice": "P013",
+"confidence": 0.75,
+"probabilities": {
+"P000": 0.01,
+"P001": 0.03,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.01,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.01,
+"P010": 0.01,
+"P011": 0.0,
+"P012": 0.01,
+"P013": 0.76,
+"P014": 0.02,
+"P015": 0.12,
+"P016": 0.02,
+"P017": 0.0,
+"P018": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3803,
+"latency_s": 0.45,
 "model": "jev-1.13.0"
 },
 "70b440abc2f497c562469645b1aa96006aba41eefd81a145c6b2462895270350": {
@@ -46083,6 +49247,97 @@
 },
 "input_tokens": 2326,
 "latency_s": 0.149,
+"model": "jev-1.13.0"
+},
+"715ea78edae17cd2d3c9975fd6f2b428075bbe961ecec788ae9296ed40ec7a4a": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.82,
+"probabilities": {
+"other_way": 0.08,
+"same_way": 0.03,
+"silent": 0.89
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.73,
+"probabilities": {
+"claims_more": 0.14,
+"different_question": 0.79,
+"nothing_missing": 0.01,
+"other_way": 0.06
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.61,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.01,
+"1": 0.01,
+"2": 0.33,
+"3": 0.65
+},
+"score": 2.61,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.77,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.1,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.56,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.41,
+"1": 0.5599999999999999,
+"2": 0.02,
+"3": 0.01
+},
+"score": 0.62,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.61,
+"probabilities": {
+"neighbouring": 0.74,
+"same_question": 0.23,
+"unrelated": 0.03
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.41,
+"probabilities": {
+"court": 0.42,
+"not_discussed": 0.56,
+"other_judge": 0.0,
+"party": 0.02
+},
+"type": "choice"
+}
+},
+"input_tokens": 3472,
+"latency_s": 0.171,
 "model": "jev-1.13.0"
 },
 "71e9b91b0a13c28c41a51f44a381603008a936ca32fadd4fe00eba7be74bf56d": {
@@ -47611,6 +50866,97 @@
 },
 "input_tokens": 10855,
 "latency_s": 0.205,
+"model": "jev-1.13.0"
+},
+"75247ff29297678e1220179006e5b24391e9bda5543667bf8fd7f6a3aa3c161f": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.85,
+"probabilities": {
+"other_way": 0.08,
+"same_way": 0.9,
+"silent": 0.02
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.87,
+"probabilities": {
+"claims_more": 0.9,
+"different_question": 0.01,
+"nothing_missing": 0.08,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.51,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.12,
+"1": 0.52,
+"2": 0.36,
+"3": 0.0
+},
+"score": 1.24,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.88,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.81,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.68,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.03,
+"2": 0.25,
+"3": 0.72
+},
+"score": 2.68,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.38,
+"probabilities": {
+"neighbouring": 0.41,
+"same_question": 0.58,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.95,
+"probabilities": {
+"court": 0.96,
+"not_discussed": 0.02,
+"other_judge": 0.0,
+"party": 0.02
+},
+"type": "choice"
+}
+},
+"input_tokens": 3298,
+"latency_s": 0.152,
 "model": "jev-1.13.0"
 },
 "758aec2eeafca27eac1b569f90fa9fee74a04ef70d4a4f8e6dd28c646483200b": {
@@ -49414,6 +52760,97 @@
 "latency_s": 0.148,
 "model": "jev-1.13.0"
 },
+"77a2b393d54dd6109ef98f549f98679092c251342bb68398a05dcf4c4a21726e": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.46,
+"probabilities": {
+"other_way": 0.32,
+"same_way": 0.63,
+"silent": 0.05
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.73,
+"probabilities": {
+"claims_more": 0.8,
+"different_question": 0.11,
+"nothing_missing": 0.02,
+"other_way": 0.07
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.68,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.05,
+"1": 0.21,
+"2": 0.73,
+"3": 0.01
+},
+"score": 1.7,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.84,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.87,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.71,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.01,
+"1": 0.09,
+"2": 0.72,
+"3": 0.18
+},
+"score": 2.07,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.55,
+"probabilities": {
+"neighbouring": 0.7,
+"same_question": 0.3,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.72,
+"probabilities": {
+"court": 0.79,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.21
+},
+"type": "choice"
+}
+},
+"input_tokens": 2001,
+"latency_s": 0.15,
+"model": "jev-1.13.0"
+},
 "77d2268754379f062710e44dfea5609411194b0c14e3ef0136b1067f9f81f477": {
 "answers": {
 "adds_specifics_lean": {
@@ -50733,6 +54170,97 @@
 "latency_s": 0.206,
 "model": "jev-1.13.0"
 },
+"7b18f9e49fb44f56be46d737364c0db963859dc6b5d77f227e7cd190bb75c589": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.98,
+"probabilities": {
+"other_way": 0.01,
+"same_way": 0.99,
+"silent": 0.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.61,
+"probabilities": {
+"claims_more": 0.29,
+"different_question": 0.0,
+"nothing_missing": 0.71,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.59,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.63,
+"1": 0.34,
+"2": 0.03,
+"3": 0.0
+},
+"score": 0.41,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.9,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.97,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.97,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.0,
+"2": 0.02,
+"3": 0.98
+},
+"score": 2.97,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.86,
+"probabilities": {
+"neighbouring": 0.09,
+"same_question": 0.91,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.99,
+"probabilities": {
+"court": 1.0,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 4530,
+"latency_s": 0.151,
+"model": "jev-1.13.0"
+},
 "7b27b6f0d4d5592372f90deab1b2b955449007365c7c97b88265ddb1cf68f299": {
 "answers": {
 "adds_specifics_structured": {
@@ -50833,6 +54361,97 @@
 },
 "input_tokens": 5926,
 "latency_s": 0.181,
+"model": "jev-1.13.0"
+},
+"7b847b0c2f796b80d04ea5c9124525c92f48194162c238da0fd459e4a2ff2bb3": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.99,
+"probabilities": {
+"other_way": 0.0,
+"same_way": 0.0,
+"silent": 1.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 1.0,
+"probabilities": {
+"claims_more": 0.0,
+"different_question": 1.0,
+"nothing_missing": 0.0,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.98,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.0,
+"2": 0.0,
+"3": 1.0
+},
+"score": 2.98,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.04,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.07,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.99,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 1.0,
+"1": 0.0,
+"2": 0.0,
+"3": 0.0
+},
+"score": 0.01,
+"type": "score"
+},
+"topic": {
+"choice": "unrelated",
+"confidence": 1.0,
+"probabilities": {
+"neighbouring": 0.0,
+"same_question": 0.0,
+"unrelated": 1.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 1.0,
+"probabilities": {
+"court": 0.0,
+"not_discussed": 1.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 2191,
+"latency_s": 0.177,
 "model": "jev-1.13.0"
 },
 "7bd429d80ea216baeaa1911fdf0587a671314b5f410fee99295d0d6849dca8e7": {
@@ -51800,6 +55419,97 @@
 "latency_s": 0.252,
 "model": "jev-1.13.0"
 },
+"7db10b193e2e5360b3b362dc2c4ff9f7f835cf787b955a5b98cccac94782fa3b": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.49,
+"probabilities": {
+"other_way": 0.21,
+"same_way": 0.13,
+"silent": 0.66
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.33,
+"probabilities": {
+"claims_more": 0.5,
+"different_question": 0.43,
+"nothing_missing": 0.04,
+"other_way": 0.03
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.65,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.03,
+"1": 0.08,
+"2": 0.68,
+"3": 0.2
+},
+"score": 2.06,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.78,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.29,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.7,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.17,
+"1": 0.72,
+"2": 0.1,
+"3": 0.01
+},
+"score": 0.96,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.82,
+"probabilities": {
+"neighbouring": 0.88,
+"same_question": 0.1,
+"unrelated": 0.02
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.23,
+"probabilities": {
+"court": 0.24,
+"not_discussed": 0.43,
+"other_judge": 0.0,
+"party": 0.33
+},
+"type": "choice"
+}
+},
+"input_tokens": 3138,
+"latency_s": 0.185,
+"model": "jev-1.13.0"
+},
 "7dcf51245723079925716b72a0d1c455d235f47b824a3acf9e42785d3e22eaf0": {
 "answers": {
 "direction": {
@@ -52296,6 +56006,142 @@
 "latency_s": 0.165,
 "model": "jev-1.13.0"
 },
+"7f26b3c2becd163e8e5fc527dafac1b4a9f19ea45a916b563b87e322944434e7": {
+"answers": {
+"exists": {
+"noul": 0.89,
+"type": "noul"
+},
+"where": {
+"choice": "P075",
+"confidence": 0.58,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.03,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.35000000000000003,
+"P058": 0.0,
+"P059": 0.02,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.59,
+"P076": 0.0,
+"P077": 0.0,
+"P078": 0.0,
+"P079": 0.0,
+"P080": 0.0,
+"P081": 0.0,
+"P082": 0.0,
+"P083": 0.0,
+"P084": 0.0,
+"P085": 0.0,
+"P086": 0.0,
+"P087": 0.0,
+"P088": 0.0,
+"P089": 0.0,
+"P090": 0.0,
+"P091": 0.0,
+"P092": 0.0,
+"P093": 0.0,
+"P094": 0.0,
+"P095": 0.0,
+"P096": 0.0,
+"P097": 0.0,
+"P098": 0.0,
+"P099": 0.0,
+"P100": 0.0,
+"P101": 0.0,
+"P102": 0.0,
+"P103": 0.0,
+"P104": 0.0,
+"P105": 0.0,
+"P106": 0.0,
+"P107": 0.0,
+"P108": 0.0,
+"P109": 0.0,
+"P110": 0.0,
+"P111": 0.0,
+"P112": 0.0,
+"P113": 0.0,
+"P114": 0.0,
+"P115": 0.0,
+"P116": 0.0,
+"P117": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 12153,
+"latency_s": 0.211,
+"model": "jev-1.13.0"
+},
 "7f97a5c0e3c77447c72af0bd7630c12e4d5f961d4ceb4ab5a9b3ccfd0d517fb4": {
 "answers": {
 "exists": {
@@ -52712,6 +56558,97 @@
 "latency_s": 0.169,
 "model": "jev-1.13.0"
 },
+"8014afaeb5c7569e51ee7c55f139483be52963e8b14225ac16aac7b626de24df": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.91,
+"probabilities": {
+"other_way": 0.05,
+"same_way": 0.94,
+"silent": 0.01
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.62,
+"probabilities": {
+"claims_more": 0.26,
+"different_question": 0.01,
+"nothing_missing": 0.72,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.69,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.77,
+"1": 0.16,
+"2": 0.07,
+"3": 0.0
+},
+"score": 0.31,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.89,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.97,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.84,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.01,
+"2": 0.15,
+"3": 0.84
+},
+"score": 2.84,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.3,
+"probabilities": {
+"neighbouring": 0.45,
+"same_question": 0.54,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.99,
+"probabilities": {
+"court": 1.0,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 2488,
+"latency_s": 0.148,
+"model": "jev-1.13.0"
+},
 "8039b4d24c38474af749ecb6696ea8429e7d5b081bf07b6ccfd69fcd9223718d": {
 "answers": {
 "opposite": {
@@ -52980,6 +56917,108 @@
 "latency_s": 0.301,
 "model": "jev-1.13.0"
 },
+"80c62de91c094820be0e595e57dc0d021aaaf6bbda941310504a142f573179cd": {
+"answers": {
+"exists": {
+"noul": 0.97,
+"type": "noul"
+},
+"where": {
+"choice": "P000",
+"confidence": 0.51,
+"probabilities": {
+"P000": 0.53,
+"P001": 0.21000000000000002,
+"P002": 0.0,
+"P003": 0.01,
+"P004": 0.03,
+"P005": 0.0,
+"P006": 0.01,
+"P007": 0.01,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.01,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.01,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.05,
+"P039": 0.060000000000000005,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.03,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.01,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.02,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.0,
+"P077": 0.0,
+"P078": 0.0,
+"P079": 0.0,
+"P080": 0.0,
+"P081": 0.0,
+"P082": 0.0,
+"P083": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 16545,
+"latency_s": 0.22,
+"model": "jev-1.13.0"
+},
 "80f512bf90d4508ffc74e8be0e2ca82075aab3cfb898dc4b074f67569a7e2621": {
 "answers": {
 "exists": {
@@ -53008,6 +57047,76 @@
 },
 "input_tokens": 2664,
 "latency_s": 0.161,
+"model": "jev-1.13.0"
+},
+"8112655383d9784104e3b79861a410deff9dcfa9e47ebb7db6dea70814396b07": {
+"answers": {
+"exists": {
+"noul": 0.71,
+"type": "noul"
+},
+"where": {
+"choice": "P027",
+"confidence": 0.65,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.02,
+"P023": 0.0,
+"P024": 0.04,
+"P025": 0.0,
+"P026": 0.27,
+"P027": 0.66,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 15808,
+"latency_s": 0.248,
 "model": "jev-1.13.0"
 },
 "81215b2a7f04ba464286ca7ac2a36e6c3b25fd440e513e8fc651e87006c53fe9": {
@@ -53260,6 +57369,97 @@
 },
 "input_tokens": 3337,
 "latency_s": 0.203,
+"model": "jev-1.13.0"
+},
+"8165e2a4288dbdbf7b0bdd17bbc64e155b96a7b7d24dc69a8212a9b108a45117": {
+"answers": {
+"direction": {
+"choice": "other_way",
+"confidence": 0.2,
+"probabilities": {
+"other_way": 0.45999999999999996,
+"same_way": 0.28,
+"silent": 0.26
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.81,
+"probabilities": {
+"claims_more": 0.86,
+"different_question": 0.07,
+"nothing_missing": 0.02,
+"other_way": 0.05
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.74,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.03,
+"1": 0.14,
+"2": 0.78,
+"3": 0.05
+},
+"score": 1.84,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.7,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.62,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.68,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.24,
+"2": 0.71,
+"3": 0.01
+},
+"score": 1.69,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.84,
+"probabilities": {
+"neighbouring": 0.89,
+"same_question": 0.09,
+"unrelated": 0.02
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.76,
+"probabilities": {
+"court": 0.82,
+"not_discussed": 0.13,
+"other_judge": 0.0,
+"party": 0.05
+},
+"type": "choice"
+}
+},
+"input_tokens": 3564,
+"latency_s": 0.221,
 "model": "jev-1.13.0"
 },
 "816abc2dd1c4a908593216f315e0b8b9efa1d6aeb92957375766e6c63f9a3a7c": {
@@ -54672,6 +58872,109 @@
 "latency_s": 0.604,
 "model": "jev-1.13.0"
 },
+"847dd756688d33e01c27714f46a0519ca78cd1584d21f5009b166669db4ed280": {
+"answers": {
+"exists": {
+"noul": 0.96,
+"type": "noul"
+},
+"where": {
+"choice": "P083",
+"confidence": 0.26,
+"probabilities": {
+"P000": 0.01,
+"P001": 0.11,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.01,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.03,
+"P037": 0.03,
+"P038": 0.01,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.19,
+"P062": 0.03,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.0,
+"P077": 0.04,
+"P078": 0.0,
+"P079": 0.23,
+"P080": 0.0,
+"P081": 0.0,
+"P082": 0.0,
+"P083": 0.28,
+"P084": 0.02
+},
+"type": "choice"
+}
+},
+"input_tokens": 15828,
+"latency_s": 0.231,
+"model": "jev-1.13.0"
+},
 "84c2afc9819197f0975885f86186515fb0eca31f9a79b8491ab79709c32f3bb4": {
 "answers": {
 "adds_specifics": {
@@ -55749,6 +60052,116 @@
 "latency_s": 0.189,
 "model": "jev-1.13.0"
 },
+"876de01593bb4c1a109e02491842dd1d8e12182329d29f58fa0fffd8243ae913": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P036",
+"confidence": 0.59,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.01,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.01,
+"P026": 0.0,
+"P027": 0.02,
+"P028": 0.0,
+"P029": 0.02,
+"P030": 0.02,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.03,
+"P036": 0.6,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.02,
+"P056": 0.02,
+"P057": 0.12,
+"P058": 0.08,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.0,
+"P077": 0.0,
+"P078": 0.0,
+"P079": 0.0,
+"P080": 0.04,
+"P081": 0.0,
+"P082": 0.0,
+"P083": 0.0,
+"P084": 0.0,
+"P085": 0.0,
+"P086": 0.0,
+"P087": 0.0,
+"P088": 0.0,
+"P089": 0.0,
+"P090": 0.0,
+"P091": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 21666,
+"latency_s": 0.305,
+"model": "jev-1.13.0"
+},
 "878ff3d986eafef594c119abbbf22dbae993c0dae88ed0bde50c0e5808c893ea": {
 "answers": {
 "opposite": {
@@ -55809,6 +60222,97 @@
 },
 "input_tokens": 2740,
 "latency_s": 0.198,
+"model": "jev-1.13.0"
+},
+"87efbed6b0ecc8818298d75fef6ba8dd74d7aa0716bfdb90c77d289669094169": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.55,
+"probabilities": {
+"other_way": 0.17,
+"same_way": 0.13,
+"silent": 0.7
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.66,
+"probabilities": {
+"claims_more": 0.24,
+"different_question": 0.74,
+"nothing_missing": 0.01,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.31,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.11,
+"2": 0.33,
+"3": 0.52
+},
+"score": 2.31,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.26,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.4,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.43,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.53,
+"1": 0.39,
+"2": 0.06,
+"3": 0.02
+},
+"score": 0.57,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.4,
+"probabilities": {
+"neighbouring": 0.6,
+"same_question": 0.01,
+"unrelated": 0.39
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.69,
+"probabilities": {
+"court": 0.22,
+"not_discussed": 0.77,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 2816,
+"latency_s": 0.413,
 "model": "jev-1.13.0"
 },
 "87fcad57d0eb9129950d2b19f53707af193cd3c4fa90a85abd5a377f8286f146": {
@@ -55940,6 +60444,88 @@
 },
 "input_tokens": 3062,
 "latency_s": 0.246,
+"model": "jev-1.13.0"
+},
+"888df5a916b730209f448a5eb72446a3cf43141eac23a869292642c465cab073": {
+"answers": {
+"exists": {
+"noul": 0.04,
+"type": "noul"
+},
+"where": {
+"choice": "P037",
+"confidence": 0.35,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.01,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.14,
+"P036": 0.27,
+"P037": 0.37,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.03,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.17,
+"P048": 0.01,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 18638,
+"latency_s": 0.231,
 "model": "jev-1.13.0"
 },
 "888f7adf44c30fc1346fabb0ed49506b85cd174c02ed2b4a53bafa6f033cd8dd": {
@@ -57783,6 +62369,56 @@
 "latency_s": 0.186,
 "model": "jev-1.13.0"
 },
+"8de37244ca85b156395f9468d1823a9e3d7e15ac30fcc6b4ca6e416989ce684e": {
+"answers": {
+"exists": {
+"noul": 0.99,
+"type": "noul"
+},
+"where": {
+"choice": "P001",
+"confidence": 0.59,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.61,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.02,
+"P011": 0.22,
+"P012": 0.13,
+"P013": 0.0,
+"P014": 0.02,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 8942,
+"latency_s": 0.175,
+"model": "jev-1.13.0"
+},
 "8de4f1ae434d13a2dc4abccf4f3d4b102bfa36f9f071500552b2897398837b1f": {
 "answers": {
 "direction": {
@@ -59539,6 +64175,97 @@
 "latency_s": 0.171,
 "model": "jev-1.13.0"
 },
+"93be772629b23dd7e0ff1d4fd79657a40af85bc5ff35362310c3475718e5afeb": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.98,
+"probabilities": {
+"other_way": 0.01,
+"same_way": 0.99,
+"silent": 0.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.42,
+"probabilities": {
+"claims_more": 0.5700000000000001,
+"different_question": 0.0,
+"nothing_missing": 0.43,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.38,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.48,
+"1": 0.43,
+"2": 0.09,
+"3": 0.0
+},
+"score": 0.62,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.95,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.96,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.93,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.0,
+"2": 0.07,
+"3": 0.93
+},
+"score": 2.93,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.66,
+"probabilities": {
+"neighbouring": 0.22,
+"same_question": 0.78,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 1.0,
+"probabilities": {
+"court": 1.0,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3872,
+"latency_s": 0.167,
+"model": "jev-1.13.0"
+},
 "93e7b34aef5430a5e22297d563f53be42fd8b9ef0f597fee25905950bcce1b49": {
 "answers": {
 "exists": {
@@ -59807,6 +64534,97 @@
 },
 "input_tokens": 4920,
 "latency_s": 0.155,
+"model": "jev-1.13.0"
+},
+"94467e48fad4a6ee8da33abe5cfc8e9d368f873e24a09fbafe0c6ed4bf6a05c9": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.32,
+"probabilities": {
+"other_way": 0.1,
+"same_way": 0.36,
+"silent": 0.54
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.57,
+"probabilities": {
+"claims_more": 0.29,
+"different_question": 0.68,
+"nothing_missing": 0.02,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.42,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.02,
+"1": 0.07,
+"2": 0.38,
+"3": 0.53
+},
+"score": 2.42,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.12,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.28,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.15,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.44,
+"1": 0.35,
+"2": 0.12,
+"3": 0.09
+},
+"score": 0.85,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.54,
+"probabilities": {
+"neighbouring": 0.69,
+"same_question": 0.06,
+"unrelated": 0.25
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.51,
+"probabilities": {
+"court": 0.26,
+"not_discussed": 0.64,
+"other_judge": 0.0,
+"party": 0.1
+},
+"type": "choice"
+}
+},
+"input_tokens": 2154,
+"latency_s": 0.129,
 "model": "jev-1.13.0"
 },
 "955fe86360ca82bf1143099aeb26272b37a782fd8e979a0832f673b3d56994c8": {
@@ -60160,6 +64978,97 @@
 },
 "input_tokens": 5711,
 "latency_s": 0.148,
+"model": "jev-1.13.0"
+},
+"95db602b4c7e24ff5db5b26daf0f52f8de731f22ef39737b4222cf5a4bf1370c": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.29,
+"probabilities": {
+"other_way": 0.22,
+"same_way": 0.26,
+"silent": 0.52
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.35,
+"probabilities": {
+"claims_more": 0.5,
+"different_question": 0.35,
+"nothing_missing": 0.12,
+"other_way": 0.03
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.64,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.06,
+"1": 0.13,
+"2": 0.7,
+"3": 0.11
+},
+"score": 1.86,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.8,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.33,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.72,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.1,
+"1": 0.75,
+"2": 0.11,
+"3": 0.04
+},
+"score": 1.09,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.79,
+"probabilities": {
+"neighbouring": 0.86,
+"same_question": 0.12,
+"unrelated": 0.02
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.25,
+"probabilities": {
+"court": 0.44,
+"not_discussed": 0.41,
+"other_judge": 0.0,
+"party": 0.15
+},
+"type": "choice"
+}
+},
+"input_tokens": 3378,
+"latency_s": 0.167,
 "model": "jev-1.13.0"
 },
 "95dcc958900ef50ca495314aed5658dd17d6399d0652abcc169c2f3b64ffcfc0": {
@@ -60734,6 +65643,45 @@
 },
 "input_tokens": 2208,
 "latency_s": 0.214,
+"model": "jev-1.13.0"
+},
+"96cf28a111e6d62b4aae5272612050c9f4c65cf0180a0b74ff98a4168894e57a": {
+"answers": {
+"exists": {
+"noul": 0.48,
+"type": "noul"
+},
+"where": {
+"choice": "P016",
+"confidence": 0.89,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.02,
+"P012": 0.05,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.9,
+"P017": 0.03,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 5615,
+"latency_s": 0.183,
 "model": "jev-1.13.0"
 },
 "96e4b9fbb72e3cd662f28f51a043ee1d9ac2a123fbfaab8582584f87965d8d26": {
@@ -62449,6 +67397,61 @@
 "latency_s": 0.227,
 "model": "jev-1.13.0"
 },
+"9a30ccb6792369ae239ecd5a2390f5f78e45414284d0f2b79ac2f93e2d769940": {
+"answers": {
+"exists": {
+"noul": 0.17,
+"type": "noul"
+},
+"where": {
+"choice": "P009",
+"confidence": 0.26,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.02,
+"P007": 0.0,
+"P008": 0.02,
+"P009": 0.29000000000000004,
+"P010": 0.01,
+"P011": 0.21000000000000002,
+"P012": 0.19,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.01,
+"P016": 0.08,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.15,
+"P034": 0.0,
+"P035": 0.01,
+"P036": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 9888,
+"latency_s": 0.217,
+"model": "jev-1.13.0"
+},
 "9a661992cef361d874a179db8e605a08dab42dcab7a29fabeca9fa5125e6fa12": {
 "answers": {
 "direction": {
@@ -62609,6 +67612,56 @@
 },
 "input_tokens": 1684,
 "latency_s": 0.141,
+"model": "jev-1.13.0"
+},
+"9ad25d810d4562736943f42768d9190806a08d7657160df030551aa4bdf56ac6": {
+"answers": {
+"exists": {
+"noul": 0.6,
+"type": "noul"
+},
+"where": {
+"choice": "P015",
+"confidence": 0.41,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.04,
+"P012": 0.23,
+"P013": 0.26,
+"P014": 0.0,
+"P015": 0.44,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.01,
+"P021": 0.01,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.01,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 8749,
+"latency_s": 0.173,
 "model": "jev-1.13.0"
 },
 "9b2e976e23719b8d364cc55215a749e218a1ac5b305a734749efc7f979ef04ff": {
@@ -63342,6 +68395,76 @@
 "latency_s": 0.156,
 "model": "jev-1.13.0"
 },
+"9ca624e8e997659d11c682802e463105549cff53faba261c8a750d6186b01e9d": {
+"answers": {
+"exists": {
+"noul": 0.05,
+"type": "noul"
+},
+"where": {
+"choice": "P020",
+"confidence": 0.79,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.17,
+"P020": 0.8,
+"P021": 0.01,
+"P022": 0.02,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 15814,
+"latency_s": 0.234,
+"model": "jev-1.13.0"
+},
 "9d08a3b2e16d94d43a9e066c5e15be4a29cae6d300d4bb68439d47dc37b95e1d": {
 "answers": {
 "adds_specifics": {
@@ -63426,6 +68549,97 @@
 },
 "input_tokens": 2370,
 "latency_s": 0.233,
+"model": "jev-1.13.0"
+},
+"9d148c42f99e09073c13e2eae3ba5fa286ae6329bfd3697e7bfe3f40d4f2b016": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.37,
+"probabilities": {
+"other_way": 0.31,
+"same_way": 0.58,
+"silent": 0.11
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.5,
+"probabilities": {
+"claims_more": 0.63,
+"different_question": 0.09,
+"nothing_missing": 0.22,
+"other_way": 0.06
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.49,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.13,
+"1": 0.5,
+"2": 0.35,
+"3": 0.02
+},
+"score": 1.25,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.78,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.83,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.11,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.03,
+"1": 0.23,
+"2": 0.32,
+"3": 0.42
+},
+"score": 2.11,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.64,
+"probabilities": {
+"neighbouring": 0.76,
+"same_question": 0.23,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.69,
+"probabilities": {
+"court": 0.77,
+"not_discussed": 0.01,
+"other_judge": 0.0,
+"party": 0.22
+},
+"type": "choice"
+}
+},
+"input_tokens": 4342,
+"latency_s": 0.211,
 "model": "jev-1.13.0"
 },
 "9d2a14fcfa2559549a7987ae40df124814671b7084d896efeada8eb68e9e066b": {
@@ -64158,6 +69372,55 @@
 "latency_s": 0.252,
 "model": "jev-1.13.0"
 },
+"9f0dfdf6287439c223a3b5d5ccbdf73bb23b001030c8a697ba9f1250bda0f1d9": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P013",
+"confidence": 0.99,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 1.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 9389,
+"latency_s": 0.206,
+"model": "jev-1.13.0"
+},
 "9f9fe461ced440eee5ce61b990881c1cdd432cdda7d650958d1ecfa7618e9012": {
 "answers": {
 "direction": {
@@ -64447,6 +69710,55 @@
 },
 "input_tokens": 6255,
 "latency_s": 0.156,
+"model": "jev-1.13.0"
+},
+"9fe10aeabf31c36c98fe47c2f0fdd864cd7d8812d4686c3eb67ac1368ebf4fc1": {
+"answers": {
+"exists": {
+"noul": 0.98,
+"type": "noul"
+},
+"where": {
+"choice": "P011",
+"confidence": 0.46,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.03,
+"P011": 0.49,
+"P012": 0.0,
+"P013": 0.01,
+"P014": 0.0,
+"P015": 0.17,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.1,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.01,
+"P022": 0.14,
+"P023": 0.04,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.01,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 9369,
+"latency_s": 0.171,
 "model": "jev-1.13.0"
 },
 "a011bef6896ea8db48885d692901ae6f5d73b1f92890daa5dd8d43e624a339cb": {
@@ -65445,6 +70757,97 @@
 },
 "input_tokens": 3732,
 "latency_s": 0.163,
+"model": "jev-1.13.0"
+},
+"a2b85a7e9fa4fcbd1dc177ffa47595a1b289251bb26672a88498678ac682c2af": {
+"answers": {
+"direction": {
+"choice": "other_way",
+"confidence": 0.49,
+"probabilities": {
+"other_way": 0.66,
+"same_way": 0.14,
+"silent": 0.2
+},
+"type": "choice"
+},
+"gap": {
+"choice": "other_way",
+"confidence": 0.16,
+"probabilities": {
+"claims_more": 0.32,
+"different_question": 0.28,
+"nothing_missing": 0.03,
+"other_way": 0.37
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.28,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.1,
+"1": 0.1,
+"2": 0.22,
+"3": 0.58
+},
+"score": 2.28,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.27,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.1,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.01,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.48,
+"1": 0.21,
+"2": 0.17,
+"3": 0.14
+},
+"score": 0.99,
+"type": "score"
+},
+"topic": {
+"choice": "unrelated",
+"confidence": 0.76,
+"probabilities": {
+"neighbouring": 0.09,
+"same_question": 0.06,
+"unrelated": 0.85
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.67,
+"probabilities": {
+"court": 0.22,
+"not_discussed": 0.76,
+"other_judge": 0.0,
+"party": 0.02
+},
+"type": "choice"
+}
+},
+"input_tokens": 3971,
+"latency_s": 0.18,
 "model": "jev-1.13.0"
 },
 "a3457f3ad1cb250f80fd842a9533da31d3bd3b0394ae90817dfb4750236075a8": {
@@ -67944,6 +73347,177 @@
 "latency_s": 0.184,
 "model": "jev-1.13.0"
 },
+"a8229546d5c7e9af6744b8459f94f72bd476f56b395585de0a10ba816e5c46ce": {
+"answers": {
+"exists": {
+"noul": 0.57,
+"type": "noul"
+},
+"where": {
+"choice": "P077",
+"confidence": 0.51,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.06999999999999999,
+"P061": 0.0,
+"P062": 0.05,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.02,
+"P068": 0.14,
+"P069": 0.01,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.060000000000000005,
+"P073": 0.01,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.0,
+"P077": 0.53,
+"P078": 0.0,
+"P079": 0.0,
+"P080": 0.0,
+"P081": 0.04,
+"P082": 0.0,
+"P083": 0.0,
+"P084": 0.0,
+"P085": 0.0,
+"P086": 0.0,
+"P087": 0.0,
+"P088": 0.0,
+"P089": 0.0,
+"P090": 0.0,
+"P091": 0.0,
+"P092": 0.0,
+"P093": 0.0,
+"P094": 0.05,
+"P095": 0.0,
+"P096": 0.0,
+"P097": 0.0,
+"P098": 0.0,
+"P099": 0.0,
+"P100": 0.0,
+"P101": 0.0,
+"P102": 0.0,
+"P103": 0.0,
+"P104": 0.0,
+"P105": 0.0,
+"P106": 0.0,
+"P107": 0.01,
+"P108": 0.0,
+"P109": 0.0,
+"P110": 0.0,
+"P111": 0.0,
+"P112": 0.0,
+"P113": 0.0,
+"P114": 0.0,
+"P115": 0.0,
+"P116": 0.0,
+"P117": 0.0,
+"P118": 0.0,
+"P119": 0.0,
+"P120": 0.0,
+"P121": 0.0,
+"P122": 0.0,
+"P123": 0.0,
+"P124": 0.0,
+"P125": 0.0,
+"P126": 0.0,
+"P127": 0.0,
+"P128": 0.0,
+"P129": 0.0,
+"P130": 0.0,
+"P131": 0.0,
+"P132": 0.0,
+"P133": 0.0,
+"P134": 0.0,
+"P135": 0.0,
+"P136": 0.0,
+"P137": 0.0,
+"P138": 0.0,
+"P139": 0.0,
+"P140": 0.0,
+"P141": 0.0,
+"P142": 0.0,
+"P143": 0.0,
+"P144": 0.0,
+"P145": 0.0,
+"P146": 0.0,
+"P147": 0.0,
+"P148": 0.0,
+"P149": 0.0,
+"P150": 0.0,
+"P151": 0.0,
+"P152": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 15249,
+"latency_s": 0.281,
+"model": "jev-1.13.0"
+},
 "a84f4a8be08a71f16b8934a8771859bb1f4afb708a9eb92fbd651e47bead86e6": {
 "answers": {
 "direction": {
@@ -68181,6 +73755,97 @@
 },
 "input_tokens": 9094,
 "latency_s": 0.557,
+"model": "jev-1.13.0"
+},
+"a89b307a793c9d738d3cf41eaa9d2ffecc39646e250a4b8edd8804a7b004ca08": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.84,
+"probabilities": {
+"other_way": 0.04,
+"same_way": 0.89,
+"silent": 0.07
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.62,
+"probabilities": {
+"claims_more": 0.71,
+"different_question": 0.18,
+"nothing_missing": 0.1,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.3,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.09,
+"1": 0.17,
+"2": 0.39,
+"3": 0.35
+},
+"score": 1.99,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.11,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.81,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.0,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.33,
+"1": 0.29,
+"2": 0.2,
+"3": 0.18
+},
+"score": 1.23,
+"type": "score"
+},
+"topic": {
+"choice": "unrelated",
+"confidence": 0.26,
+"probabilities": {
+"neighbouring": 0.45,
+"same_question": 0.05,
+"unrelated": 0.5
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.78,
+"probabilities": {
+"court": 0.83,
+"not_discussed": 0.14,
+"other_judge": 0.0,
+"party": 0.03
+},
+"type": "choice"
+}
+},
+"input_tokens": 3326,
+"latency_s": 0.244,
 "model": "jev-1.13.0"
 },
 "a8a5538950debad6cbb2054f992062b96dc1cdce6cbdbe124c8b60de9c59ff11": {
@@ -68874,6 +74539,97 @@
 "latency_s": 0.184,
 "model": "jev-1.13.0"
 },
+"aa1765ddcec6cdcec721b8e358893d67e8b4d8bf88b402216c3bc31325aec16d": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.41,
+"probabilities": {
+"other_way": 0.07,
+"same_way": 0.32,
+"silent": 0.61
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.46,
+"probabilities": {
+"claims_more": 0.59,
+"different_question": 0.35,
+"nothing_missing": 0.06,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.53,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.06,
+"1": 0.26,
+"2": 0.58,
+"3": 0.1
+},
+"score": 1.73,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.64,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.54,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.31,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.11,
+"1": 0.43,
+"2": 0.34,
+"3": 0.12
+},
+"score": 1.47,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.8,
+"probabilities": {
+"neighbouring": 0.87,
+"same_question": 0.03,
+"unrelated": 0.1
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.29,
+"probabilities": {
+"court": 0.46,
+"not_discussed": 0.48,
+"other_judge": 0.0,
+"party": 0.06
+},
+"type": "choice"
+}
+},
+"input_tokens": 3765,
+"latency_s": 0.146,
+"model": "jev-1.13.0"
+},
 "aa30cdd82b4a764fc2c8811389168f51b2d7055d8f4c8b37d758aca5204ec786": {
 "answers": {
 "exists": {
@@ -69479,6 +75235,60 @@
 },
 "input_tokens": 3847,
 "latency_s": 0.197,
+"model": "jev-1.13.0"
+},
+"ac5f575db88ff04312a25b4001bffb743de0fb5c5c5e17f4dbbbed76c95d57d0": {
+"answers": {
+"exists": {
+"noul": 0.97,
+"type": "noul"
+},
+"where": {
+"choice": "P025",
+"confidence": 0.71,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.01,
+"P019": 0.0,
+"P020": 0.16,
+"P021": 0.04,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.01,
+"P025": 0.73,
+"P026": 0.05,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 8209,
+"latency_s": 0.181,
 "model": "jev-1.13.0"
 },
 "ac6cda5e920ef1ee8a3210b80cab13d5963fee64c1e0d35ac38d067bf248fdb5": {
@@ -70352,6 +76162,97 @@
 },
 "input_tokens": 3020,
 "latency_s": 0.188,
+"model": "jev-1.13.0"
+},
+"ae0e4d5447e65db4af945fc771d559ec9fa009d87edff5c7a34cc9890e92afd2": {
+"answers": {
+"direction": {
+"choice": "other_way",
+"confidence": 0.67,
+"probabilities": {
+"other_way": 0.78,
+"same_way": 0.17,
+"silent": 0.05
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.44,
+"probabilities": {
+"claims_more": 0.58,
+"different_question": 0.03,
+"nothing_missing": 0.04,
+"other_way": 0.35
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.65,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.24,
+"2": 0.7,
+"3": 0.02
+},
+"score": 1.7,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.86,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.62,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.42,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.43,
+"2": 0.46,
+"3": 0.07
+},
+"score": 1.56,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.38,
+"probabilities": {
+"neighbouring": 0.41,
+"same_question": 0.59,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.37,
+"probabilities": {
+"court": 0.54,
+"not_discussed": 0.02,
+"other_judge": 0.0,
+"party": 0.44
+},
+"type": "choice"
+}
+},
+"input_tokens": 2394,
+"latency_s": 0.163,
 "model": "jev-1.13.0"
 },
 "ae353c745b4a4f07dd9adc96eae56d9c230107f16d4dabe027f2f1cfe2b7656e": {
@@ -71788,6 +77689,211 @@
 "latency_s": 0.176,
 "model": "jev-1.13.0"
 },
+"b20990671871fc0a03b89e8e34048bceffc8efbdf71aa4931f038497b342a613": {
+"answers": {
+"exists": {
+"noul": 0.21,
+"type": "noul"
+},
+"where": {
+"choice": "P151",
+"confidence": 0.85,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.0,
+"P077": 0.0,
+"P078": 0.0,
+"P079": 0.0,
+"P080": 0.0,
+"P081": 0.0,
+"P082": 0.0,
+"P083": 0.0,
+"P084": 0.0,
+"P085": 0.0,
+"P086": 0.0,
+"P087": 0.0,
+"P088": 0.0,
+"P089": 0.0,
+"P090": 0.0,
+"P091": 0.0,
+"P092": 0.0,
+"P093": 0.0,
+"P094": 0.0,
+"P095": 0.0,
+"P096": 0.0,
+"P097": 0.0,
+"P098": 0.0,
+"P099": 0.0,
+"P100": 0.0,
+"P101": 0.0,
+"P102": 0.0,
+"P103": 0.0,
+"P104": 0.0,
+"P105": 0.0,
+"P106": 0.0,
+"P107": 0.0,
+"P108": 0.0,
+"P109": 0.0,
+"P110": 0.0,
+"P111": 0.0,
+"P112": 0.0,
+"P113": 0.0,
+"P114": 0.0,
+"P115": 0.0,
+"P116": 0.0,
+"P117": 0.0,
+"P118": 0.0,
+"P119": 0.0,
+"P120": 0.0,
+"P121": 0.0,
+"P122": 0.0,
+"P123": 0.0,
+"P124": 0.0,
+"P125": 0.0,
+"P126": 0.0,
+"P127": 0.0,
+"P128": 0.0,
+"P129": 0.0,
+"P130": 0.0,
+"P131": 0.0,
+"P132": 0.0,
+"P133": 0.0,
+"P134": 0.0,
+"P135": 0.0,
+"P136": 0.0,
+"P137": 0.0,
+"P138": 0.0,
+"P139": 0.0,
+"P140": 0.0,
+"P141": 0.0,
+"P142": 0.0,
+"P143": 0.0,
+"P144": 0.0,
+"P145": 0.0,
+"P146": 0.0,
+"P147": 0.02,
+"P148": 0.02,
+"P149": 0.02,
+"P150": 0.0,
+"P151": 0.86,
+"P152": 0.0,
+"P153": 0.0,
+"P154": 0.0,
+"P155": 0.0,
+"P156": 0.0,
+"P157": 0.0,
+"P158": 0.0,
+"P159": 0.0,
+"P160": 0.0,
+"P161": 0.0,
+"P162": 0.0,
+"P163": 0.0,
+"P164": 0.04,
+"P165": 0.04,
+"P166": 0.0,
+"P167": 0.0,
+"P168": 0.0,
+"P169": 0.0,
+"P170": 0.0,
+"P171": 0.0,
+"P172": 0.0,
+"P173": 0.0,
+"P174": 0.0,
+"P175": 0.0,
+"P176": 0.0,
+"P177": 0.0,
+"P178": 0.0,
+"P179": 0.0,
+"P180": 0.0,
+"P181": 0.0,
+"P182": 0.0,
+"P183": 0.0,
+"P184": 0.0,
+"P185": 0.0,
+"P186": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 19212,
+"latency_s": 0.227,
+"model": "jev-1.13.0"
+},
 "b2215de8b80299d2abd180ef37b71e6fa887664fe804db82727f37279ee6bebe": {
 "answers": {
 "adds_specifics_structured": {
@@ -73142,6 +79248,97 @@
 "latency_s": 0.204,
 "model": "jev-1.13.0"
 },
+"b50f11076ecf32918e889546ea7c934469169d8cc55652c6b92b235fce621402": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.97,
+"probabilities": {
+"other_way": 0.01,
+"same_way": 0.98,
+"silent": 0.01
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.57,
+"probabilities": {
+"claims_more": 0.3,
+"different_question": 0.01,
+"nothing_missing": 0.6900000000000001,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.51,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.63,
+"1": 0.26,
+"2": 0.11,
+"3": 0.0
+},
+"score": 0.49,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.91,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.98,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.81,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.05,
+"2": 0.09,
+"3": 0.86
+},
+"score": 2.81,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.29,
+"probabilities": {
+"neighbouring": 0.53,
+"same_question": 0.46,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.9,
+"probabilities": {
+"court": 0.92,
+"not_discussed": 0.0,
+"other_judge": 0.01,
+"party": 0.07
+},
+"type": "choice"
+}
+},
+"input_tokens": 3170,
+"latency_s": 0.163,
+"model": "jev-1.13.0"
+},
 "b5148566366525f225aaa6789ee41e5b78ffb09fc825d6a8f3c012b890a94e79": {
 "answers": {
 "direction": {
@@ -73456,6 +79653,104 @@
 },
 "input_tokens": 7024,
 "latency_s": 0.173,
+"model": "jev-1.13.0"
+},
+"b5280afecf18b10c341d2ee14a8b21be1948928de28f82b0c4f455b2abff5e3f": {
+"answers": {
+"exists": {
+"noul": 0.56,
+"type": "noul"
+},
+"where": {
+"choice": "P079",
+"confidence": 0.81,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.03,
+"P054": 0.01,
+"P055": 0.01,
+"P056": 0.0,
+"P057": 0.0,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.0,
+"P076": 0.02,
+"P077": 0.0,
+"P078": 0.09999999999999999,
+"P079": 0.8200000000000001
+},
+"type": "choice"
+}
+},
+"input_tokens": 22857,
+"latency_s": 0.401,
 "model": "jev-1.13.0"
 },
 "b5877d1111dbea5b0dba780e85849c6d5636fe7b47a751e081f23c558ffa9085": {
@@ -73849,6 +80144,97 @@
 },
 "input_tokens": 2637,
 "latency_s": 0.146,
+"model": "jev-1.13.0"
+},
+"b5eb14d68ebedd86e1ebfed0e5c4b49a6bee0b466a1784775e4d84f85dd406f8": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.96,
+"probabilities": {
+"other_way": 0.01,
+"same_way": 0.98,
+"silent": 0.01
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.59,
+"probabilities": {
+"claims_more": 0.27,
+"different_question": 0.03,
+"nothing_missing": 0.7,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.55,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.67,
+"1": 0.23,
+"2": 0.09,
+"3": 0.01
+},
+"score": 0.45,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.72,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.92,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.46,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.16,
+"2": 0.1,
+"3": 0.7
+},
+"score": 2.46,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.74,
+"probabilities": {
+"neighbouring": 0.83,
+"same_question": 0.14,
+"unrelated": 0.03
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.58,
+"probabilities": {
+"court": 0.68,
+"not_discussed": 0.02,
+"other_judge": 0.29,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3515,
+"latency_s": 0.217,
 "model": "jev-1.13.0"
 },
 "b61499072d0503c214371483f0d250b4ad4b5c05fa3bc09ce308252eca42a19a": {
@@ -75222,6 +81608,142 @@
 },
 "input_tokens": 2820,
 "latency_s": 0.171,
+"model": "jev-1.13.0"
+},
+"b8eac60212746618f786fd845dff23198bc56967dbfb630a3a24fdafcc252cb3": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P075",
+"confidence": 0.92,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0,
+"P052": 0.0,
+"P053": 0.0,
+"P054": 0.0,
+"P055": 0.0,
+"P056": 0.0,
+"P057": 0.04,
+"P058": 0.0,
+"P059": 0.0,
+"P060": 0.0,
+"P061": 0.0,
+"P062": 0.0,
+"P063": 0.0,
+"P064": 0.0,
+"P065": 0.0,
+"P066": 0.0,
+"P067": 0.0,
+"P068": 0.0,
+"P069": 0.0,
+"P070": 0.0,
+"P071": 0.0,
+"P072": 0.0,
+"P073": 0.0,
+"P074": 0.0,
+"P075": 0.93,
+"P076": 0.0,
+"P077": 0.0,
+"P078": 0.0,
+"P079": 0.0,
+"P080": 0.0,
+"P081": 0.0,
+"P082": 0.0,
+"P083": 0.0,
+"P084": 0.0,
+"P085": 0.0,
+"P086": 0.0,
+"P087": 0.0,
+"P088": 0.0,
+"P089": 0.0,
+"P090": 0.0,
+"P091": 0.0,
+"P092": 0.0,
+"P093": 0.0,
+"P094": 0.0,
+"P095": 0.0,
+"P096": 0.0,
+"P097": 0.0,
+"P098": 0.0,
+"P099": 0.0,
+"P100": 0.0,
+"P101": 0.0,
+"P102": 0.0,
+"P103": 0.0,
+"P104": 0.0,
+"P105": 0.0,
+"P106": 0.0,
+"P107": 0.0,
+"P108": 0.0,
+"P109": 0.0,
+"P110": 0.0,
+"P111": 0.0,
+"P112": 0.0,
+"P113": 0.0,
+"P114": 0.0,
+"P115": 0.0,
+"P116": 0.01,
+"P117": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 12167,
+"latency_s": 0.223,
 "model": "jev-1.13.0"
 },
 "b90ee3e7c89196a48ef40ca99292caeca6858f2b73b21ace1fc24775fa188505": {
@@ -76975,6 +83497,97 @@
 "latency_s": 0.137,
 "model": "jev-1.13.0"
 },
+"be213c1e744304b96c1ab9c94f66317be37739bd44bc913ebd7aeb87ea80419c": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.42,
+"probabilities": {
+"other_way": 0.31,
+"same_way": 0.62,
+"silent": 0.07
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.37,
+"probabilities": {
+"claims_more": 0.53,
+"different_question": 0.05,
+"nothing_missing": 0.34,
+"other_way": 0.08
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.45,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.17,
+"1": 0.46,
+"2": 0.35,
+"3": 0.02
+},
+"score": 1.21,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.81,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.8,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.28,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.02,
+"1": 0.15,
+"2": 0.37,
+"3": 0.46
+},
+"score": 2.28,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.44,
+"probabilities": {
+"neighbouring": 0.62,
+"same_question": 0.36,
+"unrelated": 0.02
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.91,
+"probabilities": {
+"court": 0.93,
+"not_discussed": 0.04,
+"other_judge": 0.0,
+"party": 0.02
+},
+"type": "choice"
+}
+},
+"input_tokens": 3669,
+"latency_s": 0.147,
+"model": "jev-1.13.0"
+},
 "be2dbe7c2a435f2851395b2d6eb36510ee90060b1de8693ea92dc30f7bcc5bdd": {
 "answers": {
 "exists": {
@@ -77354,6 +83967,58 @@
 },
 "input_tokens": 2532,
 "latency_s": 0.194,
+"model": "jev-1.13.0"
+},
+"c054c77e5e89d4185a28a08a34a998655a65a22dca5505d409242f89802d3be8": {
+"answers": {
+"exists": {
+"noul": 0.4,
+"type": "noul"
+},
+"where": {
+"choice": "P025",
+"confidence": 0.6,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.01,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.02,
+"P018": 0.02,
+"P019": 0.09999999999999999,
+"P020": 0.0,
+"P021": 0.05,
+"P022": 0.0,
+"P023": 0.0,
+"P024": 0.12,
+"P025": 0.62,
+"P026": 0.04,
+"P027": 0.0,
+"P028": 0.01,
+"P029": 0.0,
+"P030": 0.01,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 6920,
+"latency_s": 0.188,
 "model": "jev-1.13.0"
 },
 "c066e3922e37776f5b219308bb3e77c82d41dfb06cb11afa822c5d1de6933551": {
@@ -78672,6 +85337,55 @@
 "latency_s": 0.165,
 "model": "jev-1.13.0"
 },
+"c37c6cffc7b9e0c7c58c3244789947897b7790db577e60299cae8d5be590f93d": {
+"answers": {
+"exists": {
+"noul": 0.99,
+"type": "noul"
+},
+"where": {
+"choice": "P019",
+"confidence": 0.87,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.01,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.08,
+"P019": 0.88,
+"P020": 0.01,
+"P021": 0.01,
+"P022": 0.01,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 9375,
+"latency_s": 0.211,
+"model": "jev-1.13.0"
+},
 "c39a7a095320161817fc948a9ae70871b02b9e4b481a1668e474038dacc1d042": {
 "answers": {
 "adds_specifics_structured": {
@@ -78958,6 +85672,97 @@
 },
 "input_tokens": 1916,
 "latency_s": 0.159,
+"model": "jev-1.13.0"
+},
+"c43885c30648ec03ea375f8ddc27c4b6ebcfba881377054c5b888be9b03bb8f1": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.52,
+"probabilities": {
+"other_way": 0.14,
+"same_way": 0.68,
+"silent": 0.18
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.67,
+"probabilities": {
+"claims_more": 0.75,
+"different_question": 0.06,
+"nothing_missing": 0.12,
+"other_way": 0.07
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.43,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.19,
+"1": 0.46,
+"2": 0.32,
+"3": 0.03
+},
+"score": 1.19,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.87,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.5,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.47,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.02,
+"1": 0.23,
+"2": 0.5,
+"3": 0.25
+},
+"score": 1.98,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.53,
+"probabilities": {
+"neighbouring": 0.31,
+"same_question": 0.6799999999999999,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.72,
+"probabilities": {
+"court": 0.79,
+"not_discussed": 0.2,
+"other_judge": 0.01,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3258,
+"latency_s": 0.179,
 "model": "jev-1.13.0"
 },
 "c4ce8830ae0519abce3b3b4fa9a13bf5b14c15a4435827eb9294c2c2bc3f2150": {
@@ -79428,6 +86233,188 @@
 "latency_s": 0.209,
 "model": "jev-1.13.0"
 },
+"c5a419a2f14bd8101d343e5e336ad74c00361e590f63b92ab50236854c0b87ce": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.85,
+"probabilities": {
+"other_way": 0.02,
+"same_way": 0.07,
+"silent": 0.91
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.79,
+"probabilities": {
+"claims_more": 0.13,
+"different_question": 0.84,
+"nothing_missing": 0.02,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.41,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.04,
+"1": 0.07,
+"2": 0.33,
+"3": 0.56
+},
+"score": 2.41,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.62,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.28,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.66,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.7,
+"1": 0.28,
+"2": 0.01,
+"3": 0.01
+},
+"score": 0.34,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.78,
+"probabilities": {
+"neighbouring": 0.85,
+"same_question": 0.02,
+"unrelated": 0.13
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.71,
+"probabilities": {
+"court": 0.2,
+"not_discussed": 0.79,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 4887,
+"latency_s": 0.182,
+"model": "jev-1.13.0"
+},
+"c5bff48a77f407085fdbccc57a9d56c6f441bbd7583780d0cdcd2bfcf61fca3e": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.57,
+"probabilities": {
+"other_way": 0.21,
+"same_way": 0.08,
+"silent": 0.71
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.4,
+"probabilities": {
+"claims_more": 0.37,
+"different_question": 0.55,
+"nothing_missing": 0.01,
+"other_way": 0.07
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.61,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.02,
+"2": 0.33,
+"3": 0.65
+},
+"score": 2.61,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.58,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.1,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.53,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.34,
+"1": 0.54,
+"2": 0.1,
+"3": 0.01
+},
+"score": 0.78,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.69,
+"probabilities": {
+"neighbouring": 0.8,
+"same_question": 0.16,
+"unrelated": 0.04
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.45,
+"probabilities": {
+"court": 0.39,
+"not_discussed": 0.6,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3167,
+"latency_s": 0.148,
+"model": "jev-1.13.0"
+},
 "c60f80dee1e57d6957e99a6f97aef3888ee21d18c875045dc166cd11caa7c10c": {
 "answers": {
 "adds_specifics_lean": {
@@ -79460,6 +86447,45 @@
 },
 "input_tokens": 1607,
 "latency_s": 0.153,
+"model": "jev-1.13.0"
+},
+"c64d2dc86722e92393cfad7e7d9651ba77f1eefe593fadd1a39207f9da903d34": {
+"answers": {
+"exists": {
+"noul": 0.98,
+"type": "noul"
+},
+"where": {
+"choice": "P016",
+"confidence": 0.92,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.03,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.01,
+"P016": 0.9400000000000001,
+"P017": 0.01,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 5579,
+"latency_s": 0.182,
 "model": "jev-1.13.0"
 },
 "c686bd2871cd46cfdc7f25c16db42c657d801196c303a52b390b422aa485d565": {
@@ -81229,6 +88255,97 @@
 },
 "input_tokens": 1471,
 "latency_s": 0.151,
+"model": "jev-1.13.0"
+},
+"cc2870812391398f8a41990fef8b8bc5328fc82179f0c476b6b6efec4a071b8e": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 1.0,
+"probabilities": {
+"other_way": 0.0,
+"same_way": 1.0,
+"silent": 0.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.67,
+"probabilities": {
+"claims_more": 0.24,
+"different_question": 0.01,
+"nothing_missing": 0.75,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.62,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.66,
+"1": 0.31,
+"2": 0.03,
+"3": 0.0
+},
+"score": 0.38,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.97,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.97,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.95,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.01,
+"2": 0.04,
+"3": 0.95
+},
+"score": 2.95,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.97,
+"probabilities": {
+"neighbouring": 0.02,
+"same_question": 0.98,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.99,
+"probabilities": {
+"court": 0.99,
+"not_discussed": 0.0,
+"other_judge": 0.01,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 3189,
+"latency_s": 0.184,
 "model": "jev-1.13.0"
 },
 "cc3d815b99e0d6dc532f6b1b7c654b039055f8258a4bfc752a66589f875678a7": {
@@ -84305,6 +91422,97 @@
 "latency_s": 0.223,
 "model": "jev-1.13.0"
 },
+"d230fea94ed194b76a234b443089aec39a73169ceae8f3399bf8f99f56710ca8": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.56,
+"probabilities": {
+"other_way": 0.07,
+"same_way": 0.71,
+"silent": 0.22
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.47,
+"probabilities": {
+"claims_more": 0.36,
+"different_question": 0.61,
+"nothing_missing": 0.02,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.41,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.02,
+"1": 0.13,
+"2": 0.27,
+"3": 0.58
+},
+"score": 2.41,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.54,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.67,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.32,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.26,
+"1": 0.44,
+"2": 0.18,
+"3": 0.12
+},
+"score": 1.16,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.49,
+"probabilities": {
+"neighbouring": 0.67,
+"same_question": 0.25,
+"unrelated": 0.08
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.57,
+"probabilities": {
+"court": 0.68,
+"not_discussed": 0.3,
+"other_judge": 0.0,
+"party": 0.02
+},
+"type": "choice"
+}
+},
+"input_tokens": 2006,
+"latency_s": 0.136,
+"model": "jev-1.13.0"
+},
 "d238299bb66d44b1fd2a10317b7476d6a2355842e98c2948d509728a09837e4f": {
 "answers": {
 "opposite": {
@@ -85789,6 +92997,97 @@
 "latency_s": 0.239,
 "model": "jev-1.13.0"
 },
+"d5a69ffffc3e4695e481bbe121d852b5e6460bb7ff1ec5410a192e24f781e88f": {
+"answers": {
+"direction": {
+"choice": "silent",
+"confidence": 0.96,
+"probabilities": {
+"other_way": 0.02,
+"same_way": 0.0,
+"silent": 0.98
+},
+"type": "choice"
+},
+"gap": {
+"choice": "different_question",
+"confidence": 0.99,
+"probabilities": {
+"claims_more": 0.0,
+"different_question": 1.0,
+"nothing_missing": 0.0,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.97,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.0,
+"2": 0.02,
+"3": 0.98
+},
+"score": 2.97,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.03,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.05,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.97,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.98,
+"1": 0.02,
+"2": 0.0,
+"3": 0.0
+},
+"score": 0.03,
+"type": "score"
+},
+"topic": {
+"choice": "unrelated",
+"confidence": 0.94,
+"probabilities": {
+"neighbouring": 0.04,
+"same_question": 0.0,
+"unrelated": 0.96
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.99,
+"probabilities": {
+"court": 0.01,
+"not_discussed": 0.99,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 4376,
+"latency_s": 0.146,
+"model": "jev-1.13.0"
+},
 "d5babf7cb64820c5e4633f949707b96ff8bdde4b830ea8db027a2b8b23947a18": {
 "answers": {
 "opposite": {
@@ -86107,6 +93406,97 @@
 },
 "input_tokens": 3025,
 "latency_s": 0.448,
+"model": "jev-1.13.0"
+},
+"d63d46e2b56b3fcd357d4b6f3e7db2127dec378c764beb2ddd0ebaa026a7660b": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.83,
+"probabilities": {
+"other_way": 0.03,
+"same_way": 0.89,
+"silent": 0.08
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.58,
+"probabilities": {
+"claims_more": 0.6900000000000001,
+"different_question": 0.13,
+"nothing_missing": 0.18,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.33,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.17,
+"1": 0.32,
+"2": 0.49,
+"3": 0.02
+},
+"score": 1.36,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.64,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.88,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.26,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.06,
+"1": 0.14,
+"2": 0.26,
+"3": 0.54
+},
+"score": 2.26,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.32,
+"probabilities": {
+"neighbouring": 0.44,
+"same_question": 0.55,
+"unrelated": 0.01
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.91,
+"probabilities": {
+"court": 0.93,
+"not_discussed": 0.05,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3518,
+"latency_s": 0.229,
 "model": "jev-1.13.0"
 },
 "d65c3206fb72bc48402f6a88d9b66d7a45d69b5880d3e7fd853b914b55c472bd": {
@@ -87704,6 +95094,97 @@
 },
 "input_tokens": 3147,
 "latency_s": 0.219,
+"model": "jev-1.13.0"
+},
+"d8ddd65a7ceec28adb2211568759f5469cd4cb7ccd6b80bdab092f5b845809e2": {
+"answers": {
+"direction": {
+"choice": "other_way",
+"confidence": 0.17,
+"probabilities": {
+"other_way": 0.45,
+"same_way": 0.36,
+"silent": 0.19
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.29,
+"probabilities": {
+"claims_more": 0.46,
+"different_question": 0.18,
+"nothing_missing": 0.12,
+"other_way": 0.24
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.36,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.12,
+"1": 0.36,
+"2": 0.47,
+"3": 0.05
+},
+"score": 1.45,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.7,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.83,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.47,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.02,
+"1": 0.21,
+"2": 0.5,
+"3": 0.27
+},
+"score": 2.01,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.63,
+"probabilities": {
+"neighbouring": 0.76,
+"same_question": 0.22,
+"unrelated": 0.02
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.87,
+"probabilities": {
+"court": 0.9,
+"not_discussed": 0.09,
+"other_judge": 0.0,
+"party": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 3372,
+"latency_s": 0.179,
 "model": "jev-1.13.0"
 },
 "d8e2605dc4b72137c55eca62de07b091a3d3dfbece6403e77000f218823ff542": {
@@ -89990,6 +97471,45 @@
 "latency_s": 0.16,
 "model": "jev-1.13.0"
 },
+"dda873345f66cf1302073c7955b1b278dd8003823d22c369746d78723e4c13f6": {
+"answers": {
+"exists": {
+"noul": 0.31,
+"type": "noul"
+},
+"where": {
+"choice": "P016",
+"confidence": 0.77,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.01,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.02,
+"P011": 0.03,
+"P012": 0.12,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.01,
+"P016": 0.79,
+"P017": 0.01,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.01
+},
+"type": "choice"
+}
+},
+"input_tokens": 5599,
+"latency_s": 0.16,
+"model": "jev-1.13.0"
+},
 "dda8af5b3e7ace8135efa72c82444be71f4ffd30909ae86de1e5ae3df17697a4": {
 "answers": {
 "adds_specifics_lean": {
@@ -90781,6 +98301,41 @@
 "latency_s": 0.357,
 "model": "jev-1.13.0"
 },
+"df124ddb0862b1ed9a591ff97d56ce38a8db11a3e115856e609e4728974c7435": {
+"answers": {
+"exists": {
+"noul": 0.05,
+"type": "noul"
+},
+"where": {
+"choice": "P014",
+"confidence": 0.64,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.26,
+"P011": 0.0,
+"P012": 0.01,
+"P013": 0.06,
+"P014": 0.67,
+"P015": 0.0,
+"P016": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 4742,
+"latency_s": 0.166,
+"model": "jev-1.13.0"
+},
 "df383ae34cbcc27fd70c650aaf0679c8e7fdf6a0c085c62947dc54c475975e25": {
 "answers": {
 "exists": {
@@ -90834,6 +98389,97 @@
 },
 "input_tokens": 6579,
 "latency_s": 0.165,
+"model": "jev-1.13.0"
+},
+"df59324c2bf2784f1306e09e3a5c1aa9183926b0ca6b314288a4396a8c333ae6": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.99,
+"probabilities": {
+"other_way": 0.01,
+"same_way": 0.99,
+"silent": 0.0
+},
+"type": "choice"
+},
+"gap": {
+"choice": "nothing_missing",
+"confidence": 0.87,
+"probabilities": {
+"claims_more": 0.09,
+"different_question": 0.0,
+"nothing_missing": 0.91,
+"other_way": 0.0
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.91,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.94,
+"1": 0.04,
+"2": 0.02,
+"3": 0.0
+},
+"score": 0.09,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.96,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.98,
+"type": "noul"
+},
+"support_level": {
+"confidence": 1.0,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.0,
+"1": 0.0,
+"2": 0.0,
+"3": 1.0
+},
+"score": 3.0,
+"type": "score"
+},
+"topic": {
+"choice": "same_question",
+"confidence": 0.68,
+"probabilities": {
+"neighbouring": 0.21,
+"same_question": 0.79,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 1.0,
+"probabilities": {
+"court": 1.0,
+"not_discussed": 0.0,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 2996,
+"latency_s": 0.175,
 "model": "jev-1.13.0"
 },
 "df5e39f0ee85046ec46d3d3ca88e2db004126ed264464785a96c17cdab2ab2d7": {
@@ -99604,6 +107250,60 @@
 "latency_s": 0.24,
 "model": "jev-1.13.0"
 },
+"f0dc5c4db5a80c605dee5f250eff00dfa00966a13cf558b6f6ea530a409e00fe": {
+"answers": {
+"exists": {
+"noul": 0.11,
+"type": "noul"
+},
+"where": {
+"choice": "P001",
+"confidence": 0.41,
+"probabilities": {
+"P000": 0.01,
+"P001": 0.43,
+"P002": 0.0,
+"P003": 0.01,
+"P004": 0.0,
+"P005": 0.01,
+"P006": 0.08,
+"P007": 0.07,
+"P008": 0.01,
+"P009": 0.04,
+"P010": 0.13,
+"P011": 0.02,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.01,
+"P015": 0.01,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.11,
+"P020": 0.0,
+"P021": 0.0,
+"P022": 0.01,
+"P023": 0.01,
+"P024": 0.01,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.01,
+"P028": 0.0,
+"P029": 0.01,
+"P030": 0.01,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 10953,
+"latency_s": 0.205,
+"model": "jev-1.13.0"
+},
 "f0e4a82a6e44d4b1ebb61c75c277413e787153cc485ac23bcc681e34b3eb84e5": {
 "answers": {
 "adds_specifics_structured": {
@@ -100194,6 +107894,97 @@
 "latency_s": 0.137,
 "model": "jev-1.13.0"
 },
+"f26724c8425f0aea1e6febf9aa01ceccd707a4d3410e88671eb92956ae24dc28": {
+"answers": {
+"direction": {
+"choice": "other_way",
+"confidence": 0.81,
+"probabilities": {
+"other_way": 0.88,
+"same_way": 0.03,
+"silent": 0.09
+},
+"type": "choice"
+},
+"gap": {
+"choice": "other_way",
+"confidence": 0.57,
+"probabilities": {
+"claims_more": 0.1,
+"different_question": 0.21,
+"nothing_missing": 0.0,
+"other_way": 0.6900000000000001
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.47,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.05,
+"1": 0.1,
+"2": 0.52,
+"3": 0.33
+},
+"score": 2.12,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.52,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.24,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.45,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.29,
+"1": 0.47,
+"2": 0.22,
+"3": 0.02
+},
+"score": 0.96,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.8,
+"probabilities": {
+"neighbouring": 0.86,
+"same_question": 0.1,
+"unrelated": 0.04
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "not_discussed",
+"confidence": 0.23,
+"probabilities": {
+"court": 0.24,
+"not_discussed": 0.43,
+"other_judge": 0.0,
+"party": 0.33
+},
+"type": "choice"
+}
+},
+"input_tokens": 4131,
+"latency_s": 0.153,
+"model": "jev-1.13.0"
+},
 "f278bc96086148d6fd828fad85fa8bfedcf4a2cf39ae1ec84f8e8048b2ea4c1a": {
 "answers": {
 "exists": {
@@ -100514,6 +108305,76 @@
 },
 "input_tokens": 1970,
 "latency_s": 0.17,
+"model": "jev-1.13.0"
+},
+"f47fb5316972f50937fd844b5979207ee1bef52b4e5586610c6081303acbde51": {
+"answers": {
+"exists": {
+"noul": 0.36,
+"type": "noul"
+},
+"where": {
+"choice": "P020",
+"confidence": 0.72,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.0,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.0,
+"P016": 0.0,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.25,
+"P020": 0.74,
+"P021": 0.0,
+"P022": 0.01,
+"P023": 0.0,
+"P024": 0.0,
+"P025": 0.0,
+"P026": 0.0,
+"P027": 0.0,
+"P028": 0.0,
+"P029": 0.0,
+"P030": 0.0,
+"P031": 0.0,
+"P032": 0.0,
+"P033": 0.0,
+"P034": 0.0,
+"P035": 0.0,
+"P036": 0.0,
+"P037": 0.0,
+"P038": 0.0,
+"P039": 0.0,
+"P040": 0.0,
+"P041": 0.0,
+"P042": 0.0,
+"P043": 0.0,
+"P044": 0.0,
+"P045": 0.0,
+"P046": 0.0,
+"P047": 0.0,
+"P048": 0.0,
+"P049": 0.0,
+"P050": 0.0,
+"P051": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 15778,
+"latency_s": 0.251,
 "model": "jev-1.13.0"
 },
 "f4a33ca71ab5310d7a1f46239249a01068be764f973c670de460dd3b7a2ca1e4": {
@@ -102414,6 +110275,45 @@
 "latency_s": 0.19,
 "model": "jev-1.13.0"
 },
+"f873fc39a63dfe300f5edd3d5b34c57761cc824a7e4e2dca413444cee93e1717": {
+"answers": {
+"exists": {
+"noul": 0.92,
+"type": "noul"
+},
+"where": {
+"choice": "P016",
+"confidence": 0.93,
+"probabilities": {
+"P000": 0.0,
+"P001": 0.0,
+"P002": 0.0,
+"P003": 0.0,
+"P004": 0.0,
+"P005": 0.0,
+"P006": 0.0,
+"P007": 0.0,
+"P008": 0.0,
+"P009": 0.0,
+"P010": 0.0,
+"P011": 0.0,
+"P012": 0.04,
+"P013": 0.0,
+"P014": 0.0,
+"P015": 0.01,
+"P016": 0.9400000000000001,
+"P017": 0.0,
+"P018": 0.0,
+"P019": 0.0,
+"P020": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 5597,
+"latency_s": 0.171,
+"model": "jev-1.13.0"
+},
 "f8947bcd03239b5624d568abe23bb8b8f6f7e5d05384e3d1c30c28b205741439": {
 "answers": {
 "adds_specifics_structured": {
@@ -103089,6 +110989,35 @@
 },
 "input_tokens": 1612,
 "latency_s": 0.16,
+"model": "jev-1.13.0"
+},
+"fae252ed284807042f9bda60c82cb486d9ffb41ddceed920071ef6938fb21a8e": {
+"answers": {
+"exists": {
+"noul": 0.02,
+"type": "noul"
+},
+"where": {
+"choice": "P000",
+"confidence": 0.41,
+"probabilities": {
+"P000": 0.45,
+"P001": 0.14,
+"P002": 0.02,
+"P003": 0.05,
+"P004": 0.21,
+"P005": 0.02,
+"P006": 0.01,
+"P007": 0.03,
+"P008": 0.03,
+"P009": 0.02,
+"P010": 0.02
+},
+"type": "choice"
+}
+},
+"input_tokens": 1959,
+"latency_s": 0.139,
 "model": "jev-1.13.0"
 },
 "fb38efd44ce68e4a1a1632b01fcd8d81b29bc3496e50a4cd865e676a93e728fb": {
@@ -104205,6 +112134,97 @@
 },
 "input_tokens": 3147,
 "latency_s": 0.161,
+"model": "jev-1.13.0"
+},
+"fe0ed9fb25677ae48fb27ba83d17ef96362aa04d3060524176a098f4a7d39cdb": {
+"answers": {
+"direction": {
+"choice": "same_way",
+"confidence": 0.21,
+"probabilities": {
+"other_way": 0.43,
+"same_way": 0.47,
+"silent": 0.1
+},
+"type": "choice"
+},
+"gap": {
+"choice": "claims_more",
+"confidence": 0.96,
+"probabilities": {
+"claims_more": 0.97,
+"different_question": 0.02,
+"nothing_missing": 0.0,
+"other_way": 0.01
+},
+"type": "choice"
+},
+"reach": {
+"confidence": 0.93,
+"legend": {
+"0": "No distance -- the opinion decides exactly this",
+"1": "A short step -- the opinion decides this in substance, worded differently",
+"2": "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+"3": "A different case entirely -- the opinion does not bear on it"
+},
+"probabilities": {
+"0": 0.01,
+"1": 0.05,
+"2": 0.93,
+"3": 0.01
+},
+"score": 1.94,
+"type": "score"
+},
+"same_issue": {
+"noul": 0.76,
+"type": "noul"
+},
+"states_it": {
+"noul": 0.55,
+"type": "noul"
+},
+"support_level": {
+"confidence": 0.79,
+"legend": {
+"0": "The opinion does not address the proposition",
+"1": "The opinion touches the topic but does not establish the proposition",
+"2": "The opinion partly supports it; the proposition overstates",
+"3": "The opinion directly and fully supports the proposition"
+},
+"probabilities": {
+"0": 0.02,
+"1": 0.11,
+"2": 0.81,
+"3": 0.06
+},
+"score": 1.9,
+"type": "score"
+},
+"topic": {
+"choice": "neighbouring",
+"confidence": 0.53,
+"probabilities": {
+"neighbouring": 0.69,
+"same_question": 0.31,
+"unrelated": 0.0
+},
+"type": "choice"
+},
+"whose_view": {
+"choice": "court",
+"confidence": 0.9,
+"probabilities": {
+"court": 0.93,
+"not_discussed": 0.07,
+"other_judge": 0.0,
+"party": 0.0
+},
+"type": "choice"
+}
+},
+"input_tokens": 4180,
+"latency_s": 0.196,
 "model": "jev-1.13.0"
 },
 "fe3c1d1f0ea37d69bceac84b28684d35d9b6afb20ce390c2c45149a554c4c8b3": {
