@@ -27,12 +27,24 @@ DEFAULT_STATE = {"proposition": "proposition",
                  "brief_sentence": "brief_sentence", "opinion": "excerpt"}
 
 
+def _score_top(a: dict) -> float:
+    """A score answer's probability of its TOP level, not its expectation.
+
+    `a["score"]` is the mean over the ordered legend. Averaging hides where
+    the mass sits: "90% sure every part is there" and "split 50/50 between
+    most-of-it and all-of-it" land on nearly the same number, and that is
+    precisely the partial-vs-full distinction. p(top level) keeps it, and beat
+    the expectation on every score question in the bank (test6).
+    """
+    return a["probabilities"][max(a["legend"], key=int)]
+
+
 def _signal(answers: dict, sig: dict) -> float:
     a, field = answers[sig["q"]], sig["field"]
     if field.startswith("p:"):
         v = a["probabilities"].get(field[2:], 0.0)
     elif field == "score":
-        v = a["score"] / (len(a["legend"]) - 1)
+        v = _score_top(a)
     else:
         v = a[field]
     return 1.0 - v if sig.get("invert") else v

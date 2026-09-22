@@ -1,0 +1,82 @@
+{
+ "state": {
+  "proposition": "proposition",
+  "opinion": "excerpt"
+ },
+ "questions": {
+  "same_issue": {
+   "type": "noul",
+   "_green": "yes",
+   "instructions": "Does `opinion` discuss the same legal issue that `proposition` is about?"
+  },
+  "states_it": {
+   "type": "noul",
+   "_green": "yes",
+   "instructions": "Does `opinion` contain a passage that states `proposition` or directly implies it is true?"
+  },
+  "whose_view": {
+   "type": "choice",
+   "_green": "court",
+   "instructions": "Where `opinion` discusses the idea in `proposition`, whose view is it?",
+   "criteria": {
+    "court": "The court's own holding or reasoning",
+    "party": "An argument by a party that the court rejects or does not adopt",
+    "other_judge": "A dissent or concurrence, not the majority",
+    "not_discussed": "The opinion does not discuss the idea"
+   }
+  },
+  "support_level": {
+   "type": "score",
+   "_green": "high",
+   "instructions": "How well does `opinion` support `proposition`?",
+   "criteria": [
+    "The opinion does not address the proposition",
+    "The opinion touches the topic but does not establish the proposition",
+    "The opinion partly supports it; the proposition overstates",
+    "The opinion directly and fully supports the proposition"
+   ]
+  },
+  "gap": {
+   "type": "choice",
+   "_green": "nothing_missing",
+   "instructions": "`proposition` is offered as something `opinion` establishes. What is wrong with that, if anything?",
+   "criteria": {
+    "nothing_missing": "The opinion establishes the proposition as stated",
+    "claims_more": "The opinion supports the same point but the proposition states it more broadly, more strongly, or adds a condition, category, or detail the opinion does not give",
+    "different_question": "The opinion is about a different legal question, so it establishes nothing either way about the proposition",
+    "other_way": "The opinion decides the point the other way, so it undercuts the proposition rather than establishing it"
+   }
+  },
+  "topic": {
+   "type": "choice",
+   "_green": "same_question",
+   "instructions": "How close is the legal question `opinion` decides to the legal question `proposition` asserts an answer to?",
+   "criteria": {
+    "same_question": "The opinion decides the same question",
+    "neighbouring": "A related question in the same area of law, but not the same question",
+    "unrelated": "A different area of law, or a question with no bearing on the proposition"
+   }
+  },
+  "direction": {
+   "type": "choice",
+   "_green": "same_way",
+   "instructions": "A party citing `opinion` for `proposition` wants the opinion to come out a particular way. Which way does it actually come out?",
+   "criteria": {
+    "same_way": "The opinion comes out the way the proposition needs",
+    "silent": "The opinion does not come out either way on this point",
+    "other_way": "The opinion comes out the opposite way"
+   }
+  },
+  "reach": {
+   "type": "score",
+   "_green": "low",
+   "instructions": "How far beyond what `opinion` actually decides would a reader have to go to reach `proposition`?",
+   "criteria": [
+    "No distance -- the opinion decides exactly this",
+    "A short step -- the opinion decides this in substance, worded differently",
+    "A real extension -- the opinion supports the general point but the proposition goes further than it decides",
+    "A different case entirely -- the opinion does not bear on it"
+   ]
+  }
+ }
+}

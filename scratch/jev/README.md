@@ -2,6 +2,8 @@
 
 **Start here:** `IDEAS.md` (status of every idea) · `RESULTS.md` (tests 1-4) ·
 `LOOP.md` (phrasing loop + shadow logging) · `LOCATOR_ASSESS.md` (test 5: locator
+`STAGE2.md` (tests 6-7: choice vs score question types, and grading the claims
+the gate does not clear) ·
 feeding the LLM assessment — costed, not run) · `jev-question-loops.html` (explainer).
 
 Background and the idea list: `../jev_citation_checking_research.md`.
@@ -62,3 +64,15 @@ the locator buys the gate a better clearance rate.
 - Opus never sees Jev's answers (the Haiku prescreen failed by biasing Opus).
 - Counting, dates, numbers, pincites stay in code (documented Jev weak spots).
 - Questions are literal and atomic; combination logic lives in Python.
+
+
+## Test 6 - choice vs score (`test6_choice_vs_score.py`)
+No new API calls. A `score` answer is a `choice` plus an expectation over its
+ordered legend; that averaging destroys the safety margin the gate needs.
+Read `probabilities[top_level]` instead. See `STAGE2.md`.
+
+## Test 7 - stage 2 (`stage2_data.py`, `test7_stage2.py`)
+The job that starts where the gate stops: among claims the gate did NOT clear,
+is this an overstatement or a case that does not do the work at all? 308
+badge-labelled claims across 13 briefs, 71 of them never seen by any tuning.
+Different questions from the gate - mixing the two families degrades both.

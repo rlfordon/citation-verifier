@@ -71,8 +71,11 @@ def _green_value(ans: dict, green) -> float:
     if ans["type"] == "noul":
         return ans["noul"] if green == "yes" else 1.0 - ans["noul"]
     if ans["type"] == "score":
-        v = ans["score"] / (len(ans["legend"]) - 1)
-        return v if green == "high" else 1.0 - v
+        # p(top level), NOT ans["score"] (the expectation over the legend):
+        # averaging hides where the mass sits, which is the partial-vs-full
+        # distinction the gate turns on. See test6_choice_vs_score.py.
+        lo, hi = min(ans["legend"], key=int), max(ans["legend"], key=int)
+        return ans["probabilities"][hi if green == "high" else lo]
     opts = [green] if isinstance(green, str) else green
     return sum(ans["probabilities"].get(o, 0.0) for o in opts)
 

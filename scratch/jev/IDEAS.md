@@ -1,6 +1,6 @@
 # Jev ideas — living backlog
 
-Last updated 2026-09-19. **This file is the current status of every idea.** The
+Last updated 2026-09-22. **This file is the current status of every idea.** The
 original reasoning for ideas A–H is in `../jev_citation_checking_research.md` §5
 (its ranking table is a snapshot from before any experiments). Session record:
 `docs/retrospectives/2026-09-19-jev-exploration.md`.
@@ -20,9 +20,10 @@ Standing rules for anything built on it:
 
 | # | Idea | Status | Next action |
 |---|---|---|---|
-| A | Decomposed support rubric | **Done** — measured, then reworded by the phrasing loop | none |
+| A | Decomposed support rubric | **Done** — measured, reworded by the phrasing loop, then split in two: gate questions and stage-2 questions are different sets (`STAGE2.md`) | none |
 | B | Auto-Green gate | **Measured; running in shadow** | turn on when the trigger below is met |
 | C | Passage locator | **Measured** (96% top-5). Feeding it to the LLM assessment was **designed, costed, and parked without a paid run** -- best case saves 36% (~$0.86 a brief), ~$0.40 after any fallback | none -- see `LOCATOR_ASSESS.md` for the reopen conditions |
+| I | **Stage 2: grade the claims the gate does not clear** | **Measured** — 0.88 AUC separating "overstated" from "wrong case" on 5 unseen briefs; "wrong subject vs overstated" is the sharpest cut (0.89) | log the stage-2 questions in `jev_shadow.py` (bump `RUBRIC_VERSION`) so the pool grows; more held-out *partial* claims is the binding constraint |
 | D | Quote-alteration adjudicator | Not started — **blocked** on the quote-matcher fix | decide the matcher fix (`../TODO.md`, top item) |
 | E | Second reader on Opus's proven passage | Not started — **blocked** on the `opinion_block` proof check, which needs the matcher fix | same |
 | F | Wrong-document / topic tripwire | Not built; partly answered by data (see I) | fold into I |
