@@ -11,8 +11,27 @@ Stage 2 orders a review queue. It never auto-clears anything, so it carries
 none of the gate's safety risk — which is why it can afford question types and
 combination rules the gate cannot.
 
-Scripts: `test6_choice_vs_score.py`, `stage2_data.py`, `test7_stage2.py`.
-All responses cached in `cache.json`; reruns are free. Total spend: ~$0.20.
+Scripts: `test6_choice_vs_score.py`, `stage2_data.py`, `test7_stage2.py`,
+`test8_checker.py`. All responses cached in `cache.json`; reruns are free.
+Total spend: ~$0.25.
+
+## Glossary — every term this document coins
+
+| term | plain meaning |
+|---|---|
+| **stage 1** / "the gate" | Jev clearing obviously-supported claims so no LLM call is needed. Its dangerous error is waving a bad citation through. |
+| **stage 2** | Judging the claims stage 1 did *not* clear: overstatement, or a case that does not do the work at all. |
+| **tuning briefs** | The briefs used to pick questions and thresholds. Looking at these repeatedly is expected and fine. |
+| **held-out briefs** | Briefs kept completely out of every choice, used once at the end to check whether a result survives on material nothing was tuned against. Once read, they are spent. |
+| **detailed labels** | Ground truth taken from `badge_label`, which names the *kind* of failure ("Case on unrelated subject"), so quote problems can be excluded. |
+| **coarse labels** | Ground truth taken from the old Green/Yellow/Red colour, which lumps several kinds of failure together. Noisier. |
+| **supported / partial / unsupported** | The three ground-truth classes. "Partial" = the case is on point but the brief claimed more than it holds. |
+| **AUC** | Pick one good claim and one bad claim at random; how often does the signal rank them correctly. 0.5 = coin flip, 1.0 = perfect. |
+| **worst negative** | The highest score reached by any claim that should NOT be cleared. A threshold has to sit above it, so the lower it is, the more room there is. |
+| **margin / headroom** | The gap between that worst negative and the threshold. Without it, a threshold that worked on old briefs fails on the next one. |
+| **bad clear** | A bad citation cleared as good. |
+| **false accusation** | A good citation reported as bad. |
+| **noul / choice / score** | Jev's three question types: a single probability, a set of named options, and an ordered scale. |
 
 ## Choice vs score (test 6)
 
@@ -68,11 +87,11 @@ once a claim has already failed, topic is exactly what distinguishes
 
 **332 claims across 13 briefs.** Two independent axes, deliberately kept apart:
 
-- `label_source` — **badge** (`badge_label` names the *kind* of failure, so
+- label detail — **badge** (`badge_label` names the *kind* of failure, so
   quote and citation-resolution findings are dropped instead of poisoning the
   partial class) or **colour** (legacy `/verify-brief` runs that only recorded
   Green/Yellow/Red — coarser, older prompt, a secondary check).
-- `split` — **search** (briefs some Jev tuning has touched) or **lock2**
+- which half of the data — **search** (briefs some Jev tuning has touched) or **held-out**
   (briefs no Jev tuning has ever touched).
 
 | badge | class | kind |
@@ -85,10 +104,10 @@ once a claim has already failed, topic is exactly what distinguishes
 
 | source | split | claims | supported | partial | unsupported | briefs |
 |---|---|---|---|---|---|---|
-| badge | search | 138 | 79 | 35 | 24 | payne, kettering, sonnet-q3, ohio-mailbox, extrinsic, withers |
-| badge | lock2 | 71 | 51 | 7 | 13 | maxwell, ohio-pc, lawd207038, protege, makewhole |
-| colour | search | 40 | 24 | 7 | 9 | payne, kettering |
-| colour | lock2 | **83** | 17 | **37** | **29** | fletcher, fivehouse, valve |
+| detailed | tuning | 138 | 79 | 35 | 24 | payne, kettering, sonnet-q3, ohio-mailbox, extrinsic, withers |
+| detailed | held out | 71 | 51 | 7 | 13 | maxwell, ohio-pc, lawd207038, protege, makewhole |
+| coarse | tuning | 40 | 24 | 7 | 9 | payne, kettering |
+| coarse | held out | **83** | 17 | **37** | **29** | fletcher, fivehouse, valve |
 
 Two fixes went into getting here, both of which changed the numbers:
 
@@ -154,8 +173,8 @@ clearest operational meaning: a wrong-subject citation is a different
 conversation with the author than an overstated one.
 
 **4. Combining still does not beat the best single signal by much.** Fourth
-time: on colour/lock2 the carried-4 mean (0.777) edges `whose_view` alone
-(0.759), but that is inside the noise, and on badge/lock2 the single signal
+time: on held-out briefs with coarse labels the carried-4 mean (0.777) edges `whose_view` alone
+(0.759), but that is inside the noise, and on held-out briefs with detailed labels the single signal
 wins (0.879 vs 0.868). The signals are ~0.92 correlated within family — the
 same model answering near-paraphrases about the same text.
 
@@ -184,10 +203,10 @@ produced the only false accusation in the earlier pass (an ohio-pc claim that
 said "Pfeifer J. **dissent** in Gill..." in the proposition itself). Whether a
 brief *hides* that it is quoting a dissent is a separate, deterministic check.
 
-**Protocol:** both thresholds chosen on `search` by a rule declared in the
+**Protocol:** both thresholds chosen on the tuning briefs by a rule declared in the
 script, with explicit margins (LOOP.md: a threshold flush against the worst
 training example does not survive a new brief), then frozen and applied to
-`lock2` unchanged.
+the held-out briefs unchanged.
 
     clear if as_written > 0.580                  (worst search negative 0.480 + 0.10)
     flag  if min(whose_view, same_issue) < 0.130 (lowest search supported 0.180 - 0.05)
@@ -195,7 +214,7 @@ training example does not survive a new brief), then frozen and applied to
 | cell | claims | CLEAR | bad clears | FLAG | false accusations | to LLM |
 |---|---|---|---|---|---|---|
 | search (fitted here) | 178 | 48 (27%) | **0** | 18 (10%) | **0** | 63% |
-| **lock2 (never seen)** | 154 | 36 (23%) | **0** | 19 (12%) | **0** | 64% |
+| **held-out (never seen)** | 154 | 36 (23%) | **0** | 19 (12%) | **0** | 64% |
 | — badge-labelled | 71 | 25 (35%) | 0 | 4 (6%) | 0 | 59% |
 | — colour-labelled | 83 | 11 (13%) | 0 | 15 (18%) | 0 | 69% |
 | all 13 briefs | 332 | 84 (25%) | **0** | 37 (11%) | **0** | 64% |
@@ -224,13 +243,13 @@ standalone tool must say so: silence is "not checked", never "clean".
 - The dataset **excludes fabricated cases and fabricated quotes** — the
   CourtListener lookup and the quote matcher catch those upstream for free. So
   test 8 measures the hard residual class, and the full stack catches more.
-- `badge/lock2` task B still rests on **7 partial vs 13 unsupported**. The big
-  held-out cell (`colour/lock2`, 37 vs 29) has the coarser labels. There is no
+- `held-out briefs with detailed labels` task B still rests on **7 partial vs 13 unsupported**. The big
+  held-out cell (`held-out briefs with coarse labels`, 37 vs 29) has the coarser labels. There is no
   cell that is both large and cleanly labelled — that is the gap to close.
 - Labels are Opus verdicts, not human judgements, except in the frozen corpora,
   and the badge was assigned by a model that read the same opinion Jev reads.
 - `valve` is a brief built largely of fabricated citations, so its negatives
-  may be unrepresentatively blatant; it is 42 of the 83 colour/lock2 rows.
+  may be unrepresentatively blatant; it is 42 of the 83 held-out briefs with coarse labels rows.
 - The `quote_suspect` flag (legacy free-text that complains only about quote
   wording on a claim the case otherwise supports) is heuristic. Only 3 rows
   trip it; `--strict` excludes them and changes nothing material.

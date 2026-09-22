@@ -10,16 +10,16 @@ so it carries none of the gate's safety risk.
 
 Two independent axes, deliberately kept apart:
 
-  label_source  "badge" -- badge_label names the KIND of failure, so quote and
+  label_source  "detailed" -- badge_label names the KIND of failure, so quote and
                            citation-resolution findings can be DROPPED instead
                            of poisoning the partial class. The primary data.
-                "colour" -- legacy /verify-brief runs that only recorded
+                "coarse" -- legacy /verify-brief runs that only recorded
                            Green/Yellow/Red. Coarser and from an older
                            assessment prompt: a secondary check, never mixed
                            into the primary result.
 
-  split         "search" -- briefs some Jev tuning has already touched.
-                "lock2"  -- briefs no Jev tuning has ever touched.
+  split         "tuning" -- briefs some Jev tuning has already touched.
+                "held_out"  -- briefs no Jev tuning has ever touched.
 
 A BRIEF never straddles a split: re-runs and companion filings of the same
 matter share a `group`, and near-duplicate propositions are deduplicated
@@ -102,25 +102,25 @@ _UNUSABLE = re.compile(
 # (workdir, group, split, label_source)
 SOURCES = [
     # --- badge-labelled: the primary data ---
-    (REPO / "matters/payne",                    "payne",         "search", "badge"),
-    (REPO / "matters/kettering-mtd",            "kettering",     "search", "badge"),
-    (REPO / "matters/sonnet-q3-protest",        "sonnet-q3",     "search", "badge"),
-    (REPO / "matters/ohio-mailbox",             "ohio-mailbox",  "search", "badge"),
-    (REPO / "matters/extrinsic-evidence",       "extrinsic",     "search", "badge"),
-    (REPO / "matters/withers-v2-demo",          "withers",       "search", "badge"),
-    (REPO / "briefs/maxwell-v-michael",         "maxwell",       "lock2",  "badge"),
+    (REPO / "matters/payne",                    "payne",         "tuning", "detailed"),
+    (REPO / "matters/kettering-mtd",            "kettering",     "tuning", "detailed"),
+    (REPO / "matters/sonnet-q3-protest",        "sonnet-q3",     "tuning", "detailed"),
+    (REPO / "matters/ohio-mailbox",             "ohio-mailbox",  "tuning", "detailed"),
+    (REPO / "matters/extrinsic-evidence",       "extrinsic",     "tuning", "detailed"),
+    (REPO / "matters/withers-v2-demo",          "withers",       "tuning", "detailed"),
+    (REPO / "briefs/maxwell-v-michael",         "maxwell",       "held_out",  "detailed"),
     (REPO / "briefs/2026-05-25-ohio-physical-control-system-b",
-                                                "ohio-pc",       "lock2",  "badge"),
+                                                "ohio-pc",       "held_out",  "detailed"),
     (REPO / "briefs/gov.uscourts.lawd.207038.49.1",
-                                                "lawd207038",    "lock2",  "badge"),
-    (REPO / "briefs/protege-makewhole",         "protege",       "lock2",  "badge"),
-    (REPO / "briefs/make-whole-bankruptcy-ny",  "makewhole",     "lock2",  "badge"),
+                                                "lawd207038",    "held_out",  "detailed"),
+    (REPO / "briefs/protege-makewhole",         "protege",       "held_out",  "detailed"),
+    (REPO / "briefs/make-whole-bankruptcy-ny",  "makewhole",     "held_out",  "detailed"),
     # --- colour-labelled: the secondary check ---
-    (REPO / "briefs/payne-proposed",            "payne",         "search", "colour"),
-    (REPO / "briefs/kettering-v-collier",       "kettering",     "search", "colour"),
-    (REPO / "briefs/fletcher-v-experian",       "fletcher",      "lock2",  "colour"),
-    (REPO / "briefs/fivehouse-v-dod",           "fivehouse",     "lock2",  "colour"),
-    (REPO / "briefs/Valve v Rothschild",        "valve",         "lock2",  "colour"),
+    (REPO / "briefs/payne-proposed",            "payne",         "tuning", "coarse"),
+    (REPO / "briefs/kettering-v-collier",       "kettering",     "tuning", "coarse"),
+    (REPO / "briefs/fletcher-v-experian",       "fletcher",      "held_out",  "coarse"),
+    (REPO / "briefs/fivehouse-v-dod",           "fivehouse",     "held_out",  "coarse"),
+    (REPO / "briefs/Valve v Rothschild",        "valve",         "held_out",  "coarse"),
 ]
 
 
@@ -257,7 +257,7 @@ def build() -> list[dict]:
             continue
         kept = 0
         for i, row in enumerate(csv.DictReader(cf.open(encoding="utf-8"))):
-            got = (_badge_label(row) if source == "badge"
+            got = (_badge_label(row) if source == "detailed"
                    else _colour_label(row))
             if got is None:
                 drops[f"{source}: unusable label"] += 1
@@ -285,7 +285,7 @@ def build() -> list[dict]:
             rows.append({
                 "id": f"{workdir.name}:{row.get('claim_id', i)}",
                 "group": group, "split": split, "label_source": source,
-                "label": label, "kind": kind_, "badge": badge,
+                "label": label, "kind": kind_, "detailed": badge,
                 "quote_suspect": badge == "(quote-suspect)",
                 "is_sup": label == "supported",
                 "proposition": prop,
@@ -326,8 +326,8 @@ def main() -> None:
     hdr = f"{'source':7s} {'split':7s} {'claims':>7s} {'sup':>5s} {'part':>5s} {'unsup':>6s}  groups"
     print(hdr)
     print("-" * len(hdr))
-    for source in ("badge", "colour"):
-        for split in ("search", "lock2"):
+    for source in ("detailed", "coarse"):
+        for split in ("tuning", "held_out"):
             sub = [r for r in rows
                    if r["label_source"] == source and r["split"] == split]
             if not sub:

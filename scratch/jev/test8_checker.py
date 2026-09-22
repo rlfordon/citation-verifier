@@ -13,8 +13,8 @@ The two errors are not symmetric and are not traded off against each other:
     a BAD CLEAR waves a bad citation through           -- the gate's error
     a FALSE ACCUSATION calls a good citation bad       -- the flag's error
 
-**Protocol.** Both thresholds are chosen on `search` by a rule declared here,
-before looking at `lock2`, and then applied unchanged. LOOP.md's lesson was
+**Protocol.** Both thresholds are chosen on the tuning briefs by a rule declared here,
+before looking at `held-out`, and then applied unchanged. LOOP.md's lesson was
 that a threshold sitting flush against the worst training example does not
 survive contact with a new brief, so each side carries an explicit margin.
 
@@ -37,7 +37,7 @@ from stage2_data import load_dataset
 
 ROUND = HERE / "bank" / "checker_v0.json"
 
-# Declared before looking at lock2.
+# Declared before looking at held-out.
 CLEAR_MARGIN = 0.10   # LOOP.md: a flush threshold does not survive a new brief
 FLAG_MARGIN = 0.05
 
@@ -100,7 +100,7 @@ def main() -> None:
     flag_sig = np.minimum(X[:, names.index("whose_view")],
                           X[:, names.index("same_issue")])
 
-    s = split == "search"
+    s = split == "tuning"
     # CLEAR: above every not-supported search claim, plus a margin.
     worst_neg = clear_sig[s & (lab != "supported")].max()
     clear_thr = min(0.995, worst_neg + CLEAR_MARGIN)
@@ -108,16 +108,16 @@ def main() -> None:
     best_pos = flag_sig[s & (lab == "supported")].min()
     flag_thr = max(0.0, best_pos - FLAG_MARGIN)
 
-    print(f"Thresholds chosen on `search` ({s.sum()} claims), then frozen:")
+    print(f"Thresholds chosen on the tuning briefs ({s.sum()} claims), then frozen:")
     print(f"  clear if as_written          > {clear_thr:.3f}  "
-          f"(worst search negative {worst_neg:.3f} + {CLEAR_MARGIN} margin)")
+          f"(worst not-supported claim in tuning {worst_neg:.3f} + {CLEAR_MARGIN} margin)")
     print(f"  flag  if min(whose_view,same_issue) < {flag_thr:.3f}  "
-          f"(lowest search supported {best_pos:.3f} - {FLAG_MARGIN} margin)\n")
+          f"(lowest supported claim in tuning {best_pos:.3f} - {FLAG_MARGIN} margin)\n")
 
-    for tag, m in (("SEARCH (thresholds fitted here)", s),
-                   ("LOCK2  (never seen -- the real test)", split == "lock2"),
-                   ("  of which badge-labelled", (split == "lock2") & (src == "badge")),
-                   ("  of which colour-labelled", (split == "lock2") & (src == "colour")),
+    for tag, m in (("TUNING BRIEFS (thresholds were fitted here)", s),
+                   ("HELD-OUT BRIEFS (never used for tuning -- the real test)", split == "held_out"),
+                   ("  ...of those, with detailed labels", (split == "held_out") & (src == "detailed")),
+                   ("  ...of those, with coarse labels", (split == "held_out") & (src == "coarse")),
                    ("ALL 13 BRIEFS", np.ones(len(rows), bool))):
         if not m.sum():
             continue

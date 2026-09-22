@@ -34,10 +34,10 @@ from stage2_data import load_dataset
 
 ROUND = HERE / "bank" / "stage2_round_00.json"
 CARRIED = {"same_issue", "states_it", "whose_view", "support_level"}
-# (label_source, split) -- the primary result is badge/lock2; colour/lock2 is
+# (label_source, split) -- the primary result is badge/held-out; colour/held-out is
 # a bigger but coarser held-out check.
-CELLS = [("badge", "search"), ("badge", "lock2"),
-         ("colour", "search"), ("colour", "lock2")]
+CELLS = [("detailed", "tuning"), ("detailed", "held_out"),
+         ("coarse", "tuning"), ("coarse", "held_out")]
 
 
 def auc(pos, neg) -> float:
@@ -108,13 +108,14 @@ def main() -> None:
         m = cell == k
         print(f"{k:14s} {m.sum():3d} claims  {dict(Counter(lab[m]))}")
     print()
-    print("Task A = supported vs rest (what stage 1 does).")
-    print("Task B = partial vs unsupported, among non-supported claims only")
-    print("         (what stage 2 would do). 1.0 = perfect, 0.5 = coin flip.")
-    print("badge/lock2 is the cleanest held-out cell but the smallest;")
-    print("colour/lock2 is 3x bigger with coarser labels.\n")
+    print("Job 1 (clearing): supported claims vs everything else.")
+    print("Job 2 (grading): among claims that are NOT supported, is it an")
+    print("         overstatement (partial) or a case that does not do the work")
+    print("         at all (unsupported)?  1.0 = perfect, 0.5 = coin flip.")
+    print("Detailed labels are cleaner but the held-out group is small;")
+    print("colour/held-out is 3x bigger with coarser labels.\n")
 
-    head = f"{'signal':16s} {'kind':8s}" + "".join(f"{'A ' + k:>16s}" for k in keys)
+    head = f"{'signal':16s} {'kind':8s}" + "".join(f"{'clear ' + k:>16s}" for k in keys)
     print(head)
     A = {}
     for j, n in enumerate(names):
@@ -124,12 +125,12 @@ def main() -> None:
             vals.append(auc(X[m & (lab == "supported"), j],
                             X[m & (lab != "supported"), j]))
         A[n] = vals
-        kk = "carried" if n in CARRIED else "new"
+        kk = "reused" if n in CARRIED else "new"
         print(f"{n:16s} {kk:8s}" + "".join(f"{v:16.3f}" for v in vals))
 
     print()
-    head = (f"{'signal':16s} {'kind':8s}" + "".join(f"{'B ' + k:>16s}" for k in keys)
-            + f"{'B colour/lock2 CI':>20s}")
+    head = (f"{'signal':16s} {'kind':8s}" + "".join(f"{'grade ' + k:>16s}" for k in keys)
+            + f"{'coarse held-out CI':>20s}")
     print(head)
     table = []
     for j, n in enumerate(names):
@@ -138,19 +139,19 @@ def main() -> None:
             m = cell == k
             par, uns = X[m & (lab == "partial"), j], X[m & (lab == "unsupported"), j]
             vals.append(auc(par, uns))
-            if k == "colour/lock2":
+            if k == "coarse/held_out":
                 ci = boot_ci(par, uns)
         table.append((vals[-1], n, vals, ci))
     for _, n, vals, ci in sorted(table, reverse=True):
-        kk = "carried" if n in CARRIED else "new"
+        kk = "reused" if n in CARRIED else "new"
         print(f"{n:16s} {kk:8s}" + "".join(f"{v:16.3f}" for v in vals)
               + f"{'[%.2f, %.2f]' % ci:>20s}")
 
-    print("\nwrong_subject vs overstated (badge cells only -- colour rows have "
+    print("\nwrong_subject vs overstated (detailed labels only -- coarse rows have "
           "no kind detail):")
     for j, n in enumerate(names):
         out = []
-        for k in ("badge/search", "badge/lock2"):
+        for k in ("detailed/tuning", "detailed/held_out"):
             m = cell == k
             out.append(auc(X[m & (kind == "overstated"), j],
                            X[m & (kind == "wrong_subject"), j]))
@@ -163,15 +164,15 @@ def main() -> None:
     grp = np.array([r["group"] for r in rows])
     allm = np.ones(len(rows), bool)
     print(f"\n{'signal':16s} {'pooled':>9s} {'within all':>11s} "
-          f"{'within badge':>13s} {'within colour':>14s}")
+          f"{'within detailed':>16s} {'within coarse':>14s}")
     wb_rows = []
     for j, n in enumerate(names):
         p, u = X[lab == "partial", j], X[lab == "unsupported", j]
         wb_rows.append((within_brief(X, j, grp, lab, allm), n, auc(p, u),
-                        within_brief(X, j, grp, lab, src == "badge"),
-                        within_brief(X, j, grp, lab, src == "colour")))
+                        within_brief(X, j, grp, lab, src == "detailed"),
+                        within_brief(X, j, grp, lab, src == "coarse")))
     for w, n, pooled, wbb, wbc in sorted(wb_rows, reverse=True):
-        print(f"{n:16s} {pooled:9.3f} {w:11.3f} {wbb:13.3f} {wbc:14.3f}")
+        print(f"{n:16s} {pooled:9.3f} {w:11.3f} {wbb:16.3f} {wbc:14.3f}")
 
     idx = {n: j for j, n in enumerate(names)}
     combos = {
