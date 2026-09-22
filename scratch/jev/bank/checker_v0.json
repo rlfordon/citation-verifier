@@ -1,0 +1,46 @@
+{
+ "_comment": "Two-sided checker rubric: ONE Jev request per claim carrying both the clear-side questions (as_written/coverage, from the phrasing loop's round-3 champion) and the flag-side questions (whose_view/same_issue, the best stage-2 signals). Extra questions in one request add no latency and almost no cost, so both sides ride along together. Lean state (no brief_sentence) because the older workdirs do not record one -- the same framing must apply to every brief or the splits are not comparable.",
+ "state": {"proposition": "proposition", "opinion": "excerpt"},
+ "questions": {
+  "as_written": {
+   "type": "choice",
+   "_green": "fully",
+   "_side": "clear",
+   "instructions": "Is `proposition`, exactly as written, fully supported by `opinion`?",
+   "criteria": {
+    "fully": "The opinion supports the proposition exactly as written, with nothing added or strengthened",
+    "not_fully": "The proposition adds, strengthens, or changes something compared with what the opinion says, or the opinion does not address it"
+   }
+  },
+  "coverage": {
+   "type": "choice",
+   "_green": "all_parts",
+   "_side": "clear",
+   "instructions": "How much of `proposition` does `opinion` state or directly imply?",
+   "criteria": {
+    "all_parts": "Every clause and qualifier of the proposition is stated or directly implied by the opinion",
+    "main_part_only": "The opinion supports the main point, but one clause, qualifier, or detail of the proposition is not in the opinion",
+    "little_or_none": "The opinion does not state the main point of the proposition"
+   }
+  },
+  "whose_view": {
+   "type": "choice",
+   "_green": ["court", "other_judge"],
+   "_side": "flag",
+   "_note": "other_judge counts as green here: citing a dissent AS a dissent is legitimate, and penalising it produced the only false accusation in the one-sided run. Whether the brief hides that it is a dissent is a separate, deterministic check.",
+   "instructions": "Where `opinion` discusses the idea in `proposition`, whose view is it?",
+   "criteria": {
+    "court": "The court's own holding or reasoning",
+    "party": "An argument by a party that the court rejects or does not adopt",
+    "other_judge": "A dissent or concurrence, not the majority",
+    "not_discussed": "The opinion does not discuss the idea"
+   }
+  },
+  "same_issue": {
+   "type": "noul",
+   "_green": "yes",
+   "_side": "flag",
+   "instructions": "Does `opinion` discuss the same legal issue that `proposition` is about?"
+  }
+ }
+}

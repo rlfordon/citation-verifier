@@ -24,6 +24,7 @@ Standing rules for anything built on it:
 | B | Auto-Green gate | **Measured; running in shadow** | turn on when the trigger below is met |
 | C | Passage locator | **Measured** (96% top-5). Feeding it to the LLM assessment was **designed, costed, and parked without a paid run** -- best case saves 36% (~$0.86 a brief), ~$0.40 after any fallback | none -- see `LOCATOR_ASSESS.md` for the reopen conditions |
 | I | **Stage 2: grade the claims the gate does not clear** | **Measured** — ~0.86 within-brief separating "overstated" from "wrong case" across 13 briefs (0.97 where labels are clean, 0.80 where coarse); "wrong subject vs overstated" is the sharpest cut | log the stage-2 questions in `jev_shadow.py` (bump `RUBRIC_VERSION`); the repo is exhausted — more clean labels now means running the pipeline on new briefs |
+| J | **Two-sided poor-mans checker** (clear greens + flag reds in one Jev request, LLM only for the middle) | **Measured** — on 5 unseen briefs: 0 bad clears, 0 false accusations, 36% of claims answered without an LLM; flag recall 36-43% | build the tooling and run it on live briefs (STAGE2.md test 8) |
 | D | Quote-alteration adjudicator | Not started — **blocked** on the quote-matcher fix | decide the matcher fix (`../TODO.md`, top item) |
 | E | Second reader on Opus's proven passage | Not started — **blocked** on the `opinion_block` proof check, which needs the matcher fix | same |
 | F | Wrong-document / topic tripwire | Not built; partly answered by data (see I) | fold into I |

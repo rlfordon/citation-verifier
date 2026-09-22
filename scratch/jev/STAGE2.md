@@ -163,8 +163,67 @@ same model answering near-paraphrases about the same text.
 despite being the worst kind of gate signal. The averaging that destroys safety
 margin is harmless when nothing auto-clears and you only want an ordering.
 
+## Test 8 — the two-sided checker
+
+Stage 2 on its own is weak product: escalated claims go to the LLM anyway, and
+the LLM already produces the badge. The version that pays is **two-sided** —
+clear the obvious greens, flag the obvious reds, send only the middle to the
+LLM. Both sides ride in **one Jev request** (`bank/checker_v0.json`), because
+extra questions add no latency and almost no cost:
+
+- clear side: `as_written` (the phrasing loop's champion question)
+- flag side: `min(whose_view, same_issue)`
+
+The two errors are not symmetric and are never traded against each other: a
+**bad clear** waves a bad citation through; a **false accusation** calls a good
+citation bad. The second is the one that destroys trust in a standalone tool.
+
+One fix from the one-sided run: `whose_view` now counts `other_judge` as
+acceptable. Citing a dissent *as* a dissent is legitimate, and penalising it
+produced the only false accusation in the earlier pass (an ohio-pc claim that
+said "Pfeifer J. **dissent** in Gill..." in the proposition itself). Whether a
+brief *hides* that it is quoting a dissent is a separate, deterministic check.
+
+**Protocol:** both thresholds chosen on `search` by a rule declared in the
+script, with explicit margins (LOOP.md: a threshold flush against the worst
+training example does not survive a new brief), then frozen and applied to
+`lock2` unchanged.
+
+    clear if as_written > 0.580                  (worst search negative 0.480 + 0.10)
+    flag  if min(whose_view, same_issue) < 0.130 (lowest search supported 0.180 - 0.05)
+
+| cell | claims | CLEAR | bad clears | FLAG | false accusations | to LLM |
+|---|---|---|---|---|---|---|
+| search (fitted here) | 178 | 48 (27%) | **0** | 18 (10%) | **0** | 63% |
+| **lock2 (never seen)** | 154 | 36 (23%) | **0** | 19 (12%) | **0** | 64% |
+| — badge-labelled | 71 | 25 (35%) | 0 | 4 (6%) | 0 | 59% |
+| — colour-labelled | 83 | 11 (13%) | 0 | 15 (18%) | 0 | 69% |
+| all 13 briefs | 332 | 84 (25%) | **0** | 37 (11%) | **0** | 64% |
+
+The two buckets never overlap (0 claims trip both thresholds), so the rule is
+well-formed rather than accidentally consistent.
+
+Read it two ways:
+
+- **As a triage in front of the LLM:** answers ~36% of claims itself, so the
+  expensive pass runs on ~64%. At ~0.5 s and ~$0.0005 per claim, Jev's own cost
+  is a rounding error against an Opus assess call.
+- **As a standalone fast checker:** on a 30-claim brief, roughly 7 claims come
+  back green, 4 come back flagged, and 19 say "can't tell — needs review," in
+  about 15 seconds for about 2 cents.
+
+**Flag recall is 36–43%.** It catches four in ten bad citations, not ten. A
+standalone tool must say so: silence is "not checked", never "clean".
+
 ## Caveats
 
+- **Zero errors, but out of small numbers.** 0 bad clears in 36 held-out cleared
+  claims is consistent with a true rate up to ~8% (rule of three); 0 false
+  accusations in 19 flagged, up to ~16%. Pooled over all 13 briefs: ~4% and ~8%.
+  These are encouraging, not certified.
+- The dataset **excludes fabricated cases and fabricated quotes** — the
+  CourtListener lookup and the quote matcher catch those upstream for free. So
+  test 8 measures the hard residual class, and the full stack catches more.
 - `badge/lock2` task B still rests on **7 partial vs 13 unsupported**. The big
   held-out cell (`colour/lock2`, 37 vs 29) has the coarser labels. There is no
   cell that is both large and cleanly labelled — that is the gap to close.
