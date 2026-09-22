@@ -17,6 +17,7 @@ This document tracks potential contributions to FLP's projects (CourtListener, e
 | [9](#9-eyecite-slip-opinion-placeholder-absorbed-into-case-name) | eyecite: Slip Opinion Placeholder Absorbed into Case Name | DRAFT | eyecite |
 | [10](#10-search-api-defaults-to-published-only-stat_-filters-undocumented) | Search API Defaults to Published Only; stat_ Filters Undocumented | SUBMITTED | CL [#7049](https://github.com/freelawproject/courtlistener/issues/7049) |
 | [11](#11-batch-document-text-retrieval) | Batch Document Text Retrieval | DRAFT | CL |
+| [12](#12-criminal-district-court-opinions-are-recap-only) | Criminal District Court Opinions Are RECAP-Only | SUBMITTED | CL [#7596](https://github.com/freelawproject/courtlistener/issues/7596) (comment) |
 
 ## Status Legend
 
@@ -934,3 +935,30 @@ Review this document:
 - Before each potential FLP contribution
 - After submitting anything (update status, add links)
 - Quarterly to remove outdated items
+
+---
+
+## 12. Criminal District Court Opinions Are RECAP-Only
+
+**Status:** SUBMITTED (comment on an existing open issue, 2026-09-19)
+**Target:** CourtListener [#7596](https://github.com/freelawproject/courtlistener/issues/7596#issuecomment-5745591911) — "Bulk opinions coverage — are criminal rulings included, or RECAP-only?" (opened 2026-07-20 by another researcher; no maintainer reply at the time)
+**Type:** Diagnosis + feature question
+**Related:** #5 above / #6963 (civil opinions missing), #3790 and #4642 (RECAP into Opinions; criminal planned as next batch)
+
+### Summary
+
+District-court criminal written opinions are not in the opinions database, by design: `recap_document_into_opinions` (`cl/corpus_importer/tasks.py`) skips any federal district document whose docket number lacks "cv"; the bulk command only queues documents filed after each court's latest non-RECAP cluster. Surfaced by a corpus-research round (Eighth Circuit clothing re-entry; closest ruling, *United States v. Avalos*, D. Neb. 2013, exists only in RECAP and reportedly not on Westlaw/Lexis).
+
+### Evidence posted
+
+- 2020: "United States v." opinions = 4 of 704 (D. Neb.), 8 of 409 (W.D. Mo.), 4 of 1,897 (E.D. Mo.), vs 36–47 RECAP suppression rulings with text per court.
+- Recent filings (Mar 1 – Aug 15, 2026), `is_free_on_pacer=True`, ≥4 pages: criminal suppression rulings 0 of 84 (46 courts) have an opinion cluster on the docket; civil SJ control 37 of 41 (90%). June 2026, 15 courts: 2,212 opinions, 1 captioned "United States v."
+- D. Neb. 2013–2018: 129 opinions in the DB vs 5,373 for 2019+ (the date cutoff) — possibly also the explanation for the older civil misses in #6963.
+
+### Asked
+
+Is criminal import still planned now that `classify_case_name_by_llm` exists; is a backfill of pre-cutoff free written opinions in scope; can the docs say RECAP search is the only route to criminal rulings.
+
+### Where the work lives
+
+`Projects/corpus-research/experiments/01-grounding-to-paragraph/` — `08-courtlistener-issue-7596-comment-draft.md` (as posted), `r5-evidence/recent-criminal-coverage-check.json` (the 84/41 sample), `07-r5-district-court-triage.md` (the research round). Relation to the coverage study in `case-law-proposition-benchmark/scratch/cl-coverage-offshoot/`: that study measures cited-case findability on a civil-skewed sample (5 of 50 district cites were "United States v."), so it could not see this gap.
