@@ -2253,6 +2253,9 @@ def generate_report(
         # unlocatable) beat the assessment column; otherwise the
         # floor-enforced assessment is authoritative.
         lane = report_lane(cl_status, assessment, opinion_file)
+        # Card chips. Two sources -- the SS6.5 crosscheck flags and the
+        # words a CLOSE quote altered -- rendered the same way. Neither ever
+        # moves a claim between lanes.
         flag_lines = (_crosscheck_flag_lines(claim)
                       + _quote_alteration_lines(claim))
 
@@ -2265,7 +2268,7 @@ def generate_report(
                 "proposition": proposition,
                 "badge_label": "Supported",
                 "supporting_language": supporting_lang,
-                "crosscheck_flags": flag_lines,
+                "card_flags": flag_lines,
             })
         elif lane == GRAY:
             explanation, reason = _UNLOCATABLE_EXPLANATIONS.get(
@@ -2369,7 +2372,7 @@ def generate_report(
                 "quoted_strings": quoted_strings,
                 "matched_passages": matched_passages,
                 "finding_analysis": finding_analysis,
-                "crosscheck_flags": flag_lines,
+                "card_flags": flag_lines,
             })
 
     report_data = {

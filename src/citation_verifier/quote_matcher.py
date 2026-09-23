@@ -80,7 +80,19 @@ _MIN_ANCHOR_BLOCK = 4
 
 
 def _locate(needle: str, haystack: str) -> list[int]:
-    """Coarse scan: the most promising window starts, best first."""
+    """Coarse scan: the most promising window starts, best first.
+
+    This is the expensive part -- one SequenceMatcher pass per window, ~7000
+    of them on a 100k-character opinion, about 4s. Two obvious speedups were
+    measured and both came out SLOWER, so don't retry them: reusing one
+    matcher with ``set_seq2(needle)`` (the cost is the match algorithm, not
+    building the index), and pruning on ``real_quick_ratio``/``quick_ratio``
+    (both are 2*min/(la+lb), which for a 1.5w chunk is exactly the 0.80 the
+    real ratio is also capped at here, so the bound never prunes and only
+    adds work). The fix that would work is anchoring with ``str.find`` on
+    distinctive slices of the needle; it is a real behavior change and has
+    not been done. Quotes that exact-match never reach here.
+    """
     w = len(needle)
     step = max(1, w // 8)
     scored: list[tuple[float, int]] = []
@@ -456,12 +468,27 @@ def verify_quote(
             was_ocrd=was_ocrd, alterations=(),
         )
 
+    if align_ratio == 1.0:
+        # The normalized quote is literally a substring of the opinion, which
+        # only the exact path can produce (a fuzzy span equal to the needle
+        # would have been caught there first). Verbatim by definition -- and
+        # skipping the word diff also skips the one artifact it can invent
+        # here, where snapping a span out to whole words gives the opinion a
+        # longer edge word than the quote has.
+        return QuoteVerification(
+            quote=quote, result=QuoteMatch.VERBATIM, similarity=1.0,
+            matched_passage=passage, was_ocrd=was_ocrd, alterations=(),
+        )
+
     # The structural diff sees the RAW quote: its ellipses and brackets are the
     # markers that license the opinion's extra words.
     needle = _normalize_ocr_confusions(quote) if was_ocrd else quote
     alterations, altered_words = _word_alterations(needle, span)
+    # A CLOSE never reports 1.0: that value means VERBATIM by contract, and
+    # rounding a long quote with one short word changed would otherwise reach
+    # it.
     similarity = (1.0 if not alterations
-                  else _content_similarity(needle, span))
+                  else min(_content_similarity(needle, span), 0.99))
     result = QuoteMatch.VERBATIM if not alterations else QuoteMatch.CLOSE
     return QuoteVerification(
         quote=quote,

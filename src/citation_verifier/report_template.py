@@ -135,8 +135,9 @@ def _badge(label: str, severity: str) -> str:
 
 
 def _build_flags(flag_lines: list[str]) -> str:
-    """SS6.5 card-level crosscheck flags -- amber chips. The flags
-    never move a claim between lanes; they render even on Green cards."""
+    """Card-level amber chips: the SS6.5 crosscheck flags, plus the words a
+    CLOSE quote altered. Neither ever moves a claim between lanes; both
+    render even on Green cards."""
     if not flag_lines:
         return ""
     chips = "".join(
@@ -363,7 +364,7 @@ def _build_findings(findings: list[dict]) -> str:
 
         # SS6.5 crosscheck flags render at the top of the card body --
         # even when support is otherwise fine.
-        flags_block = _build_flags(f.get("crosscheck_flags", []))
+        flags_block = _build_flags(f.get("card_flags", []))
 
         items.append(f"""<details id="{_esc(f.get("id", ""))}">
   <summary>
@@ -485,7 +486,7 @@ def _build_verified(verified: list[dict]) -> str:
             f'{_esc(v.get("proposition", ""))} '
             f'{_badge(badge_label, "green")}'
             f'{supp}'
-            f'{_build_flags(v.get("crosscheck_flags", []))}'
+            f'{_build_flags(v.get("card_flags", []))}'
             f'</div>'
         )
 
