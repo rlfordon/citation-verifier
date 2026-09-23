@@ -44,8 +44,9 @@ substituted, added or dropped -> CLOSE, with the words named in a new
 `alterations` field and counted in `altered_words`; poor alignment ->
 FABRICATED. The `[0.75, 0.85)` transcription-noise band in `_quote_floor` is
 replaced by a structural exemption: FABRICATED floors, and so does any CLOSE
-touching more than ONE word. A lone altered word does not floor -- nothing
-deterministic separates "or"->"and" from "shall"->"may" -- but the CLOSE
+touching more than ONE word, or touching a negation, a modal or a number
+(`_NEVER_EXEMPT`). A lone conjunction/article/preposition does not floor, but
+even then the CLOSE
 verdict, the amber chip, the full triage track and the poor-man's-checker
 block all still fire, so only the automatic Yellow is withheld.
 

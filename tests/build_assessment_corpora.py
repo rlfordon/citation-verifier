@@ -85,12 +85,18 @@ def write_cassette(path: Path, verdicts: list[Verdict]) -> None:
             row = json.loads(line)
             if row.get("prompt_version") != PROMPT_VERSION:
                 kept.append(line)
-        path.unlink()
+    # Build beside the cassette and swap it in, so the rows being preserved
+    # are never held only in memory: a crash mid-write leaves the original
+    # file intact rather than losing recordings that cannot be regenerated.
+    tmp = path.with_name(path.name + ".tmp")
+    if tmp.exists():
+        tmp.unlink()
     for v in verdicts:
-        append_verdict_jsonl(path, v)
+        append_verdict_jsonl(tmp, v)
     if kept:
-        with path.open("a", encoding="utf-8") as f:
+        with tmp.open("a", encoding="utf-8") as f:
             f.write("\n".join(kept) + "\n")
+    tmp.replace(path)
 
 
 # ---------------------------------------------------------------------------

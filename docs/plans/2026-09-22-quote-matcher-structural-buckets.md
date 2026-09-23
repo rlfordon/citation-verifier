@@ -51,8 +51,8 @@ Locate, then align, then ask *what* differs.
    |---|---|
    | insertion at a span edge | licensed — a quotation is an excerpt, and the span boundary is the matcher's choice, not the quoter's |
    | insertion at an ellipsis in the quote | licensed, up to 60 words |
-   | insertion at a bracketed alteration in the quote | licensed, up to 4 words |
-   | insertion of a bare 1–2 digit token | licensed (footnote marker) |
+   | insertion at a bracketed alteration in the quote | licensed, **one word only** |
+   | insertion of a bare 1–2 digit token | licensed as a footnote marker, **unless the preceding opinion word introduces a quantity** (`to`, `within`, `least`, …) |
    | deletion at a bracketed alteration in the *opinion* | licensed — the reported text carries its own, as Iqbal does quoting Twombly's `"[A] plaintiff's obligation"` |
    | anything else | a real alteration → `CLOSE` |
 
@@ -60,15 +60,24 @@ Locate, then align, then ask *what* differs.
    is not in the opinion at all. Real fabrications align at ≤ 0.52 and the
    worst genuine alteration at 0.69, so that cut is not tight.
 
-The gap limits matter: without them `[is]` could stand for "is not liable
-because no duty ran to this plaintiff", which is a misquote wearing a bracket.
+The gap limits matter, and the first pass had them too loose. Review found
+that a 4-word bracket let `the defendant [was] liable` grade VERBATIM against
+"the defendant **is not** liable" — a misquote wearing a bracket. Every
+bracket in the corpora replaces exactly one word, so the limit is 1. The same
+review found the footnote rule eating the `10` in "entitled to 10 days
+notice"; a bare digit is now a marker only where the word before it does not
+introduce a quantity.
 
 `similarity` is now word-content similarity with the licensed material removed,
 so `VERBATIM` is exactly `similarity == 1.0`. `QuoteVerification` gained
 `alterations: tuple[str, ...]` — each real difference named (`"or -> and"`,
-`"dropped: genuine issue of"`) — and `altered_words: int`, how many words
-those differences touch. Both are persisted per quote in the `quote_check`
-column.
+`"dropped: genuine issue of"`) — plus `altered_words: int`, how many words
+those differences touch, and `altered_tokens: tuple[str, ...]`, the words
+themselves from both sides. All three are persisted per quote in the
+`quote_check` column. `similarity` is word-content similarity on the VERBATIM
+and CLOSE paths and is capped below 1.0 for CLOSE, since 1.0 means VERBATIM;
+on the FABRICATED path there is no trustworthy span to compare words against,
+so it is the raw character alignment ratio instead.
 
 ## The band is gone; the exemption is structural
 
@@ -84,11 +93,20 @@ using a number that the 0.80 ceiling had made meaningless; two of the rows it
 protected were quotes that are in fact verbatim, and it had no way to protect
 `withers-38` from being lumped in with them.
 
-**One word is where the question becomes unanswerable.** Nothing structural
-separates `withers-21`'s `"or"` where the opinion says `"and"` from a `shall`
-→ `may` swap. At that size the corpora say the immaterial case dominates —
-`withers-21` and `wainwright-17` (an inserted `"the"`) are the only one-word
-`CLOSE`s in 63 quotes, and both are immaterial.
+**One word is where the question becomes unanswerable** — mostly.
+`withers-21`'s `"or"` where the opinion says `"and"` and `wainwright-17`'s
+inserted `"the"` are the only one-word `CLOSE`s in the 63 quotes, and both are
+immaterial.
+
+But not every lone word is a judgment call, and the first pass treated them as
+if they were. Review produced a quote dropping `"not"` from "did not have
+probable cause" and one turning `30 days` into `10 days`: one word each, and
+each reverses or restates the holding. So the exemption never applies when an
+altered word is a **negation, a modal, or carries a digit** (`_NEVER_EXEMPT`).
+That also settles `shall` → `may`, which this doc previously called
+unanswerable — it is not, because a modal is meaning-bearing wherever it
+appears. What is left in the exemption is genuinely the noise band:
+conjunctions, articles, prepositions.
 
 What the exemption withholds is only the **automatic** Yellow, which is a
 deterministic override of the agent's judgment. Everything else still fires:
@@ -229,10 +247,10 @@ words that touches (`≤1` does not floor):
 |---|---|---|
 | withers-04 | 4 | `is a strict one -> set forth` |
 | withers-09 | 2 | `judicial -> withdrawals of` |
-| withers-21 | **1** | `or -> and` |
+| withers-21 | **1** | `or -> and` (exempt: conjunction) |
 | withers-38 | 5 | `dropped: genuine issue of`; `exists when -> is genuine that is if` |
 | withers-45 | 6 | `statute -> case`; `dropped: limitations for`; `claim begins to run -> the cause of action accrues` |
-| wainwright-17 | **1** | `added: the` |
+| wainwright-17 | **1** | `added: the` (exempt: article) |
 | aliaj-08 | 4 | `fed r civ p -> rule` |
 | aliaj-09 | 4 | `fed r civ p -> twombly rule` |
 | aliaj-14 | 6 | `should be dismissed for failing to -> has alleged but it has not` |
@@ -256,6 +274,20 @@ built.
   two unrelated rows moved as well — this checker is not bit-reproducible.)
 * `proposition_pipeline._quote_alteration_lines` renders the alterations as
   amber flag chips on the report card, alongside the crosscheck flags.
+
+## Known costs
+
+`_locate` is the expensive part: one `SequenceMatcher` pass per window, ~7000
+of them on a 100k-character opinion, about 4 seconds per quote that does not
+exact-match. This is not new — the pre-change matcher was 5.6s on the same
+input — and quotes that exact-match short-circuit in under a millisecond. Two
+obvious speedups were measured and **both came out slower**: reusing one
+matcher via `set_seq2(needle)` (the cost is the match algorithm, not building
+the index) and pruning on `real_quick_ratio`/`quick_ratio` (both are
+`2·min/(la+lb)`, which for a 1.5w chunk is exactly the 0.80 the real ratio is
+capped at here, so the bound never prunes and only adds work). Anchoring with
+`str.find` on distinctive slices of the needle would work, but it is a real
+behavior change on a freshly recalibrated path, so it is noted, not done.
 
 ## Not done
 

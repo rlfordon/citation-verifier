@@ -1644,9 +1644,11 @@ def _crosscheck_flag_lines(claim: dict) -> list[str]:
 def _quote_alteration_lines(claim: dict) -> list[str]:
     """Card flags naming the words a CLOSE quote changed (2026-09-22).
 
-    A CLOSE now always floors the claim to Yellow, so the card has to say
-    which word moved -- "or -> and" is dismissed in a glance, "shall -> may"
-    is not, and a bare similarity number distinguishes neither.
+    The card has to say which word moved: "or -> and" is dismissed in a
+    glance where a bare similarity number tells the reader nothing. This is
+    doubly true since a lone altered word does not always floor -- see
+    _quote_floor -- so for some CLOSEs the chip is the only signal on the
+    card.
     """
     raw = (claim.get("quote_check") or "").strip()
     if not raw:
@@ -1865,6 +1867,18 @@ class QuoteCheckStats:
 # _quote_floor; the matcher supplies the count as `altered_words`.
 _LONE_WORD_MAX = 1
 
+# ...unless the word is one of these, or carries a digit. A lone word is
+# exempt because at that size the matcher cannot tell noise from meaning --
+# but for a negation, a modal or a number it does not have to: those reverse
+# or restate the holding whichever side they sit on. Found by review
+# (2026-09-22): a quote dropping "not" from "did not have probable cause", and
+# one turning "30 days" into "10 days", were both exempt.
+_NEVER_EXEMPT = frozenset({
+    "not", "no", "never", "nor", "none", "cannot", "cant", "without",
+    "unless", "except", "neither", "must", "shall", "may", "should",
+    "will", "cannot", "need", "required", "optional", "prohibited",
+})
+
 
 def _quote_floor(results: list[dict]) -> str:
     """SS6.4 deterministic floor over per-quote verdicts.
@@ -1888,16 +1902,30 @@ def _quote_floor(results: list[dict]) -> str:
     fire, so a one-word swap that does matter still reaches the agent and the
     reader -- the floor just stops overriding their judgment.
 
+    The exemption never applies to a negation, a modal or a number
+    (`_NEVER_EXEMPT`): there the one word IS the holding, so the matcher does
+    not need to judge tone to know it matters.
+
     Legacy rows written before `altered_words` existed floor on any CLOSE.
     """
     for r in results:
         if r["result"] == "FABRICATED":
             return "Yellow"
-        if (r["result"] == "CLOSE"
-                and r.get("altered_words", _LONE_WORD_MAX + 1)
-                > _LONE_WORD_MAX):
+        if r["result"] != "CLOSE":
+            continue
+        if r.get("altered_words", _LONE_WORD_MAX + 1) > _LONE_WORD_MAX:
+            return "Yellow"
+        if _has_never_exempt_word(r.get("altered_tokens") or []):
             return "Yellow"
     return ""
+
+
+def _has_never_exempt_word(tokens) -> bool:
+    """Is one of the altered words meaning-bearing on its own?"""
+    if isinstance(tokens, str):  # tolerate a mis-serialized cell
+        tokens = [tokens]
+    return any(t in _NEVER_EXEMPT or any(c.isdigit() for c in str(t))
+               for t in tokens)
 
 
 def check_quotes(workdir: Path) -> QuoteCheckStats:
@@ -2010,6 +2038,7 @@ def check_quotes(workdir: Path) -> QuoteCheckStats:
                 # exemption on.
                 entry["alterations"] = list(qv.alterations)
                 entry["altered_words"] = qv.altered_words
+                entry["altered_tokens"] = list(qv.altered_tokens)
             results.append(entry)
 
             if _WORST_ORDER.get(result, 0) > _WORST_ORDER.get(worst, 0):

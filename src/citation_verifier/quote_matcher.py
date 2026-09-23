@@ -262,9 +262,12 @@ _GAP_BRACKET = "\x01"
 _GAPS = (_GAP_ELLIPSIS, _GAP_BRACKET)
 
 # How much opinion text a disclosed gap may cover. An ellipsis stands for a
-# passage, so it is generous; a bracketed alteration stands for a word or two,
-# and is capped so `[is]` cannot silently swallow "is not liable because ...".
-_GAP_SPAN_LIMIT = {_GAP_ELLIPSIS: 60, _GAP_BRACKET: 4}
+# passage, so it is generous. A bracketed alteration stands for exactly ONE
+# word: at 4, `the defendant [was] liable` graded VERBATIM against "the
+# defendant is not liable" -- the bracket swallowed the negation, which is the
+# misquote this tool exists to catch (review, 2026-09-22). Every bracket in
+# the corpora replaces a single word, so 1 costs nothing real.
+_GAP_SPAN_LIMIT = {_GAP_ELLIPSIS: 60, _GAP_BRACKET: 1}
 
 _STAR_PAGE_RE = re.compile(r"\*\s?\d+")          # *534 star pagination
 _ELLIPSIS_RE = re.compile(r"(?:\.\s*){3,}|…")   # ... / . . . / ellipsis
@@ -276,9 +279,18 @@ _HYPHEN_JOIN_RE = re.compile(r"(?<=\w)-\s*(?=\w)")  # non-moving == nonmoving
 _APOSTROPHE_JOIN_RE = re.compile(r"(?<=\w)'(?=\w)")
 _TOKEN_RE = re.compile(r"[\x00\x01]|[a-z0-9]+")
 
-# A bare one-or-two-digit token that appears only on the opinion side is a
-# footnote marker ("disbarred 8 does not"), not a word of the quotation.
+# A bare one-or-two-digit token that appears only on the opinion side is
+# usually a footnote marker ("disbarred 8 does not"), not a word of the
+# quotation -- whitespace-collapsed opinion text keeps no other trace of one.
+# But "entitled to 10 days notice" is the same shape, and a quote that drops
+# the 10 is a real misquote, so a digit following a word that introduces a
+# quantity is NOT treated as a marker (review, 2026-09-22).
 _FOOTNOTE_RE = re.compile(r"^\d{1,2}$")
+_QUANTITY_LEAD = frozenset({
+    "to", "within", "of", "least", "most", "than", "under", "over", "about",
+    "approximately", "exceeding", "after", "before", "past", "another",
+    "additional", "further", "every", "each", "per", "up", "at", "for",
+})
 
 
 def _diff_tokens(text: str) -> list[str]:
@@ -305,8 +317,11 @@ def _split_gaps(tokens: list[str]) -> tuple[list[str], dict[int, str]]:
     return words, gaps
 
 
-def _all_footnotes(tokens: list[str]) -> bool:
-    return bool(tokens) and all(_FOOTNOTE_RE.match(t) for t in tokens)
+def _is_footnote_marker(added: list[str], prev_span_word: str) -> bool:
+    """One bare small digit that does not read as a quantity."""
+    if len(added) != 1 or not _FOOTNOTE_RE.match(added[0]):
+        return False
+    return prev_span_word not in _QUANTITY_LEAD
 
 
 def _covered(gaps: dict[int, str], pos: int, run: list[str]) -> bool:
@@ -317,7 +332,8 @@ def _covered(gaps: dict[int, str], pos: int, run: list[str]) -> bool:
 
 def _is_licensed(tag: str, i1: int, j1: int, dropped: list[str],
                  added: list[str], n_gaps: dict[int, str],
-                 s_gaps: dict[int, str], n_len: int) -> bool:
+                 s_gaps: dict[int, str], n_len: int,
+                 prev_span_word: str = "") -> bool:
     """Is this opcode a disclosed edit or typographic junk, not a misquote?
 
     Only one-sided opcodes are licensed. An insertion is licensed when it sits
@@ -332,7 +348,8 @@ def _is_licensed(tag: str, i1: int, j1: int, dropped: list[str],
     if tag == "insert":
         if i1 == 0 or i1 >= n_len:
             return True  # span overhang before/after the quoted words
-        return _covered(n_gaps, i1, added) or _all_footnotes(added)
+        return (_covered(n_gaps, i1, added)
+                or _is_footnote_marker(added, prev_span_word))
     if tag == "delete":
         return _covered(s_gaps, j1, dropped)
     return False
@@ -356,29 +373,33 @@ def _describe(needle_words: list[str], span_words: list[str]) -> str:
 
 def _word_alterations(
     needle_raw: str, span_raw: str,
-) -> tuple[tuple[str, ...], int]:
+) -> tuple[tuple[str, ...], int, tuple[str, ...]]:
     """Word-level differences that are NOT typographic or disclosed junk.
 
-    Returns the descriptions and the number of words they touch -- the wider
-    of the two sides of each edit, summed. "or -> and" and "added: the" are
-    both 1; "fed r civ p -> rule" is 4. Consumers use the count to separate a
-    lone word from a rewritten clause; the matcher itself never does.
+    Returns the descriptions, the number of words they touch -- the wider of
+    the two sides of each edit, summed, so "or -> and" and "added: the" are
+    both 1 and "fed r civ p -> rule" is 4 -- and every word involved, from
+    both sides. Consumers use the count and the words to decide what a
+    difference is worth; the matcher itself never does.
     """
     n_words, s_words, n_gaps, s_gaps, opcodes = _word_opcodes(
         needle_raw, span_raw)
     if not n_words:
-        return (), 0
-    alterations, altered = [], 0
+        return (), 0, ()
+    alterations, altered, touched = [], 0, []
     for tag, i1, i2, j1, j2 in opcodes:
         if tag == "equal":
             continue
         dropped, added = n_words[i1:i2], s_words[j1:j2]
+        prev_span_word = s_words[j1 - 1] if j1 else ""
         if _is_licensed(tag, i1, j1, dropped, added, n_gaps, s_gaps,
-                        len(n_words)):
+                        len(n_words), prev_span_word):
             continue
         alterations.append(_describe(dropped, added))
         altered += max(len(dropped), len(added))
-    return tuple(alterations), altered
+        touched.extend(dropped)
+        touched.extend(added)
+    return tuple(alterations), altered, tuple(dict.fromkeys(touched))
 
 
 def _content_similarity(needle_raw: str, span_raw: str) -> float:
@@ -398,7 +419,7 @@ def _content_similarity(needle_raw: str, span_raw: str) -> float:
         chunk = s_words[j1:j2]
         if tag != "equal" and _is_licensed(
                 tag, i1, j1, n_words[i1:i2], chunk, n_gaps, s_gaps,
-                len(n_words)):
+                len(n_words), s_words[j1 - 1] if j1 else ""):
             # A licensed deletion keeps the quote's own words, so the two
             # streams stay comparable; a licensed insertion drops the
             # opinion's extra words.
@@ -431,11 +452,17 @@ class QuoteVerification:
     """Result of verifying one quote against one opinion's text."""
     quote: str              # the RAW input quote, echoed verbatim
     result: QuoteMatch
-    similarity: float       # 0.0-1.0 word-content similarity (1.0 = VERBATIM)
+    # 0.0-1.0. For VERBATIM and CLOSE this is word-content similarity, with
+    # junk and disclosed gaps costing nothing; VERBATIM is always exactly 1.0
+    # and CLOSE never reaches it. For FABRICATED there is no trustworthy span
+    # to compare words against, so it is the raw character alignment ratio --
+    # a "how close did we get to finding it at all", not a fidelity score.
+    similarity: float
     matched_passage: str    # best-matching span from opinion_text ("" if none)
     was_ocrd: bool          # whether OCR-confusion rules were applied
     alterations: tuple[str, ...] = field(default=())  # the non-junk word diffs
     altered_words: int = 0  # words those diffs touch (0 unless CLOSE)
+    altered_tokens: tuple[str, ...] = field(default=())  # the words themselves
 
 
 def verify_quote(
@@ -483,7 +510,8 @@ def verify_quote(
     # The structural diff sees the RAW quote: its ellipses and brackets are the
     # markers that license the opinion's extra words.
     needle = _normalize_ocr_confusions(quote) if was_ocrd else quote
-    alterations, altered_words = _word_alterations(needle, span)
+    alterations, altered_words, altered_tokens = _word_alterations(
+        needle, span)
     # A CLOSE never reports 1.0: that value means VERBATIM by contract, and
     # rounding a long quote with one short word changed would otherwise reach
     # it.
@@ -498,6 +526,7 @@ def verify_quote(
         was_ocrd=was_ocrd,
         alterations=alterations,
         altered_words=altered_words,
+        altered_tokens=altered_tokens,
     )
 
 

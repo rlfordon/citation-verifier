@@ -76,6 +76,49 @@ class TestJunkIsVerbatim:
                           opinion)
         assert qv.result is QuoteMatch.VERBATIM
 
+    def test_bracket_cannot_swallow_a_negation(self):
+        """Review 2026-09-22: at a 4-word bracket limit this graded VERBATIM.
+        A bracket stands for one word, and "is not" is two -- one of which
+        reverses the holding."""
+        qv = verify_quote(
+            "the defendant [was] liable for the resulting harm",
+            "We conclude the defendant is not liable for the resulting harm.")
+        assert qv.result is QuoteMatch.CLOSE
+        assert qv.alterations == ("added: is not",)
+
+    def test_footnote_rule_does_not_eat_a_quantity(self):
+        """A bare small digit is a footnote marker only where it does not
+        read as a number. Review 2026-09-22: dropping the 10 from
+        "entitled to 10 days notice" graded VERBATIM."""
+        qv = verify_quote(
+            "the tenant is entitled to days notice before eviction",
+            "By statute the tenant is entitled to 10 days notice before "
+            "eviction of the premises.")
+        assert qv.result is QuoteMatch.CLOSE
+        assert qv.alterations == ("added: 10",)
+
+    def test_real_footnote_marker_still_licensed(self):
+        qv = verify_quote(
+            "counsel was subsequently disbarred does not itself show",
+            "counsel was subsequently disbarred 8 does not itself show error")
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_altered_tokens_carry_both_sides(self):
+        qv = verify_quote("a period of 10 days from service",
+                          "the rule allows a period of 30 days from service")
+        assert set(qv.altered_tokens) == {"10", "30"}
+
+    def test_close_never_reports_one_point_zero(self):
+        """VERBATIM owns 1.0 by contract; a long quote with one short word
+        changed would otherwise round up to it."""
+        opinion = ("The agency shall consider every single timely written "
+                   "comment that it receives from any affected party before "
+                   "taking any final action in the matter at hand.")
+        quote = opinion.replace("shall", "may").rstrip(".")
+        qv = verify_quote(quote, opinion)
+        assert qv.result is QuoteMatch.CLOSE
+        assert qv.similarity < 1.0
+
     def test_bracket_cannot_swallow_a_clause(self):
         # A gap is bounded: [is] may stand for a word, not for a negation
         # plus the rest of the sentence.

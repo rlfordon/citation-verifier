@@ -542,6 +542,25 @@ class TestCheckQuotesExtensions:
         assert _quote_floor([verbatim, one_word, fab]) == "Yellow"
         assert _quote_floor([]) == ""
 
+    def test_lone_word_exemption_never_covers_meaning_bearing_words(self):
+        """Review 2026-09-22: a dropped "not" and a 30->10 numeral change are
+        both one word, and both reverse or restate the holding. The exemption
+        exists because the matcher cannot judge a lone word -- for a negation,
+        a modal or a number it does not have to."""
+        from citation_verifier.proposition_pipeline import _quote_floor
+
+        def one(*tokens):
+            return [{"result": "CLOSE", "similarity": 0.97,
+                     "altered_words": 1, "altered_tokens": list(tokens)}]
+
+        assert _quote_floor(one("or", "and")) == ""
+        assert _quote_floor(one("the")) == ""
+        assert _quote_floor(one("not")) == "Yellow"
+        assert _quote_floor(one("never")) == "Yellow"
+        assert _quote_floor(one("shall", "may")) == "Yellow"
+        assert _quote_floor(one("10", "30")) == "Yellow"
+        assert _quote_floor(one("1983")) == "Yellow"
+
     def test_quote_floor_is_conservative_for_legacy_rows(self):
         """A claims.csv written before `altered_words` existed has no count;
         those CLOSEs floor rather than being silently exempted."""
