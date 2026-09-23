@@ -7,6 +7,120 @@ from citation_verifier.quote_matcher import (
 )
 
 
+class TestNoRatioCeiling:
+    """Until 2026-09-22 the fuzzy path compared a length-w quote against a
+    1.5w chunk, so SequenceMatcher.ratio() could not exceed 2w/2.5w = 0.80:
+    VERBATIM was reachable only by exact substring, and a quote that was
+    verbatim apart from a star-pagination marker scored FABRICATED."""
+
+    def test_star_pagination_mid_quote_is_verbatim(self):
+        # wainwright-16: recorded FABRICATED at 0.46 under the old matcher.
+        opinion = (
+            "Before that. If an appellant fails to meet his or her burden of "
+            "proving *534 either prong of the Strickland test, the reviewing "
+            "court does not have to examine the other prong. After that.")
+        quote = ("If an appellant fails to meet his or her burden of proving "
+                 "either prong of the Strickland test, the reviewing court "
+                 "does not have to examine the other prong.")
+        qv = verify_quote(quote, opinion)
+        assert qv.result is QuoteMatch.VERBATIM
+        assert qv.similarity == 1.0
+        assert qv.alterations == ()
+
+    def test_one_word_swap_in_a_long_quote_is_close_not_verbatim(self):
+        # The case a corrected *ratio* cannot catch: ~0.96 on any char scale.
+        opinion = ("The agency shall consider every timely comment it "
+                   "receives from an affected party before acting.")
+        quote = ("The agency may consider every timely comment it receives "
+                 "from an affected party before acting.")
+        qv = verify_quote(quote, opinion)
+        assert qv.result is QuoteMatch.CLOSE
+        assert qv.alterations == ("may -> shall",)
+
+
+class TestJunkIsVerbatim:
+    def test_footnote_marker(self):
+        opinion = ("Lastly, counsel was subsequently disbarred 8 does not "
+                   "itself show ineffective assistance.")
+        qv = verify_quote(
+            "counsel was subsequently disbarred does not itself show "
+            "ineffective assistance.", opinion)
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_trailing_punctuation_and_quote_marks(self):
+        opinion = "The court held that “mere delay does not alone matter” here."
+        qv = verify_quote("mere delay does not alone matter,", opinion)
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_line_break_hyphenation(self):
+        opinion = "a verdict for the nonmoving party is required"
+        qv = verify_quote("a verdict for the non-moving party", opinion)
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_ellipsis_licenses_the_elided_words(self):
+        opinion = "the county and municipal prosecutors and police officers involved"
+        qv = verify_quote("county and municipal...police officers", opinion)
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_bracketed_alteration_licenses_the_replaced_word(self):
+        opinion = "does not itself show ineffective assistance in Anthony's particular case."
+        qv = verify_quote(
+            "does not itself show ineffective assistance in [a] particular case.",
+            opinion)
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_opinion_side_bracket_licenses_the_quote_word(self):
+        # Iqbal quoting Twombly: the reported text carries "[A] plaintiff's".
+        opinion = "(quoting Conley). “[A] plaintiff's obligation to provide the grounds"
+        qv = verify_quote("a plaintiff's obligation to provide the grounds",
+                          opinion)
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_bracket_cannot_swallow_a_clause(self):
+        # A gap is bounded: [is] may stand for a word, not for a negation
+        # plus the rest of the sentence.
+        opinion = ("the defendant is not liable because no duty ran to this "
+                   "plaintiff at the relevant time")
+        qv = verify_quote("the defendant [is] plaintiff at the relevant time",
+                          opinion)
+        assert qv.result is not QuoteMatch.VERBATIM
+
+
+class TestAlterationsAreReported:
+    def test_substitution_named(self):
+        qv = verify_quote(
+            "opportunities for fraud or collusion",
+            "greater opportunities for fraud and collusion here")
+        assert qv.result is QuoteMatch.CLOSE
+        assert qv.alterations == ("or -> and",)
+
+    def test_an_interior_extra_word_is_named(self):
+        qv = verify_quote(
+            "counsel was disbarred does not show ineffective assistance here",
+            "counsel was disbarred does not show Anthony ineffective "
+            "assistance here today")
+        assert qv.result is QuoteMatch.CLOSE
+        assert qv.alterations == ("added: anthony",)
+
+    def test_span_overhang_is_not_an_alteration(self):
+        """The span boundary is the matcher's choice, not the quoter's: every
+        quotation is an excerpt, so opinion words outside it are not added."""
+        qv = verify_quote(
+            "the jurors in the jury box",
+            "Upon request the court shall put the jurors in the jury box for "
+            "examination of individual jurors.")
+        assert qv.result is QuoteMatch.VERBATIM
+
+    def test_verbatim_has_no_alterations(self):
+        qv = verify_quote("hello world", "say hello world now")
+        assert qv.alterations == ()
+
+    def test_fabricated_has_no_alterations(self):
+        qv = verify_quote("zzz qqq vvv wwww", "nothing alike here at all")
+        assert qv.result is QuoteMatch.FABRICATED
+        assert qv.alterations == ()
+
+
 class TestNormalizeOcrConfusions:
     def test_rn_to_m_midword(self):
         assert _normalize_ocr_confusions("modern") == "modem"

@@ -514,16 +514,22 @@ class TestCheckQuotesExtensions:
         assert json.loads(claims[0]["quoted_text"]) == [
             "supplied span appears"]
 
-    def test_quote_floor_bands(self):
+    def test_quote_floor_has_no_similarity_band(self):
+        """Every CLOSE floors (2026-09-22).
+
+        The old [0.75, 0.85) exemption was an artifact of the matcher's 0.80
+        ceiling, which made "verbatim plus a star-pagination marker" and "one
+        word changed" score the same. Bucketing is structural now: CLOSE means
+        a word really differs, at any similarity.
+        """
         from citation_verifier.proposition_pipeline import _quote_floor
         fab = {"result": "FABRICATED", "similarity": 0.2}
         close_low = {"result": "CLOSE", "similarity": 0.64}
-        close_near_verbatim = {"result": "CLOSE", "similarity": 0.80}
+        close_near_verbatim = {"result": "CLOSE", "similarity": 0.98}
         verbatim = {"result": "VERBATIM", "similarity": 1.0}
         assert _quote_floor([fab]) == "Yellow"
         assert _quote_floor([close_low]) == "Yellow"
-        # near-verbatim CLOSE band [0.75, 0.85): transcription noise, no floor
-        assert _quote_floor([close_near_verbatim]) == ""
+        assert _quote_floor([close_near_verbatim]) == "Yellow"
         assert _quote_floor([verbatim]) == ""
         assert _quote_floor([verbatim, close_near_verbatim, fab]) == "Yellow"
         assert _quote_floor([]) == ""

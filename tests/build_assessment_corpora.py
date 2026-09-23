@@ -69,10 +69,28 @@ def write_csv(path: Path, rows: list[dict]) -> None:
 
 
 def write_cassette(path: Path, verdicts: list[Verdict]) -> None:
+    """Rewrite the rows this builder owns, keeping every other prompt version.
+
+    One cassette file holds all prompt versions (RecordedExecutor keys on
+    claim_id + prompt_version). The builder only regenerates PROMPT_VERSION
+    rows from their recorded source run; the live re-records (assess-v2) are
+    not reproducible from anything committed, so truncating the file would
+    destroy them.
+    """
+    kept = []
     if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if row.get("prompt_version") != PROMPT_VERSION:
+                kept.append(line)
         path.unlink()
     for v in verdicts:
         append_verdict_jsonl(path, v)
+    if kept:
+        with path.open("a", encoding="utf-8") as f:
+            f.write("\n".join(kept) + "\n")
 
 
 # ---------------------------------------------------------------------------
@@ -185,8 +203,13 @@ def build_ab_corpus(source: str) -> None:
         if not dest.exists():
             shutil.copy2(opinion, dest)
     write_csv(corpus / "claims.csv", rows)
+    # Re-run the deterministic quote phase so every corpus carries the
+    # CURRENT matcher's quote_check/quote_check_worst/quote_floor, not the
+    # values frozen into the source brief when it was run.
+    q = check_quotes(corpus)
     print(f"{source}: claims.csv {len(rows)} rows, "
-          f"{len(list((corpus / 'opinions').iterdir()))} opinions")
+          f"{len(list((corpus / 'opinions').iterdir()))} opinions; quotes "
+          f"verbatim={q.verbatim} close={q.close} fabricated={q.fabricated}")
 
     gt = [{
         "claim_id": f"{source}-{c['id']:02d}",

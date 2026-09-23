@@ -78,6 +78,17 @@ def resolve_opinion(workdir: Path, ref: str) -> Path | None:
     return hits[0] if len(hits) == 1 else None
 
 
+def _altered(row: dict) -> str:
+    """The word-level differences the quote matcher recorded, for the note."""
+    alts = []
+    try:
+        for entry in json.loads(row.get("quote_check") or "[]"):
+            alts.extend(entry.get("alterations") or [])
+    except (json.JSONDecodeError, TypeError, AttributeError):
+        pass
+    return "; ".join(alts[:3]) if alts else "not exact"
+
+
 def deterministic(row: dict) -> tuple[str | None, str | None]:
     """What the free, code-only checks already know, before Jev is asked.
     -> (finding, blocker). A finding is reported as a problem; a blocker only
@@ -88,11 +99,13 @@ def deterministic(row: dict) -> tuple[str | None, str | None]:
     every Jev question -- correctly, because the *proposition* is supported.
     Only the quote matcher sees it.
 
-    CLOSE is deliberately NOT a finding: the pipeline's own quote floor treats
-    CLOSE as a transcription-noise band, and the quote matcher has a known
-    ceiling bug that scores real verbatim quotes as CLOSE (scratch/TODO.md).
-    POSSIBLE_MATCH likewise -- it means the citation resolved but the name did
-    not match cleanly, which is worth a look, not an accusation.
+    CLOSE is a finding as of 2026-09-22. It used to be only a blocker,
+    because the matcher's 0.80 ceiling scored genuinely verbatim quotes as
+    CLOSE and the quote floor treated the band as transcription noise. The
+    matcher now buckets on what differs, so CLOSE means a word really was
+    substituted, added or dropped -- and `alterations` in quote_check names
+    which. POSSIBLE_MATCH stays a blocker: the citation resolved but the name
+    did not match cleanly, which is worth a look, not an accusation.
     """
     status = (row.get("cl_status") or "").strip()
     q = (row.get("quote_check_worst") or "").strip()
@@ -102,12 +115,12 @@ def deterministic(row: dict) -> tuple[str | None, str | None]:
         return f"the citation could not be verified ({status})", None
     if q == "FABRICATED":
         return "quoted text does not appear in the opinion", None
+    if q == "CLOSE":
+        return f"quoted text is altered ({_altered(row)})", None
 
     if status and status not in ("VERIFIED", "VERIFIED_VIA_RECAP",
                                  "VERIFIED_PARTIAL"):
         return None, f"citation verified only loosely ({status})"
-    if q == "CLOSE":
-        return None, "quoted text is close but not exact"
     if q == "NO_OPINION":
         return None, "no opinion text was available"
     if flags not in ("", "[]"):

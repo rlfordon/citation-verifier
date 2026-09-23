@@ -17,9 +17,9 @@ import ab_test_runner as ab  # noqa: E402
 class TestReplayMode:
     def test_scores_frozen_cassettes(self, capsys):
         scores = ab.run_ab_config("baseline", {}, replay=True)
-        assert (scores["payne"].correct, scores["payne"].total) == (23, 27)
+        assert (scores["payne"].correct, scores["payne"].total) == (24, 27)
         assert (scores["wainwright"].correct,
-                scores["wainwright"].total) == (33, 34)
+                scores["wainwright"].total) == (32, 34)
         assert "baseline/payne" in capsys.readouterr().out
 
 
@@ -35,7 +35,7 @@ class TestLiveModeOfflineSeam:
         scores = ab.run_ab_config(
             "test", {"model": "opus"}, corpora=("payne",),
             run_root=tmp_path, executor_factory=factory)
-        assert (scores["payne"].correct, scores["payne"].total) == (23, 27)
+        assert (scores["payne"].correct, scores["payne"].total) == (24, 27)
         # the copy got a fresh cassette written through run_assess
         copy_cassette = tmp_path / "payne" / "jobs" / "assess_results.jsonl"
         assert copy_cassette.exists()
@@ -105,7 +105,7 @@ class TestSaveAndCompare:
         capsys.readouterr()
         ab.compare_results(str(out), str(out))
         printed = capsys.readouterr().out
-        assert "23/27 correct" in printed
+        assert "24/27 correct" in printed
         assert "Disagreements: 0" in printed
 
 

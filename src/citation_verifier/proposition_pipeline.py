@@ -1641,6 +1641,29 @@ def _crosscheck_flag_lines(claim: dict) -> list[str]:
     return lines
 
 
+def _quote_alteration_lines(claim: dict) -> list[str]:
+    """Card flags naming the words a CLOSE quote changed (2026-09-22).
+
+    A CLOSE now always floors the claim to Yellow, so the card has to say
+    which word moved -- "or -> and" is dismissed in a glance, "shall -> may"
+    is not, and a bare similarity number distinguishes neither.
+    """
+    raw = (claim.get("quote_check") or "").strip()
+    if not raw:
+        return []
+    try:
+        entries = json_mod.loads(raw)
+    except (json_mod.JSONDecodeError, ValueError):
+        return []
+    lines: list[str] = []
+    for entry in entries if isinstance(entries, list) else []:
+        if not isinstance(entry, dict) or entry.get("result") != "CLOSE":
+            continue
+        for alt in (entry.get("alterations") or [])[:3]:
+            lines.append(f"Quote altered: {alt}")
+    return lines
+
+
 def _triage_track_for(claim: dict) -> str:
     """Deterministic SS6.7 track. '' = deterministic lane (not agent-
     assessable). The SKILL's two LLM-judgment criteria (syllabus topic
@@ -1838,29 +1861,22 @@ class QuoteCheckStats:
     derived_quotes: int = 0
 
 
-# CLOSE quotes at or above this similarity are near-verbatim (the matcher's
-# VERBATIM cut is >0.85): they keep their CLOSE verdict but do not trigger
-# the Yellow floor. See _quote_floor for the calibration data.
-_CLOSE_FLOOR_MAX_SIM = 0.75
-
-
 def _quote_floor(results: list[dict]) -> str:
     """SS6.4 deterministic floor over per-quote verdicts.
 
-    A FABRICATED quote, or a CLOSE quote below the near-verbatim band,
-    caps the claim at Yellow (apply-assessments enforces it: the agent
-    can lower a color, never raise it past the floor; offline scoring
-    models the same rule). CLOSE in [0.75, 0.85) does NOT floor: that
-    band is dominated by transcription noise and bracket alterations
-    (Withers calibration 2026-06-11 -- flooring it over-flagged a true
-    green whose quotes scored 0.79/0.80 while the real misquote catches
-    sat at 0.64/0.73). The CLOSE verdict still shows in the report.
+    A FABRICATED or CLOSE quote caps the claim at Yellow (apply-assessments
+    enforces it: the agent can lower a color, never raise it past the floor;
+    offline scoring models the same rule).
+
+    There is no longer a similarity band. Until 2026-09-22 a CLOSE in
+    [0.75, 0.85) was exempted as transcription noise, because the matcher's
+    fuzzy path was capped at 0.80 and could not tell a verbatim quote carrying
+    a star-pagination marker from a quote with a word changed. The matcher now
+    buckets on *what* differs, so a CLOSE means a word was really substituted,
+    added or dropped -- see quote_matcher and the per-quote `alterations`.
     """
     for r in results:
-        if r["result"] == "FABRICATED":
-            return "Yellow"
-        if (r["result"] == "CLOSE"
-                and r["similarity"] < _CLOSE_FLOOR_MAX_SIM):
+        if r["result"] in ("FABRICATED", "CLOSE"):
             return "Yellow"
     return ""
 
@@ -1968,6 +1984,10 @@ def check_quotes(workdir: Path) -> QuoteCheckStats:
             }
             if qv.matched_passage:
                 entry["matched_passage"] = qv.matched_passage
+            if qv.alterations:
+                # What actually differs -- the CLOSE verdict's evidence, shown
+                # in the report and given to the agent.
+                entry["alterations"] = list(qv.alterations)
             results.append(entry)
 
             if _WORST_ORDER.get(result, 0) > _WORST_ORDER.get(worst, 0):
@@ -2211,7 +2231,8 @@ def generate_report(
         # unlocatable) beat the assessment column; otherwise the
         # floor-enforced assessment is authoritative.
         lane = report_lane(cl_status, assessment, opinion_file)
-        flag_lines = _crosscheck_flag_lines(claim)
+        flag_lines = (_crosscheck_flag_lines(claim)
+                      + _quote_alteration_lines(claim))
 
         if lane == GREEN:
             verified.append({

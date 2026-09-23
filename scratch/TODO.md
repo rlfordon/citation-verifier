@@ -25,40 +25,39 @@
 - On each other computer: `pip install -e ".[jev]"` and add `TYPESAFE_API_KEY` +
   `JEV_SHADOW=1` to `.env`.
 
-## OPEN 2026-09-19 — quote matcher fuzzy path is capped at 0.80 (decision needed)
+## ~~OPEN 2026-09-19 - quote matcher capped at 0.80~~ FIXED 2026-09-22
 
 Found while trying to add a verbatim check on agent-written `opinion_block`
-(background: `scratch/jev_citation_checking_research.md` §3).
+(background: `scratch/jev_citation_checking_research.md` SS3).
 
 **Fixed (commit `e89783b`):** the opinion text never got smart-quote
 straightening (the quote did), so quotes with apostrophes missed the exact path.
 
-**Still open — `quote_matcher._best_match_with_passage`:** the sliding window
-compares the quote (length w) against a chunk of length 1.5w, so
-`SequenceMatcher.ratio()` tops out at 2w/2.5w = **0.80**. Consequences:
-- `VERBATIM` (>0.85) is reachable ONLY by exact substring; `if best > 0.95: break`
-  is dead code. A one-character difference in a 70-char quote scores 0.79.
-- **False "fabricated":** `wainwright-16` is verbatim except for a star-pagination
-  marker (`*534`) mid-sentence; it is recorded FABRICATED at 0.46. A same-length
-  window + step-1 refinement scores it 0.97.
-- The `[0.75, 0.85)` "transcription-noise band" in `_quote_floor` was calibrated
-  on this artifact: the true green that motivated it (`withers-21`, 0.79/0.80)
-  scores 0.97/0.98 on a corrected scale.
+**Fixed (2026-09-22):** the sliding window compared a length-w quote against a
+1.5w chunk, so `SequenceMatcher.ratio()` topped out at 2w/2.5w = 0.80 and
+VERBATIM was reachable only by exact substring. The matcher now locates with
+the oversized chunk, re-aligns the quote to the span it actually matches (no
+ceiling), and **buckets on what differs** rather than on the ratio: junk only
+(star pagination, footnote markers, punctuation, hyphenation, ellipsis
+elisions, bracketed alterations on either side) -> VERBATIM; any word
+substituted, added or dropped -> CLOSE, with the words named in a new
+`alterations` field; poor alignment -> FABRICATED. The `[0.75, 0.85)`
+transcription-noise band in `_quote_floor` is gone -- every CLOSE floors.
 
-**Why it is not a drop-in fix:** on a corrected scale, real misquotes move up too
-(`withers-04` 0.64 -> 0.76, `withers-38` 0.73 -> 0.83 — both would slip over the
-0.75 floor cutoff), and a single meaning-changing word swap in a long quote
-("shall" -> "may") scores ~0.96, which the 0.85 cut would call VERBATIM. In the
-three frozen corpora the corrected scale separates cleanly (true verbatims
->= 0.88, real alterations <= 0.83), but a ratio threshold alone cannot tell
-"verbatim plus pagination junk" from "one word changed".
+Design, calibration and the full 63-quote before/after diff:
+[`docs/plans/2026-09-22-quote-matcher-structural-buckets.md`](../docs/plans/2026-09-22-quote-matcher-structural-buckets.md).
 
-**Proposed:** bucket on WHAT differs after alignment, not on the ratio: only
-junk differs (star pagination, footnote markers, punctuation, hyphenation,
-bracketed alterations) -> VERBATIM; any word substituted/added/dropped -> CLOSE;
-poor alignment -> FABRICATED. Then drop the noise band (every CLOSE floors) and
-re-record the corpora `quote_check` columns + regression baselines. The
-`opinion_block` verbatim check gets built on top of this.
+Measured: 63 quotes across the three frozen corpora + `matters/aliaj-rochelle-park`.
+VERBATIM 30 -> 43, CLOSE 20 -> 9. On the live Aliaj brief, six false CLOSEs
+removed and one true flag added. Baselines held (withers yellows 14/19 v1 and
+16/19 v2, A/B 56/61 v1 and 55/61 v2); the cost is two green over-flags,
+`withers-21` ("or" for "and") and `wainwright-17` (an inserted "the") -- the
+rows where a single function word differs, which nothing structural can
+distinguish from a meaning-changing swap. The doc records the alternative
+floor rule if that trade proves wrong.
+
+**Still open:** the `opinion_block` verbatim check itself. The primitive it
+needs now exists.
 
 ## Hand-off — contribute DE-279 to lq-ai (case citation validation)
 
