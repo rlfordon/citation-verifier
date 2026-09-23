@@ -78,14 +78,27 @@ def resolve_opinion(workdir: Path, ref: str) -> Path | None:
     return hits[0] if len(hits) == 1 else None
 
 
+def _quote_entries(row: dict) -> list:
+    try:
+        entries = json.loads(row.get("quote_check") or "[]")
+    except (json.JSONDecodeError, TypeError):
+        return []
+    return entries if isinstance(entries, list) else []
+
+
+def _altered_words(row: dict) -> int:
+    """Most words any one CLOSE quote touches. Legacy rows -> 2 (flag)."""
+    counts = [e.get("altered_words", 2) for e in _quote_entries(row)
+              if isinstance(e, dict) and e.get("result") == "CLOSE"]
+    return max(counts) if counts else 0
+
+
 def _altered(row: dict) -> str:
     """The word-level differences the quote matcher recorded, for the note."""
     alts = []
-    try:
-        for entry in json.loads(row.get("quote_check") or "[]"):
+    for entry in _quote_entries(row):
+        if isinstance(entry, dict):
             alts.extend(entry.get("alterations") or [])
-    except (json.JSONDecodeError, TypeError, AttributeError):
-        pass
     return "; ".join(alts[:3]) if alts else "not exact"
 
 
@@ -99,13 +112,15 @@ def deterministic(row: dict) -> tuple[str | None, str | None]:
     every Jev question -- correctly, because the *proposition* is supported.
     Only the quote matcher sees it.
 
-    CLOSE is a finding as of 2026-09-22. It used to be only a blocker,
-    because the matcher's 0.80 ceiling scored genuinely verbatim quotes as
-    CLOSE and the quote floor treated the band as transcription noise. The
-    matcher now buckets on what differs, so CLOSE means a word really was
-    substituted, added or dropped -- and `alterations` in quote_check names
-    which. POSSIBLE_MATCH stays a blocker: the citation resolved but the name
-    did not match cleanly, which is worth a look, not an accusation.
+    CLOSE is a finding as of 2026-09-22 when it touches more than one word.
+    It used to be only a blocker, because the matcher's 0.80 ceiling scored
+    genuinely verbatim quotes as CLOSE. The matcher now buckets on what
+    differs, so CLOSE means a word really was substituted, added or dropped,
+    and `alterations` names which. A lone word stays a blocker, matching
+    proposition_pipeline._quote_floor: nothing structural tells "or" for
+    "and" from "shall" for "may", so it goes to a reader rather than an
+    accusation. POSSIBLE_MATCH stays a blocker for the same reason -- the
+    citation resolved but the name did not match cleanly.
     """
     status = (row.get("cl_status") or "").strip()
     q = (row.get("quote_check_worst") or "").strip()
@@ -115,12 +130,14 @@ def deterministic(row: dict) -> tuple[str | None, str | None]:
         return f"the citation could not be verified ({status})", None
     if q == "FABRICATED":
         return "quoted text does not appear in the opinion", None
-    if q == "CLOSE":
+    if q == "CLOSE" and _altered_words(row) > 1:
         return f"quoted text is altered ({_altered(row)})", None
 
     if status and status not in ("VERIFIED", "VERIFIED_VIA_RECAP",
                                  "VERIFIED_PARTIAL"):
         return None, f"citation verified only loosely ({status})"
+    if q == "CLOSE":
+        return None, f"one word of the quote differs ({_altered(row)})"
     if q == "NO_OPINION":
         return None, "no opinion text was available"
     if flags not in ("", "[]"):

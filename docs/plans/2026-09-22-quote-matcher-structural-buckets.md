@@ -66,31 +66,44 @@ because no duty ran to this plaintiff", which is a misquote wearing a bracket.
 `similarity` is now word-content similarity with the licensed material removed,
 so `VERBATIM` is exactly `similarity == 1.0`. `QuoteVerification` gained
 `alterations: tuple[str, ...]` — each real difference named (`"or -> and"`,
-`"dropped: genuine issue of"`) — persisted per quote in the `quote_check`
+`"dropped: genuine issue of"`) — and `altered_words: int`, how many words
+those differences touch. Both are persisted per quote in the `quote_check`
 column.
 
-## The band is gone
+## The band is gone; the exemption is structural
 
-`_quote_floor` no longer exempts a similarity range: **every `CLOSE` floors.**
-A `CLOSE` now means a word really was substituted, added or dropped, which is
-what the band was trying and failing to approximate.
+`_quote_floor` no longer exempts a *similarity range*. It exempts a **CLOSE
+that touches exactly one word** — one word substituted for one word, or one
+word added or dropped. The matcher supplies the count as
+`QuoteVerification.altered_words`, persisted per quote in `quote_check`.
+`FABRICATED`, and any `CLOSE` touching two or more words, floors.
 
-**This over-flags, and the amount is measured.** There is no structural
-difference between `withers-21`'s `"or"` where the opinion says `"and"`
-(immaterial) and a `shall` → `may` swap (not). Across the 63 quotes below,
-dropping the band costs exactly **two** rows; fixing the ceiling clears
-**eleven**.
+This is the old `[0.75, 0.85)` band restated in terms of what actually
+differs. The band was trying to say "this is transcription noise" and was
+using a number that the 0.80 ceiling had made meaningless; two of the rows it
+protected were quotes that are in fact verbatim, and it had no way to protect
+`withers-38` from being lumped in with them.
 
-The mitigation is that the card now says *which word*. `_quote_alteration_lines`
-renders `Quote altered: or -> and` as an amber chip on the finding, so the
-reader dismisses it at a glance instead of squinting at `0.79`.
+**One word is where the question becomes unanswerable.** Nothing structural
+separates `withers-21`'s `"or"` where the opinion says `"and"` from a `shall`
+→ `may` swap. At that size the corpora say the immaterial case dominates —
+`withers-21` and `wainwright-17` (an inserted `"the"`) are the only one-word
+`CLOSE`s in 63 quotes, and both are immaterial.
 
-**If that trade turns out to be wrong**, the alternative measured alongside it
-was: floor every `CLOSE` *except* one whose sole alteration is a single word
-for a single word, or one word added or dropped. That exempts exactly
-`withers-21` and `wainwright-17` and nothing else in the corpora, restoring
-both baselines — at the cost of an exemption that cannot be told apart from a
-meaning-changing swap. It is a two-line change in `_quote_floor`.
+What the exemption withholds is only the **automatic** Yellow, which is a
+deterministic override of the agent's judgment. Everything else still fires:
+
+* the `CLOSE` verdict and the named `alterations` stay on the claim,
+* `_quote_alteration_lines` renders `Quote altered: or -> and` as an amber
+  chip on the report card,
+* `_triage_track_for` still routes any `CLOSE` to the **full** track,
+* `tools/poor_mans_check.py` still blocks the claim from clearing.
+
+So a one-word swap that *does* matter still reaches the agent and the reader.
+The floor simply stops overriding them on the one case it cannot judge.
+
+Legacy rows written before `altered_words` existed carry no count and floor on
+any `CLOSE` — the conservative direction.
 
 ## Effect
 
@@ -114,23 +127,24 @@ before. Net on a real brief: **six false flags removed, one true flag added.**
 | | before | after |
 |---|---|---|
 | withers v1 yellows caught | 14/19 | 14/19 |
-| withers v1 greens exact / over-flagged | 9 / 2 | 8 / 3 |
+| withers v1 greens exact / over-flagged | 9 / 2 | 9 / 2 |
 | withers v2 yellows caught | 16/19 | 16/19 |
-| withers v2 greens exact / over-flagged | 7 / 4 | 6 / 5 |
-| A/B v1 (payne + wainwright) | 23 + 33 = 56/61 | 24 + 32 = 56/61 |
+| withers v2 greens exact / over-flagged | 7 / 4 | 7 / 4 |
+| A/B v1 (payne + wainwright) | 23 + 33 = 56/61 | **24 + 33 = 57/61** |
 | A/B v2 | 23 + 32 = 55/61 | 23 + 32 = 55/61 |
-| v1 lenient-direction errors | payne-03, payne-58 | payne-03 |
+| v1 lenient-direction errors | payne-03, payne-58 | **payne-03** |
 
-Every move traces to a named row:
+Every baseline holds or improves. The two that move both come from one fix:
+the payne and wainwright corpora carried quote columns frozen from their
+source briefs, written before `quote_floor` existed, so six `FABRICATED`
+quotes had never floored. `tests/build_assessment_corpora.py` now re-runs
+`check_quotes` on every corpus, not just withers — that is payne 23 → 24 and
+`payne-58` leaving the lenient set. It is independent of the matcher change.
 
-* **payne 23 → 24**, and **payne-58 leaving the lenient set**: the payne and
-  wainwright corpora carried quote columns frozen from their source briefs,
-  written before `quote_floor` existed, so six `FABRICATED` quotes never
-  floored. `tests/build_assessment_corpora.py` now re-runs `check_quotes` on
-  every corpus, not just withers. Independent of the matcher change.
-* **wainwright 33 → 32** (`wainwright-17`, an inserted `"the"`) and **withers
-  greens 9 → 8** (`withers-21`, `"or"` for `"and"`): the two rows that lose the
-  noise band. That is the whole cost.
+`withers-21` and `wainwright-17` hold their old values under the lone-word
+exemption. Flooring them instead — the first thing tried — costs withers
+greens 9 → 8 exact, wainwright 33 → 32, and withers v2 greens 7 → 6. That
+measurement is why the exemption is stated in words rather than dropped.
 
 Two builder bugs were fixed on the way. `write_cassette` truncated the cassette
 file, destroying the `assess-v2` verdicts — live recordings, not reproducible
@@ -150,19 +164,19 @@ per *claim*, not per quote, so it repeats across a claim's quotes.
 | withers/withers-10 | Admissions obtained under Rule 36, including those | FABRICATED 0.41 | FABRICATED 0.47 | Yellow |
 | withers/withers-13 | not mere evidence; they are conclusive judicial ad | FABRICATED 0.47 | FABRICATED 0.47 | Yellow |
 | withers/withers-14 | not mere evidence; they are conclusive judicial ad | FABRICATED 0.51 | FABRICATED 0.49 | Yellow |
-| withers/withers-21 | mere delay does not alone constitute prejudice, | CLOSE 0.8 | **VERBATIM 1.0** | - -> Yellow |
-| withers/withers-21 | in the loss of evidence, increased difficulties in | CLOSE 0.79 | CLOSE 0.98 | - -> Yellow |
-| withers/withers-21 | defense sufficient to support a finding on the mer | VERBATIM 1.0 | VERBATIM 1.0 | - -> Yellow |
+| withers/withers-21 | mere delay does not alone constitute prejudice, | CLOSE 0.8 | **VERBATIM 1.0** | - |
+| withers/withers-21 | in the loss of evidence, increased difficulties in | CLOSE 0.79 | CLOSE 0.98 | - |
+| withers/withers-21 | defense sufficient to support a finding on the mer | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | withers/withers-30 | good cause | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | withers/withers-37 | It would be inconsistent with the purpose of the f | FABRICATED 0.4 | FABRICATED 0.4 | Yellow |
 | withers/withers-38 | A genuine issue of material fact exists when the e | CLOSE 0.73 | CLOSE 0.85 | Yellow |
 | withers/withers-45 | The statute of limitations for a breach of contrac | FABRICATED 0.53 | **CLOSE 0.69** | Yellow |
 | payne/payne-12 | A charge on justification is proper where the defe | FABRICATED 0.41 | FABRICATED 0.42 | - -> Yellow |
 | payne/payne-14 | [a]lthough the defendant requested a charge on cit | FABRICATED 0.38 | FABRICATED 0.41 | - -> Yellow |
-| payne/payne-15 | [a] citizen's arrest defense is not required when  | FABRICATED 0.48 | FABRICATED 0.48 | - -> Yellow |
+| payne/payne-15 | [a] citizen’s arrest defense is not required when  | FABRICATED 0.48 | FABRICATED 0.48 | - -> Yellow |
 | payne/payne-32 | hindsight has no place in an assessment of the per | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | payne/payne-33 | The fact that defendant and his present counsel di | VERBATIM 1.0 | VERBATIM 1.0 | - |
-| payne/payne-34 | [t]rial counsel's decisions relating to strategy a | VERBATIM 1.0 | VERBATIM 1.0 | - |
+| payne/payne-34 | [t]rial counsel’s decisions relating to strategy a | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | payne/payne-38 | in his presence | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | payne/payne-38 | within his immediate knowledge | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | payne/payne-58 | but there must be a legitimate basis for the defen | FABRICATED 0.48 | FABRICATED 0.47 | - -> Yellow |
@@ -177,7 +191,7 @@ per *claim*, not per quote, so it repeats across a claim's quotes.
 | wainwright/wainwright-12 | attorney's failure [to] be complete | CLOSE 0.8 | **VERBATIM 1.0** | - |
 | wainwright/wainwright-14 | does not meet this stringent standard | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | wainwright/wainwright-16 | If an appellant fails to meet his or her burden of | FABRICATED 0.46 | **VERBATIM 1.0** | - |
-| wainwright/wainwright-17 | upon a party's request, the trial court is require | CLOSE 0.8 | CLOSE 0.99 | - -> Yellow |
+| wainwright/wainwright-17 | upon a party's request, the trial court is require | CLOSE 0.8 | CLOSE 0.99 | - |
 | wainwright/wainwright-21 | To authorize a requested jury instruction, there n | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | wainwright/wainwright-23 | A defendant is not entitled to a jury instruction  | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | wainwright/wainwright-25 | Indeed, it would turn the law on its head to allow | VERBATIM 1.0 | VERBATIM 1.0 | - |
@@ -208,25 +222,38 @@ per *claim*, not per quote, so it repeats across a claim's quotes.
 | aliaj/aliaj-rochelle-park-33 | supervisory authority over all law enforcement act | VERBATIM 1.0 | VERBATIM 1.0 | - |
 | aliaj/aliaj-rochelle-park-33 | county and municipal...police officers | CLOSE 0.8 | **VERBATIM 1.0** | - |
 
-The nine surviving `CLOSE`s, with what the matcher says differs:
+The nine surviving `CLOSE`s, what the matcher says differs, and how many
+words that touches (`≤1` does not floor):
 
-| claim | alteration(s) |
-|---|---|
-| withers-04 | `is a strict one -> set forth` |
-| withers-09 | `judicial -> withdrawals of` |
-| withers-21 | `or -> and` |
-| withers-38 | `dropped: genuine issue of`; `exists when -> is genuine that is if` |
-| withers-45 | `statute -> case`; `dropped: limitations for`; `claim begins to run -> the cause of action accrues` |
-| wainwright-17 | `added: the` |
-| aliaj-08 | `fed r civ p -> rule` |
-| aliaj-09 | `fed r civ p -> twombly rule` |
-| aliaj-14 | `should be dismissed for failing to -> has alleged but it has not` |
+| claim | words | alteration(s) |
+|---|---|---|
+| withers-04 | 4 | `is a strict one -> set forth` |
+| withers-09 | 2 | `judicial -> withdrawals of` |
+| withers-21 | **1** | `or -> and` |
+| withers-38 | 5 | `dropped: genuine issue of`; `exists when -> is genuine that is if` |
+| withers-45 | 6 | `statute -> case`; `dropped: limitations for`; `claim begins to run -> the cause of action accrues` |
+| wainwright-17 | **1** | `added: the` |
+| aliaj-08 | 4 | `fed r civ p -> rule` |
+| aliaj-09 | 4 | `fed r civ p -> twombly rule` |
+| aliaj-14 | 6 | `should be dismissed for failing to -> has alleged but it has not` |
+
+`aliaj-08` and `aliaj-09` are the same substitution twice: the brief writes
+`Fed R.Civ.P. 8` where Phillips says `Rule 8`. That is a citation-form
+substitution inside a quotation, not a misrepresentation, and it floors. A
+citation-alias junk rule would clear it, but aliasing reporter and rule names
+is a real piece of work and nothing in the corpora needs it yet — noted, not
+built.
 
 ## Downstream
 
 * `tools/poor_mans_check.py` treated `CLOSE` as a blocker rather than a
-  finding, explicitly because of this bug. `CLOSE` is now a finding, and the
-  note names the altered words.
+  finding, explicitly because of this bug. A `CLOSE` touching more than one
+  word is now a finding and the note names the altered words; a lone word
+  stays a blocker, matching `_quote_floor`. Re-run live on Aliaj: REVIEW 21 →
+  11, LOOKS OK 12 → 19, PROBLEM 1 → 4. Six claims stopped being blocked by a
+  quote that was in fact verbatim; three real alterations became findings.
+  (Jev's own scores drift by a mean 0.014 between runs, max 0.14 observed, so
+  two unrelated rows moved as well — this checker is not bit-reproducible.)
 * `proposition_pipeline._quote_alteration_lines` renders the alterations as
   amber flag chips on the report card, alongside the crosscheck flags.
 

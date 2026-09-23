@@ -1,7 +1,7 @@
 """Offline regression: the frozen corpora + recorded cassettes must keep
 reproducing the two committed acceptance baselines (design SS8).
 
-  1. Withers: 14/19 yellows caught (8 exact), greens 8 exact / 3
+  1. Withers: 14/19 yellows caught (8 exact), greens 9 exact / 2
      over-flagged, reds 1 Red + 2 Gray. History: the 2026-06-11
      measurement run scored 12/19 (cross-checked row-for-row against
      tests/data/withers_assessment_results.csv); the SS6.4 quote rules
@@ -10,7 +10,7 @@ reproducing the two committed acceptance baselines (design SS8).
      (Anderson).
   2. A/B opus baseline (ab_opus-baseline_20260323-002228.jsonl) scored
      against the CURRENT ab_test_cases.json ledger: payne 24/27,
-     wainwright 32/34 -> 56/61 (91.8%, >= the 85% target). Note: the
+     wainwright 33/34 -> 57/61 (93.4%, >= the 85% target). Note: the
      recording's own `correct` flags say payne 21/27 -- two payne cases
      (ids 16, 75) had expected_assessment revised in the ledger after the
      recording, both to agree with the model's answer. The ledger is
@@ -24,12 +24,15 @@ different composition -- the four moves are each traceable to one row:
     FABRICATED quotes never floored. The builder now re-runs check_quotes
     on every corpus. payne 23 -> 24 and the pinned lenient error
     payne-58 (Yellow predicted Green) disappears.
-  * wainwright-17 (33 -> 32) and withers-21 (greens 9 -> 8 exact): the
-    two rows where a quote is CLOSE for exactly one function word --
-    "the" inserted, "or" for "and". The old [0.75, 0.85) band exempted
-    them; nothing structural can tell them from "shall" for "may", so
-    they now floor. This is the measured cost of dropping the band, and
-    it is the whole of it.
+  * wainwright-17 and withers-21 hold their old values. Both are CLOSE
+    for exactly one function word -- "the" inserted, "or" for "and" --
+    and `_quote_floor` exempts a lone altered word, which is the old
+    [0.75, 0.85) band restated structurally instead of as a threshold
+    that the matcher's 0.80 ceiling had made meaningless. A CLOSE
+    touching two or more words floors.
+
+Net vs. the pre-2026-09-22 numbers: A/B v1 56 -> 57/61 and the lenient
+set halves; everything else holds.
 
 No network, no LLM: RecordedExecutor replay only. A prompt-template change
 bumps the version key and makes these tests fail loudly via
@@ -52,8 +55,8 @@ class TestWithersBaseline:
         assert s.yellows_caught == 14   # 12 measured + SS6.4 floors (+2)
         assert s.yellows_exact == 8
         assert s.greens_total == 12
-        assert s.greens_exact == 8
-        assert s.greens_overflagged == 3
+        assert s.greens_exact == 9
+        assert s.greens_overflagged == 2
         assert s.reds_total == 3
         assert s.reds_caught == 3  # 1 Red via WRONG_CASE + 2 Gray
 
@@ -75,7 +78,7 @@ class TestABOpusBaseline:
 
     def test_wainwright(self):
         s = score_workdir(CORPORA / "wainwright")
-        assert (s.correct, s.total) == (32, 34)
+        assert (s.correct, s.total) == (33, 34)
 
     def test_lenient_direction_errors_pinned(self):
         """SS8.2 target: no NEW lenient-direction (Red->Yellow->Green)
@@ -120,8 +123,8 @@ class TestAssessV2Baselines:
         assert s.yellows_caught == 16
         assert s.yellows_exact == 11
         assert s.greens_total == 12
-        assert s.greens_exact == 6
-        assert s.greens_overflagged == 5
+        assert s.greens_exact == 7
+        assert s.greens_overflagged == 4
         assert s.reds_total == 3
         assert s.reds_caught == 3
 

@@ -514,25 +514,39 @@ class TestCheckQuotesExtensions:
         assert json.loads(claims[0]["quoted_text"]) == [
             "supplied span appears"]
 
-    def test_quote_floor_has_no_similarity_band(self):
-        """Every CLOSE floors (2026-09-22).
+    def test_quote_floor_exempts_a_lone_altered_word(self):
+        """The exemption is structural, not a similarity band (2026-09-22).
 
-        The old [0.75, 0.85) exemption was an artifact of the matcher's 0.80
+        The old [0.75, 0.85) band was an artifact of the matcher's 0.80
         ceiling, which made "verbatim plus a star-pagination marker" and "one
-        word changed" score the same. Bucketing is structural now: CLOSE means
-        a word really differs, at any similarity.
+        word changed" score the same. CLOSE now means a word really differs,
+        at any similarity; what is exempt is a CLOSE touching ONE word, which
+        is where the immaterial case ("or" for "and") cannot be told from the
+        material one ("shall" for "may").
         """
         from citation_verifier.proposition_pipeline import _quote_floor
         fab = {"result": "FABRICATED", "similarity": 0.2}
-        close_low = {"result": "CLOSE", "similarity": 0.64}
-        close_near_verbatim = {"result": "CLOSE", "similarity": 0.98}
+        one_word = {"result": "CLOSE", "similarity": 0.98,
+                    "altered_words": 1}
+        two_words = {"result": "CLOSE", "similarity": 0.98,
+                     "altered_words": 2}
+        low_one_word = {"result": "CLOSE", "similarity": 0.64,
+                        "altered_words": 1}
         verbatim = {"result": "VERBATIM", "similarity": 1.0}
         assert _quote_floor([fab]) == "Yellow"
-        assert _quote_floor([close_low]) == "Yellow"
-        assert _quote_floor([close_near_verbatim]) == "Yellow"
+        assert _quote_floor([two_words]) == "Yellow"
+        assert _quote_floor([one_word]) == ""
+        # similarity is not consulted at all -- only the word count
+        assert _quote_floor([low_one_word]) == ""
         assert _quote_floor([verbatim]) == ""
-        assert _quote_floor([verbatim, close_near_verbatim, fab]) == "Yellow"
+        assert _quote_floor([verbatim, one_word, fab]) == "Yellow"
         assert _quote_floor([]) == ""
+
+    def test_quote_floor_is_conservative_for_legacy_rows(self):
+        """A claims.csv written before `altered_words` existed has no count;
+        those CLOSEs floor rather than being silently exempted."""
+        from citation_verifier.proposition_pipeline import _quote_floor
+        assert _quote_floor([{"result": "CLOSE", "similarity": 0.8}]) == "Yellow"
 
     def test_no_quotes_anywhere_still_no_quotes(self, tmp_path):
         from citation_verifier.proposition_pipeline import check_quotes

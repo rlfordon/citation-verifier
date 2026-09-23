@@ -1861,22 +1861,41 @@ class QuoteCheckStats:
     derived_quotes: int = 0
 
 
+# A CLOSE touching no more than this many words does not floor. See
+# _quote_floor; the matcher supplies the count as `altered_words`.
+_LONE_WORD_MAX = 1
+
+
 def _quote_floor(results: list[dict]) -> str:
     """SS6.4 deterministic floor over per-quote verdicts.
 
-    A FABRICATED or CLOSE quote caps the claim at Yellow (apply-assessments
-    enforces it: the agent can lower a color, never raise it past the floor;
-    offline scoring models the same rule).
+    A FABRICATED quote, or a CLOSE that touches more than one word, caps the
+    claim at Yellow (apply-assessments enforces it: the agent can lower a
+    color, never raise it past the floor; offline scoring models the same
+    rule).
 
-    There is no longer a similarity band. Until 2026-09-22 a CLOSE in
-    [0.75, 0.85) was exempted as transcription noise, because the matcher's
-    fuzzy path was capped at 0.80 and could not tell a verbatim quote carrying
-    a star-pagination marker from a quote with a word changed. The matcher now
-    buckets on *what* differs, so a CLOSE means a word was really substituted,
-    added or dropped -- see quote_matcher and the per-quote `alterations`.
+    The old exemption was a similarity band, [0.75, 0.85), and it was an
+    artifact: the matcher's fuzzy path was capped at 0.80 and could not tell a
+    verbatim quote carrying a star-pagination marker from one with a word
+    changed. The matcher now buckets on *what* differs (2026-09-22), so the
+    exemption is stated in those terms instead -- a single word substituted,
+    added or dropped. Nothing structural separates withers-21's "or" where the
+    opinion says "and" from a "shall" -> "may" swap, and at one word the
+    immaterial case dominates the corpora.
+
+    This withholds only the *automatic* Yellow. The CLOSE verdict, the named
+    alterations, the report's amber chip and the full triage track all still
+    fire, so a one-word swap that does matter still reaches the agent and the
+    reader -- the floor just stops overriding their judgment.
+
+    Legacy rows written before `altered_words` existed floor on any CLOSE.
     """
     for r in results:
-        if r["result"] in ("FABRICATED", "CLOSE"):
+        if r["result"] == "FABRICATED":
+            return "Yellow"
+        if (r["result"] == "CLOSE"
+                and r.get("altered_words", _LONE_WORD_MAX + 1)
+                > _LONE_WORD_MAX):
             return "Yellow"
     return ""
 
@@ -1986,8 +2005,11 @@ def check_quotes(workdir: Path) -> QuoteCheckStats:
                 entry["matched_passage"] = qv.matched_passage
             if qv.alterations:
                 # What actually differs -- the CLOSE verdict's evidence, shown
-                # in the report and given to the agent.
+                # in the report and given to the agent. `altered_words` is how
+                # many words they touch, which _quote_floor keys the lone-word
+                # exemption on.
                 entry["alterations"] = list(qv.alterations)
+                entry["altered_words"] = qv.altered_words
             results.append(entry)
 
             if _WORST_ORDER.get(result, 0) > _WORST_ORDER.get(worst, 0):

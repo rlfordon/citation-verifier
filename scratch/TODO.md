@@ -41,20 +41,25 @@ ceiling), and **buckets on what differs** rather than on the ratio: junk only
 (star pagination, footnote markers, punctuation, hyphenation, ellipsis
 elisions, bracketed alterations on either side) -> VERBATIM; any word
 substituted, added or dropped -> CLOSE, with the words named in a new
-`alterations` field; poor alignment -> FABRICATED. The `[0.75, 0.85)`
-transcription-noise band in `_quote_floor` is gone -- every CLOSE floors.
+`alterations` field and counted in `altered_words`; poor alignment ->
+FABRICATED. The `[0.75, 0.85)` transcription-noise band in `_quote_floor` is
+replaced by a structural exemption: FABRICATED floors, and so does any CLOSE
+touching more than ONE word. A lone altered word does not floor -- nothing
+deterministic separates "or"->"and" from "shall"->"may" -- but the CLOSE
+verdict, the amber chip, the full triage track and the poor-man's-checker
+block all still fire, so only the automatic Yellow is withheld.
 
 Design, calibration and the full 63-quote before/after diff:
 [`docs/plans/2026-09-22-quote-matcher-structural-buckets.md`](../docs/plans/2026-09-22-quote-matcher-structural-buckets.md).
 
 Measured: 63 quotes across the three frozen corpora + `matters/aliaj-rochelle-park`.
 VERBATIM 30 -> 43, CLOSE 20 -> 9. On the live Aliaj brief, six false CLOSEs
-removed and one true flag added. Baselines held (withers yellows 14/19 v1 and
-16/19 v2, A/B 56/61 v1 and 55/61 v2); the cost is two green over-flags,
-`withers-21` ("or" for "and") and `wainwright-17` (an inserted "the") -- the
-rows where a single function word differs, which nothing structural can
-distinguish from a meaning-changing swap. The doc records the alternative
-floor rule if that trade proves wrong.
+removed and one true flag added; re-running `tools/poor_mans_check.py` there
+took REVIEW 21 -> 11 and PROBLEM 1 -> 4. Every baseline held or improved:
+withers yellows 14/19 v1 and 16/19 v2, greens 9/2 and 7/4 (all unchanged),
+A/B **57/61** v1 (up from 56 -- the payne/wainwright corpora's quote columns
+were stale, predating `quote_floor`, so six FABRICATED quotes had never
+floored) and 55/61 v2, lenient set {payne-03} (was two).
 
 **Still open:** the `opinion_block` verbatim check itself. The primitive it
 needs now exists.

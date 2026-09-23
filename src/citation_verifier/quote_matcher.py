@@ -342,13 +342,21 @@ def _describe(needle_words: list[str], span_words: list[str]) -> str:
     return "added: %s" % " ".join(span_words)
 
 
-def _word_alterations(needle_raw: str, span_raw: str) -> tuple[str, ...]:
-    """Word-level differences that are NOT typographic or disclosed junk."""
+def _word_alterations(
+    needle_raw: str, span_raw: str,
+) -> tuple[tuple[str, ...], int]:
+    """Word-level differences that are NOT typographic or disclosed junk.
+
+    Returns the descriptions and the number of words they touch -- the wider
+    of the two sides of each edit, summed. "or -> and" and "added: the" are
+    both 1; "fed r civ p -> rule" is 4. Consumers use the count to separate a
+    lone word from a rewritten clause; the matcher itself never does.
+    """
     n_words, s_words, n_gaps, s_gaps, opcodes = _word_opcodes(
         needle_raw, span_raw)
     if not n_words:
-        return ()
-    alterations = []
+        return (), 0
+    alterations, altered = [], 0
     for tag, i1, i2, j1, j2 in opcodes:
         if tag == "equal":
             continue
@@ -357,7 +365,8 @@ def _word_alterations(needle_raw: str, span_raw: str) -> tuple[str, ...]:
                         len(n_words)):
             continue
         alterations.append(_describe(dropped, added))
-    return tuple(alterations)
+        altered += max(len(dropped), len(added))
+    return tuple(alterations), altered
 
 
 def _content_similarity(needle_raw: str, span_raw: str) -> float:
@@ -414,6 +423,7 @@ class QuoteVerification:
     matched_passage: str    # best-matching span from opinion_text ("" if none)
     was_ocrd: bool          # whether OCR-confusion rules were applied
     alterations: tuple[str, ...] = field(default=())  # the non-junk word diffs
+    altered_words: int = 0  # words those diffs touch (0 unless CLOSE)
 
 
 def verify_quote(
@@ -449,7 +459,7 @@ def verify_quote(
     # The structural diff sees the RAW quote: its ellipses and brackets are the
     # markers that license the opinion's extra words.
     needle = _normalize_ocr_confusions(quote) if was_ocrd else quote
-    alterations = _word_alterations(needle, span)
+    alterations, altered_words = _word_alterations(needle, span)
     similarity = (1.0 if not alterations
                   else _content_similarity(needle, span))
     result = QuoteMatch.VERBATIM if not alterations else QuoteMatch.CLOSE
@@ -460,6 +470,7 @@ def verify_quote(
         matched_passage=passage,
         was_ocrd=was_ocrd,
         alterations=alterations,
+        altered_words=altered_words,
     )
 
 

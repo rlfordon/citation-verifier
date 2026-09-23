@@ -19,7 +19,7 @@ class TestReplayMode:
         scores = ab.run_ab_config("baseline", {}, replay=True)
         assert (scores["payne"].correct, scores["payne"].total) == (24, 27)
         assert (scores["wainwright"].correct,
-                scores["wainwright"].total) == (32, 34)
+                scores["wainwright"].total) == (33, 34)
         assert "baseline/payne" in capsys.readouterr().out
 
 

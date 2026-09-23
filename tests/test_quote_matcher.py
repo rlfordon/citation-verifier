@@ -115,6 +115,23 @@ class TestAlterationsAreReported:
         qv = verify_quote("hello world", "say hello world now")
         assert qv.alterations == ()
 
+    def test_altered_words_counts_the_wider_side_of_each_edit(self):
+        """proposition_pipeline._quote_floor exempts a lone altered word, so
+        the count has to be the matcher's, not a guess from the strings."""
+        one = verify_quote("opportunities for fraud or collusion",
+                           "greater opportunities for fraud and collusion")
+        assert (one.alterations, one.altered_words) == (("or -> and",), 1)
+
+        many = verify_quote(
+            "notice of claim which is contemplated by Fed R.Civ.P. 8",
+            "the type of notice of claim which is contemplated by Rule 8. See")
+        assert many.altered_words == 4  # four quote words for one opinion word
+
+    def test_verbatim_and_fabricated_count_zero(self):
+        assert verify_quote("hello world", "say hello world now").altered_words == 0
+        assert verify_quote("zzz qqq vvv wwww",
+                            "nothing alike here at all").altered_words == 0
+
     def test_fabricated_has_no_alterations(self):
         qv = verify_quote("zzz qqq vvv wwww", "nothing alike here at all")
         assert qv.result is QuoteMatch.FABRICATED
