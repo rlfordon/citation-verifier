@@ -270,7 +270,7 @@ questions could act as *reliability* signals, marking claims where the support
 check cannot be trusted (a proposition that bolts the brief's own application
 onto the rule can never be supported "exactly as written"). Inside the middle
 bucket they separate good from bad at 0.33-0.55 - chance again - and splitting
-on "is this a clean general rule" does not change how well  works
+on "is this a clean general rule" does not change how well `as_written` works
 (0.707 vs 0.768, n=28 vs 71).
 
 **Reading:** across seven questions in three framings, everything uncorrelated
