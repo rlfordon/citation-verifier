@@ -1,6 +1,8 @@
 # Render Blueprint for the public "Verify and Retrieve" page (free plan).
 # Free web services sleep after 15 minutes idle; the first request after that takes ~1 minute.
 # Nothing written to disk survives a restart, which is fine in public mode (cache only).
+# No COURTLISTENER_API_TOKEN on purpose: users bring their own token (X-CL-API-Token header).
+# If one were set here, the client would fall back to it for anyone who didn't paste a token.
 services:
   - type: web
     name: verify-and-retrieve
@@ -14,5 +16,3 @@ services:
         value: public
       - key: PYTHON_VERSION
         value: "3.11.11"
-      - key: COURTLISTENER_API_TOKEN
-        sync: false
