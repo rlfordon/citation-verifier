@@ -175,8 +175,23 @@ def main() -> None:
     for i, c in enumerate(claims):
         prop = (c.get("cited_for") or c.get("proposition") or "").strip()
         path = resolve_opinion(workdir, c.get("opinion_file") or "")
-        if not prop or path is None:
-            skipped += 1
+        if path is None or not prop:
+            # No opinion text means Jev cannot be asked -- but the
+            # deterministic layer may already have a finding, and dropping the
+            # claim would throw it away. A citation that resolves to a
+            # different case is exactly this situation.
+            finding, blocker = deterministic(c)
+            out.append({
+                "verdict": "PROBLEM" if finding else "REVIEW",
+                "checks_low": 0,
+                "reasons": [finding or blocker or "no opinion text available"],
+                "scores": dict.fromkeys(
+                    ("as_written", "coverage", "whose_view", "same_issue"), ""),
+                "claim_id": c.get("claim_id", str(i)),
+                "cited_case": (c.get("cited_case") or "")[:60],
+                "proposition": prop,
+                "truth": (c.get("badge_label") or c.get("assessment") or "")[:44],
+            })
             continue
         try:
             r = check_one(prop, path.read_text(encoding="utf-8", errors="ignore"),
