@@ -315,6 +315,41 @@ hold.")
 
 ## Priority 2 — Improvements (better results)
 
+### Quote matcher: citation-form aliases inside a quotation (2026-09-22)
+
+`aliaj-rochelle-park-08` and `-09` both flag because the brief writes
+`Fed R.Civ.P. 8` where Phillips says `Rule 8`. The matcher is right that the
+words differ, but a citation-form substitution inside a quotation is not a
+misrepresentation, and it currently floors the claim to Yellow and shows as a
+PROBLEM in `tools/poor_mans_check.py`.
+
+Fix: treat a small set of citation aliases as junk in `_diff_tokens` — rule /
+Fed. R. Civ. P. / FRCP, and the reporter families we already know from
+`_reporter_family`. Scope it to alterations where BOTH sides are citation
+tokens, so `Rule 8` -> `Rule 9` still flags.
+
+Not urgent: two rows on one brief, and the flag is honest, just noisy.
+
+### Quote matcher: `_locate` is ~4s per non-exact quote (2026-09-22)
+
+One `SequenceMatcher` pass per window, ~7000 of them on a 100k-character
+opinion. Not a regression (the pre-rewrite matcher was 5.6s on the same
+input), and a quote that exact-matches short-circuits in under a
+millisecond — so this only bites a brief with many altered or fabricated
+quotes against long opinions.
+
+**Do not retry these two — both measured SLOWER:** reusing one matcher via
+`set_seq2(needle)` (the cost is the match algorithm, not building the index),
+and pruning on `real_quick_ratio`/`quick_ratio` (both are `2*min/(la+lb)`,
+which for a 1.5w chunk is exactly the 0.80 the real ratio is capped at here,
+so the bound never prunes and only adds work).
+
+What would work: anchor with `str.find` on two or three distinctive slices of
+the needle and only score windows near a hit, falling back to the full scan
+when nothing anchors. It is a real behavior change on a freshly recalibrated
+path, so it wants its own measurement pass against the 63-quote corpus in
+`docs/plans/2026-09-22-quote-matcher-structural-buckets.md`.
+
 ### Report layout v2: filterable, skimmable, multi-view (logged 2026-06-12)
 User feedback after seeing the first real v2 report (withers-v2-demo): the
 current single-scroll card layout may not be the most useful shape — "what

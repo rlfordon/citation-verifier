@@ -92,6 +92,47 @@ Implementation note: this is a flag on the existing per-citation iteration, not 
 
 Open questions: stage-name vs. integer-depth parameter shape (stage names are semantic but brittle to future stage additions; integers are opaque); whether depth-capped results stay `NOT_FOUND` with a warning or get a distinct status like `VERIFICATION_TRUNCATED`. Surfaced 2026-05-21 conversation while mid-refactor; deliberately deferred to keep refactor scope clean.
 
+## Assessment Harness
+
+### Key the cassettes on the rendered prompt, not a hand-typed version label
+
+`RecordedExecutor` looks verdicts up by `(claim_id, prompt_version)`, where
+`prompt_version` is a string a human types into the prompt file's header. So
+the harness cannot tell these apart:
+
+* rewriting the assessment criteria — genuinely invalidates all 180 recorded
+  verdicts, and
+* adding one optional line that is empty for most claims — genuinely
+  invalidates only the claims where it is non-empty.
+
+Both cost a full re-record: ~$47 of Opus at the recorded prices ($9.41 for the
+90 assess-v1 verdicts, $37.71 for the 90 assess-v2 ones) plus a row-by-row
+re-adjudication of every baseline in `test_assessment_regression.py`. That
+tail is why small prompt improvements do not get made.
+
+If the key were a **hash of the actually-rendered prompt** this would fall out
+for free: change the criteria and every rendered prompt changes, so everything
+re-records; add an optional field and only the affected claims do. `Verdict`
+already carries `claim_id, prompt_version, model, cost_usd, elapsed_s` —
+adding `prompt_sha` and matching on it when present is contained. It also
+removes the "remember to bump the version" discipline, which is the kind of
+rule that gets forgotten once and then silently poisons a baseline.
+
+Pairs with: **make the baselines directional.** `assert s.greens_exact == 9`
+is an exact-equality assertion on a stochastic measurement, so any re-record
+moves it, including drift that means nothing. The file's own prose already
+thinks in the right terms (`>= 15 target`, "lenient set is a subset of the
+pinned set"); the committed assertions do not.
+
+Unblocks (currently not worth doing on its own): giving the assess prompt the
+specific altered words from `quote_check` — `or -> and`, `10 -> 30` — instead
+of the bare verdict `CLOSE`. assess-v1 passes only `{quote_check_worst}`;
+assess-v2 passes the quoted strings and the matched passage but not even the
+verdict. Low value today, because after the 2026-09-22 review the
+deterministic floor catches every lone-word change that can carry meaning
+(negation, modal, number) and every multi-word one. Would be worth it if
+re-recording got cheap.
+
 ## Scale & Distribution
 
 ### Package for other legal tech tools
