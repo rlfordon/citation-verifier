@@ -208,7 +208,7 @@ class MasterCSV:
 
 app = FastAPI(title="Citation Verifier", version="0.1.0")
 
-# Public mode: when MODE=public, only serve the Get & Print page (for Replit).
+# Public mode: when MODE=public, only serve the Get & Print page (hosted on Render).
 _public_mode = os.environ.get("MODE", "").lower() == "public"
 MAX_CITATIONS = 500 if _public_mode else 0  # 0 = no limit
 

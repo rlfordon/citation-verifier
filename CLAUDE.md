@@ -121,18 +121,17 @@ Three-step verification pipeline in `src/citation_verifier/verifier.py`:
 | `scratch/jev/` | Jev experiments (rubric, gate, passage locator, phrasing loop) with cached API responses for free replay -- see its `README.md`, `RESULTS.md`, `LOOP.md` |
 | `docs/plans/` | Implementation plans and design docs |
 | `docs/retrospectives/` | Post-run retrospectives and skill test feedback (date-prefixed, e.g. `2026-03-04-verify-brief-valve-v-rothschild.md`) |
-| `.replit` | Replit config (deployment, workflows, `MODE=public`) |
-| `replit.nix` | Nix dependencies for Replit (python311Full) |
+| `render.yaml` | Render Blueprint for the public deployment (free plan, `MODE=public`) |
 
-## Replit Deployment (Public Mode)
+## Render Deployment (Public Mode)
 
 Set `MODE=public` to serve only the Retrieve page publicly. The Debug page and QC page are blocked.
 
 - `/` serves `get.html` (Retrieve, nav hidden), `/get` redirects to `/`, `/debug`, `/qc`, `/api/qc/*`, and `/api/flag-for-flp` return 404
 - All shared API routes (`/api/verify`, downloads, health) remain available
-- One-way git flow: develop locally, push to GitHub, pull on Replit (`git fetch origin && git reset --hard origin/main`)
-- Redeploy after code changes: `git fetch origin && git reset --hard origin/main && rm -rf .venv`, then Run/Publish
-- CL API key stored in Replit's `.env` (Secrets tab)
+- Hosted at https://verify-and-retrieve.onrender.com, defined by `render.yaml`; Render auto-deploys on push to `main`
+- Free plan: sleeps after 15 min idle (~1 min cold start), no persistent disk
+- BYOK: users paste their own CourtListener token (sent as `X-CL-API-Token`). Deliberately no server `COURTLISTENER_API_TOKEN`, because the client falls back to it
 
 ## Environment
 

@@ -13,7 +13,7 @@ The project has two layers:
 
 ## Try It
 
-**[Verify and Retrieve](https://verify-and-retrieve.replit.app/)** -- paste citations, verify them against CourtListener, and download the opinion text or PDFs. No installation needed.
+**[Verify and Retrieve](https://verify-and-retrieve.onrender.com/)** -- paste citations, verify them against CourtListener, and download the opinion text or PDFs. No installation needed.
 
 ## How It Works
 
@@ -105,7 +105,7 @@ The app has three pages:
 
 Results stream via SSE as each citation completes. Batches capped at 50 citations.
 
-**Public mode:** Set `MODE=public` to expose only the Retrieve page (used for the hosted Replit deployment). Debug and QC routes return 404.
+**Public mode:** Set `MODE=public` to expose only the Retrieve page (used for the hosted Render deployment; see `render.yaml`). Debug and QC routes return 404.
 
 ### Command Line
 
