@@ -234,6 +234,54 @@ Read it two ways:
 **Flag recall is 36–43%.** It catches four in ten bad citations, not ten. A
 standalone tool must say so: silence is "not checked", never "clean".
 
+
+## Test 9 - are there any *unrelated* questions worth asking?
+
+The four checks correlate with each other up to 0.95, which is why weighting
+them never helps (tested three ways: log-odds, fitted, and continuous - all
+gave AUC 0.929 on held-out briefs, identical to a plain count). So the fix
+would have to be a genuinely independent signal. Seven candidates were written
+in three framings, each designed NOT to be about the support relation:
+
+- read only the **proposition**: does it use absolute words; is it a general
+  rule or a fact-bound claim; does it assert more than one separable thing
+- read only the **opinion**: does it announce a general rule; is the reasoning
+  a holding, background, or a quotation of another authority
+- **factual lookups**: do the two name the same statute/rule/doctrine; are they
+  at the same stage of a case
+
+| question | max correlation with the four | AUC on held-out briefs |
+|---|---|---|
+| proposition only: absolute words | 0.03 | 0.475 |
+| proposition only: general rule vs fact claim | 0.23 | 0.408 |
+| proposition only: asserts several things | 0.15 | 0.499 |
+| opinion only: announces a rule | 0.13 | 0.472 |
+| opinion only: holding vs background | 0.07 | 0.549 |
+| lookup: same named statute/rule | 0.24 | 0.549 |
+| lookup: same stage of a case | **0.77** | 0.223 |
+
+**The independence is real and the signal is nil.** Everything uncorrelated
+scores at chance (0.5). Adding any of them to the count makes it worse
+(0.929 -> 0.886-0.920). The one that carries signal, "same stage of a case",
+correlates at 0.77 - it is another support question wearing a disguise.
+
+A second hypothesis from hand-reading the middle cases also failed: that these
+questions could act as *reliability* signals, marking claims where the support
+check cannot be trusted (a proposition that bolts the brief's own application
+onto the rule can never be supported "exactly as written"). Inside the middle
+bucket they separate good from bad at 0.33-0.55 - chance again - and splitting
+on "is this a clean general rule" does not change how well  works
+(0.707 vs 0.768, n=28 vs 71).
+
+**Reading:** across seven questions in three framings, everything uncorrelated
+with the support judgement was also uninformative. That suggests Jev has
+essentially **one dimension** to offer about a claim - roughly "how well does
+this opinion support this proposition" - and every question is a cleaner or
+noisier read of that same quantity. It explains why weighting never pays, why
+combining never beats the best single question, and why purpose-built questions
+keep losing to reused ones. Seven questions is not proof, but it is enough to
+stop hunting: the middle bucket is the LLM's job, not a wording problem.
+
 ## Caveats
 
 - **Zero errors, but out of small numbers.** 0 bad clears in 36 held-out cleared

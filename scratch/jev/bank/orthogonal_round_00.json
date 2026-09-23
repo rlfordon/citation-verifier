@@ -1,0 +1,63 @@
+{
+ "prop_only": {
+  "_state": {
+   "proposition": "proposition"
+  },
+  "absolutes": {
+   "type": "noul",
+   "_green": "no",
+   "instructions": "Does `proposition` state a rule in absolute terms -- always, never, must, any, all, requires, cannot -- rather than a qualified one?"
+  },
+  "is_general_rule": {
+   "type": "choice",
+   "_green": "general_rule",
+   "instructions": "What kind of statement is `proposition`?",
+   "criteria": {
+    "general_rule": "A general statement of law that would apply beyond one case",
+    "applied_holding": "A statement about how the law applied to one case's particular facts",
+    "fact_claim": "A claim about what happened, or about specific parties, not about law"
+   }
+  },
+  "compound": {
+   "type": "noul",
+   "_green": "no",
+   "instructions": "Does `proposition` assert more than one separable thing -- a rule plus a qualifier, an exception, a category, or a second rule?"
+  }
+ },
+ "opinion_only": {
+  "_state": {
+   "opinion": "excerpt"
+  },
+  "announces_rule": {
+   "type": "noul",
+   "_green": "yes",
+   "instructions": "Does `opinion` announce or restate a general rule of law, rather than only applying settled law to the facts before it?"
+  },
+  "passage_role": {
+   "type": "choice",
+   "_green": "holding",
+   "instructions": "In `opinion`, what is the role of the reasoning shown?",
+   "criteria": {
+    "holding": "The court's own reasoning for its decision",
+    "background": "Recitation of facts, procedural history, or the parties' arguments",
+    "quoting_other": "Mainly a quotation or summary of some other authority"
+   }
+  }
+ },
+ "lookup": {
+  "_state": {
+   "proposition": "proposition",
+   "opinion": "excerpt"
+  },
+  "same_named_thing": {
+   "type": "noul",
+   "_green": "yes",
+   "instructions": "Do `proposition` and `opinion` refer to the same statute, rule, or doctrine by name?"
+  },
+  "same_stage": {
+   "type": "noul",
+   "_green": "yes",
+   "instructions": "Do `proposition` and `opinion` concern the same stage of a case?"
+  }
+ }
+}
