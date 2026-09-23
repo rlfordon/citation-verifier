@@ -14,6 +14,9 @@
 
 - Ideas backlog with current status: [`scratch/jev/IDEAS.md`](jev/IDEAS.md)
 - What was done and learned: [`docs/retrospectives/2026-09-19-jev-exploration.md`](../docs/retrospectives/2026-09-19-jev-exploration.md)
+- Session 2 (2026-09-22): [`docs/retrospectives/2026-09-22-jev-stage2-and-poor-mans-checker.md`](../docs/retrospectives/2026-09-22-jev-stage2-and-poor-mans-checker.md)
+  - findings: [`scratch/jev/STAGE2.md`](jev/STAGE2.md); prototype: `tools/poor_mans_check.py`
+  - **the quote-matcher cap below now blocks the fast checker too, not just the opinion_block check**
 - **Next:** locator -> LLM assessment test, plan in
   [`docs/plans/2026-09-19-jev-locator-assess-test.md`](../docs/plans/2026-09-19-jev-locator-assess-test.md) (run in a fresh session)
 - Shadow logging is live (`JEV_SHADOW=1` in `.env`, per machine). Check the pool
