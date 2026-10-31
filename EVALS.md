@@ -47,7 +47,7 @@ change is scored instantly and offline.
 
 | Corpus | Size | What it measures | Provenance | Test |
 |---|---|---|---|---|
-| **Charlotin fakes** | **511** | Fabricated citations the verifier should *not* resolve | Mined offline from Damien Charlotin's hallucination database (`scratch/Charlotin-hallucination_cases.csv`, ~1,600 court rulings that addressed AI-hallucinated material) via `build_charlotin_corpus.py`. 509 court-confirmed "Fabricated: Case Law" + 2 real-but-wrong (pincite/court). | — (raw material; see note) |
+| **Charlotin fakes** | **511** | Fabricated citations the verifier should *not* resolve | Mined offline from Damien Charlotin's hallucination database (`scratch/Charlotin-hallucination_cases.csv`, ~1,600 court rulings that addressed AI-hallucinated material) via `build_charlotin_corpus.py`. 509 court-confirmed "Fabricated: Case Law" + 2 real-but-wrong (pincite/court). | Scored by cassette replay (`charlotin_baseline.json`); no pytest guard yet — see note |
 | Real-citation benchmark | 204 | Regression guard: real cases must keep resolving (catches over-tightening into false negatives) | Curated real citations, `benchmark_real_citations.json` | `test_benchmark_regression.py` |
 | Fallback corpus | 51 | Lookup-miss citations that exercise the fuzzy opinion-search + RECAP fallback path | `build_fallback_corpus.py` | `test_fallback_regression.py` |
 | Known fakes | 19 | Court-order + QC-confirmed hallucinations that must be rejected | Sanctions orders + QC triage, `known_fake_citations.json` | `test_false_positives.py` (live + schema) |
@@ -57,12 +57,37 @@ change is scored instantly and offline.
 **A note on the Charlotin set and the "benchmark" naming:**
 
 - The **Charlotin corpus** is labeled *court-confirmed fabrications per
-  Charlotin's data — not independently re-verified by us*. It is the raw
-  mining pool; individual rows are promoted into the curated 19-item
-  `known_fakes` corpus only after a live verification/adjudication pass. It is
-  recorded with the generic recorder (`record_benchmark_cassette.py
-  --corpus-name charlotin`) but is not yet pinned to a dedicated regression
-  test.
+  Charlotin's data — not independently re-verified row by row*. It was cleaned
+  after the June 2026 live run (547 → 511: poisoned extractions and Charlotin
+  mislabels dropped; see `docs/retrospectives/2026-06-10-charlotin-fake-mining.md`).
+  Individual rows are promoted into the curated 19-item `known_fakes` corpus
+  only after a live verification/adjudication pass. It is recorded with the
+  generic recorder (`record_benchmark_cassette.py --corpus-name charlotin`)
+  but is not yet pinned to a dedicated pytest regression test.
+- **Current score** (live run 2026-06-11; re-scored 2026-10-31 by offline
+  cassette replay through current `main` — 0 status changes):
+
+  | On the 509 court-confirmed fakes | n | % |
+  |---|---:|---:|
+  | Rejected — `WRONG_CASE` (real cite, different case) | 238 | 46.8% |
+  | Rejected — `NOT_FOUND` | 195 | 38.3% |
+  | Flagged — `CITE_UNCONFIRMED` ("Check Cite") | 34 | 6.7% |
+  | **Caught (total)** | **467** | **91.7%** |
+  | Accepted — `VERIFIED` 18 / `VERIFIED_VIA_RECAP` 10 / `VERIFIED_PARTIAL` 3 | 31 | 6.1% |
+  | Not assessable — `INSUFFICIENT_DATA` 8 / `VERIFICATION_INCOMPLETE` 3 | 11 | 2.2% |
+
+  Excluding the 11 not assessable: 467/498 caught (93.8%). The 31 accepted
+  fakes are almost all a real (often common) case name welded to a fabricated
+  reporter/WL cite where CL has no same-family citation to contradict it; per
+  the Check Cite retrospective they carry a `cite_not_on_record` warning. The 2
+  relabeled real-case targets (wrong pincite, wrong court) both score
+  `VERIFIED` — future pin/court-check targets, not misses. Paired false-alarm
+  rate: the real-citation benchmark holds at 203/204 `VERIFIED` (the 1 is
+  `VERIFICATION_INCOMPLETE`, not a rejection). Bias to keep in mind: the set
+  leans toward flagrant fakes that courts quoted verbatim in sanctions rulings.
+- To re-score after a logic change: `python tests/record_benchmark_cassette.py
+  --corpus-name charlotin --from-cassette` (offline; **rewrites**
+  `charlotin_baseline.json`).
 - The **"benchmark" cassette/test** is the **204 real-citation** guard — a
   *separate* corpus from the Charlotin fakes, despite the shared word.
 
